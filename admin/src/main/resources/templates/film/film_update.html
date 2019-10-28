@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 添加电影</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+    <link href="css/plugins/cropper/cropper.min.css" rel="stylesheet">
+    <link href="css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+    <link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+    <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+    <link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="layer/css/layui.css"  rel="stylesheet">
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+    <script src="just_layer/layer.js"></script>
+    <script src="laydate/laydate.js"></script>
+
+</head>
+<body>
+<div class="ibox float-e-margins" style="width: 80%;margin: 0 auto;">
+    <div class="ibox-title">
+        <h5>添加电影 </h5>
+        <div class="ibox-tools">
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#">
+                <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+                <li><a href="form_basic.html#">选项1</a>
+                </li>
+                <li><a href="form_basic.html#">选项2</a>
+                </li>
+            </ul>
+            <a class="close-link">
+                <i class="fa fa-times"></i>
+            </a>
+        </div>
+    </div>
+    <form id="addFilmForm" method="post" class="form-horizontal" enctype="multipart/form-data">
+        <input id="mid" type="hidden" name="movieId">
+        <!--名字-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">电影名字</label>
+            <div class="col-sm-10">
+                <input type="text" id="movieName_update" name="movieName" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--类型-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">类型选择</label>
+
+            <div class="col-sm-10">
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="动作" id="inlineCheckbox1">动作</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="科幻" id="inlineCheckbox2">科幻</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="冒险" id="inlineCheckbox3">冒险</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="剧情" id="inlineCheckbox4">剧情</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="惊悚" id="inlineCheckbox5">惊悚</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="灾难" id="inlineCheckbox6">灾难</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="传记" id="inlineCheckbox7">传记</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="喜剧" id="inlineCheckbox8">喜剧</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="动画" id="inlineCheckbox9">动画</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="爱情" id="inlineCheckbox10">爱情</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="历史" id="inlineCheckbox11">历史</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="悬疑" id="inlineCheckbox12">悬疑</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieLevel" value="恐怖" id="inlineCheckbox13">恐怖</label>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--年代-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">影片年代</label>
+            <div class="col-sm-10">
+                <input type="text" id="movieDecade_update" name="movieDecade" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--上映日期-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">上映日期</label>
+
+            <div class="col-sm-10">
+                <input type="date" id="moviePublish_update" name="moviePublish" style="height: 35px;" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--导演-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">导演</label>
+
+            <div class="col-sm-10">
+                <input type="text" id="movieDirector_update" name="movieDirector" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--主演-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">主演</label>
+
+            <div class="col-sm-10">
+                <input type="text" id="movieActors_update" name="movieActors" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--国家-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">所属国家</label>
+            <div class="col-sm-10">
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieCountry" value="中国">中国</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieCountry" value="俄罗斯">俄罗斯</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieCountry" value="美国">美国</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieCountry" value="日本">日本</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieCountry" value="韩国">韩国</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieCountry" value="法国">法国</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="movieCountry" value="英国">英国</label>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--语言-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">语言</label>
+
+            <div class="col-sm-10">
+                <input type="text" id="movieLanguage_update" name="movieLanguage" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--评分-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">电影总评分</label>
+            <div class="col-sm-10">
+                <input type="text" id="movieTotalScore_update" name="movieTotalScore" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--投票次数-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">投票次数</label>
+            <div class="col-sm-10">
+                <input type="text" id="movieScoreTimes_update" name="movieScoreTimes" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--简介-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">简介</label>
+            <div class="col-sm-10">
+                <input type="text" id="movieDescription_update" name="movieDescription" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--票房统计-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">累计票房</label>
+            <div class="col-sm-10">
+                <input type="text" id="movieBoxOffice_update" name="movieBoxOffice" class="form-control">
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--上传海报-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">海报上传</label>
+            <input type="file" name="uploadImg">
+            <img id="moviePlacard" height="300px" alt="图片">
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--影片时长-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">电影时长/（min）</label>
+            <div class="col-sm-10">
+                <input type="text" id="movieDuration_update" name="movieDuration" class="form-control">
+            </div>
+        </div>
+        <!--影片状态-->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">影片状态</label>
+            <div class="col-sm-10">
+                <label class="checkbox-inline">
+                    <input type="radio" name="movieState" value="0">未上映</label>
+                <label class="checkbox-inline">
+                    <input type="radio" name="movieState" value="1">正在上映</label>
+                <label class="checkbox-inline">
+                    <input type="radio" name="movieState" value="2">已下映</label>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <!--提交按钮-->
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-2">
+
+            </div>
+        </div>
+    </form>
+    <button style="margin-top:-20px;margin-bottom: 20px;" class="btn btn-success btn-block" onclick="updateFilm()">保存内容</button>
+</div>
+</body>
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+    /*评分不用
+layui.use(['rate'], function(){
+var rate = layui.rate;
+rate.render({
+    elem: '#rate'
+    ,value: 3.5
+    ,half: true
+    ,text: true
+})
+});*/
+    function updateFilm() {
+        //console.log(new FormData($('#addFilmForm')[0]))
+        $.ajax({
+            url: '/movie/update_film',
+            type: 'POST',
+            data: new FormData($('#addFilmForm')[0]),
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.code == "200") {
+                    layer.msg(data.message, {icon: 1, time: 2000});
+                    setTimeout(function () {
+                        parent.location.reload()
+                        parent.layer.closeAll()
+                    },2000)
+
+                }else {layer.msg(data.message, {icon: 2, time: 2000});}
+            },
+        });
+    }
+</script>
+</html>

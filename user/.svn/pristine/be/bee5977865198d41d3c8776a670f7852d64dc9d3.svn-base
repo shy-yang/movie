@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>电影票</title>
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/seat.css">
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.seat-charts.min.js"></script>
+        <script src="just_layer/layer.js"></script>
+        <script src="js/moment-with-locales.js"></script>
+        <script src="js/vue2.6.10_min.js"></script>
+        <style type="text/css">
+            [v-cloak] {
+                display: none;
+            }
+
+            .front {
+                width: 300px;
+                margin: 5px 32px 45px 32px;
+                background-color: #b5b5b5;
+                color: #666;
+                text-align: center;
+                padding: 3px;
+                border-radius: 5px;
+            }
+
+            .booking_area {
+                float: right;
+                position: relative;
+                width: 200px;
+                height: 450px;
+            }
+
+            .booking_area h3 {
+                margin: 5px 5px 0 0;
+                font-size: 16px;
+            }
+
+            .booking_area p {
+                line-height: 26px;
+                font-size: 16px;
+                color: #999
+            }
+
+            .booking_area p span {
+                color: #666
+            }
+
+            div.seatCharts-cell {
+                color: #182C4E;
+                height: 25px;
+                width: 25px;
+                line-height: 25px;
+                margin: 3px;
+                float: left;
+                text-align: center;
+                outline: none;
+                font-size: 13px;
+            }
+
+            div.seatCharts-seat {
+                color: #fff;
+                cursor: pointer;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+            }
+
+            div.seatCharts-row {
+                height: 35px;
+            }
+
+            div.seatCharts-seat.available {
+                background-color: #B9DEA0;
+            }
+
+            div.seatCharts-seat.focused {
+                background-color: #76B474;
+                border: none;
+            }
+
+            div.seatCharts-seat.selected {
+                background-color: #E6CAC4;
+            }
+
+            div.seatCharts-seat.unavailable {
+                background-color: #472B34;
+                cursor: not-allowed;
+            }
+
+            div.seatCharts-container {
+                border-right: 1px dotted #adadad;
+                width: 900px;
+                padding: 20px;
+                float: left;
+            }
+
+            div.seatCharts-legend {
+                padding-left: 0px;
+                position: absolute;
+                bottom: 16px;
+            }
+
+            ul.seatCharts-legendList {
+                padding-left: 0px;
+            }
+
+            .seatCharts-legendItem {
+                float: left;
+                width: 90px;
+                margin-top: 10px;
+                line-height: 2;
+            }
+
+            span.seatCharts-legendDescription {
+                margin-left: 5px;
+                line-height: 30px;
+            }
+
+            .checkout-button {
+                display: block;
+                width: 80px;
+                height: 24px;
+                line-height: 20px;
+                margin: 10px auto;
+                border: 1px solid #999;
+                font-size: 14px;
+                cursor: pointer
+            }
+
+            #seats_chose {
+                max-height: 150px;
+                overflow-y: auto;
+                overflow-x: none;
+                width: 200px;
+            }
+
+            #seats_chose li {
+                float: left;
+                width: 72px;
+                height: 26px;
+                line-height: 26px;
+                border: 1px solid #d3d3d3;
+                background: #f7f7f7;
+                margin: 6px;
+                font-size: 14px;
+                font-weight: bold;
+                text-align: center
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app" v-cloak>
+            <div th:replace="~{common/header::header}"></div>
+            <input type="hidden" id="movieScheduleId" th:value="${movieScheduleId}">
+            <div class="demo clearfix">
+                <!---左边座位列表----->
+                <div id="seat_area">
+
+                </div>
+                <!---右边选座信息----->
+                <div class="booking_area">
+                    <p>电影：<span>{{movie.movieName|textLen}}</span></p>
+                    <p>开始时间：<span>{{movieTicketVo.movieScheduleStartTime | moment}}</span></p>
+                    <p>结束时间：<span>{{movieTicketVo.movieScheduleEndTime | moment}}</span></p>
+                    <p>单价：<b>￥<span>{{movieTicketVo.movieSchedulePrice | number}}</span></b></p>
+                    <p>座位：</p>
+                    <ul id="seats_chose"></ul>
+                    <p>票数：<span id="tickects_num">0.00</span></p>
+                    <p>总价：<b>￥<span id="total_price">0</span></b></p>
+
+                    <input type="button" class="btn" value="确定购买" onclick="creatOrder()">
+
+                    <div id="legend"></div>
+                </div>
+            </div>
+            <div th:replace="~{common/footer::footer}"></div>
+        </div>
+    </body>
+    <script>
+        let price = 100; //电影票价
+        const movieScheduleId = $("#movieScheduleId").val();
+        let tickets = [];
+        const app = new Vue({
+            el: "#app",
+            data: {
+                movieTicketVo: {},
+                movie: {}
+            },
+            methods: {},
+            filters: {
+                //保留2位小数点过滤器 不四舍五入
+                number(value) {
+                    var toFixedNum = Number(value).toFixed(3);
+                    return toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                },
+                //将时间戳转换为指定格式 需要引入moment-with-locales.js
+                moment(value, formatString) {
+                    formatString = formatString || 'MM-DD HH:MM';
+                    return moment(value).format(formatString);
+                },
+                //设置文本长度
+                textLen(value) {
+                    var text = value + "";
+                    var newText = text.substring(0, 20) + "...";
+                    return text.length > 20 ? newText : text;
+                }
+            },
+            created: function () {
+                getMovieTicket();
+            },
+            mounted: function () {
+            }
+        });
+
+        //计算票价总额
+        function getTotalPrice(sc) {
+            var total = 0;
+            sc.find('selected').each(function () {
+                total += price;
+            });
+            return total;
+        }
+
+        function seat(seatMap, unavailableMap) {
+            var $cart = $('#seats_chose'), //座位区
+                $tickects_num = $('#tickects_num'), //票数
+                $total_price = $('#total_price'); //票价总额
+
+            const sc = $('#seat_area').seatCharts({
+                map: seatMap,
+                naming: {//设置行列等信息
+                    top: false, //不显示顶部横坐标（行）
+                    getLabel: function (character, row, column) { //返回座位信息
+                        return column;
+                    }
+                },
+                legend: {//定义图例
+                    node: $('#legend'),
+                    items: [
+                        ['c', 'available', '可选座'],
+                        ['c', 'selected', '已选择'],
+                        ['c', 'unavailable', '已售出']
+                    ]
+                },
+                click: function () {
+                    if (this.status() === 'available') { //若为可选座状态，添加座位
+                        if (sc.find('selected').length === 5) {
+                            layer.msg("一次最多购买5张！", {icon: 5, time: 2000});
+                            return 'available';
+                        }
+                        //加入选取的电影票id
+                        tickets.push(this.settings.id);
+                        $('<li>' + (this.settings.row + 1) + '排' + this.settings.label + '座</li>')
+                            .attr('id', 'cart-item-' + this.settings.id)
+                            .data('seatId', this.settings.id)
+                            .appendTo($cart);
+
+                        $tickects_num.text(sc.find('selected').length + 1); //统计选票数量
+                        //计算票价总金额 并转换为含有两位小数的形式
+                        let total = getTotalPrice(sc) + price;
+                        let toFixedNum = Number(total).toFixed(3);
+                        $total_price.text(toFixedNum.substring(0, toFixedNum.toString().length - 1));
+                        return 'selected';
+                    } else if (this.status() === 'selected') { //若为选中状态
+
+                        //移除对应电影票id
+                        for (let i = 0; i < tickets.length; i++) {
+                            if (tickets[i] === this.settings.id) {
+                                tickets.splice(i, 1);
+                                break;
+                            }
+                        }
+                        $tickects_num.text(sc.find('selected').length - 1);//更新票数量
+                        //计算票价总金额 并转换为含有两位小数的形式
+                        let total = getTotalPrice(sc) - price;
+                        let toFixedNum = Number(total).toFixed(3);
+                        $total_price.text(toFixedNum.substring(0, toFixedNum.toString().length - 1));//更新票价总金额
+                        $('#cart-item-' + this.settings.id).remove();//删除已预订座位
+
+                        return 'available';
+                    } else if (this.status() === 'unavailable') { //若为已售出状态
+                        return 'unavailable';
+                    } else {
+                        return this.style();
+                    }
+                }
+            });
+            sc.get(unavailableMap).status('unavailable');
+            //设置已售出的座位
+            /*sc.get(['1_3', '1_4', '4_4', '4_5', '4_6', '4_7', '4_8']).status('unavailable');*/
+        }
+
+        function getMovieTicket() {
+            $.get(
+                "/movie_ticket/query",
+                {
+                    movieScheduleId: movieScheduleId,
+                    isShowAll: 1
+                },
+                function (data) {
+                    if (data.code === "200") {
+                        app.movieTicketVo = data.map.movieTicketVo;
+                        app.movie = data.map.movieTicketVo.movie;
+                        seat(data.map.allSeat, data.map.unavailableSeat);
+                        price = data.map.movieTicketVo.movieSchedulePrice;
+                        return;
+                    }
+                    layer.msg("未查询到电影场次！", {icon: 2, time: 2000})
+                }
+            );
+        }
+
+        function creatOrder() {
+            if (tickets.length === 0) {
+                layer.msg("至少选择1张电影票！", {icon: 2, time: 2000});
+                return;
+            }
+            $.post(
+                "/order/create",
+                {
+                    tickets: tickets
+                },
+                function (data) {
+                    if (typeof data === "string" && data.substring(0, 15) === "<!DOCTYPE html>") {
+                        location.href = "/user/userLogin";
+                        return;
+                    }
+                    if (data.code === "200") {
+                        const orderId = data.map.orderId;
+                        layer.msg(data.message, {icon: 6, time: 2000});
+                        layer.confirm('立即支付？', {
+                            btn: ['确认', '等等'] //按钮
+                        }, function () {
+                            location.href = "/order/pay?orderId=" + orderId;
+                            layer.close(index);
+                        }, function () {
+                            layer.msg('请尽快支付', {
+                                time: 20000, //20s后自动关闭
+                                btn: ['明白了', '知道了']
+                            });
+                            location.reload();
+                            layer.close(index);
+                        });
+                        return;
+                    }
+                    layer.msg(data.message, {icon: 7, time: 2000});
+                }
+            );
+        }
+    </script>
+</html>

@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    #数据源基本配置
+    username: luwc
+    password: luwc123
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://49.235.222.125:33061/movie?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    type: com.alibaba.druid.pool.DruidDataSource
+    #   数据源其他配置
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+mybatis:
+  check-config-location: true
+  config-location: classpath:mybatis/mybaits_config.xml
+  type-aliases-package: com.woniu.movie
+# 根据mapper、所在包在控制台打印mybatis的sql日志
+logging:
+  level:
+    com:
+      woniu:
+        movie:
+          mapper: debug
+
+alipay:
+  APPID: "2016101200667233"
+  merchant_private_key: "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCoETMFdHo92Tg8ll6SX9pbQiimflreZqGNwdJi8mvk6t/mYv1QXifR9npoJ5+MzfcXdf+jaEUxD/loL0Y4qcrEhgErS/C2OMjcq6+bES/9RcCF79dm4+NkhonAbB4L/hrjV9bVHHtr8Lv0sjgrWtBmSUPHukzYiHLSnhw/xfuGS5/B5AipdBEdt2hb7UAQjBlQv12t/fdI1VCfhp6t2k+XrlWtrmumybc3WUaL29D3gCDclB/xAnG/MehS1HMMSxjYGGoCgLX0POVZAC6QTwFyU0v/52Hm1Lh8y2BlM+ubH2N+wmXDzDYHFUpGdLFVDT7rRluCOKyEHn2AHj6YLcXrAgMBAAECggEAMr7etOrybfJEdKbCb1fZymwzcfH85eH/LZo0OAQSZ9AzQpDpA3cqds8BLqmoFw+pZ8ANK/2zxpiYKcj8XueFfckoWTZYu+xxWY/NOfj6kHKbKtW8KCju489rkFoUyHI1FCfVigtLiM/rMHsPUqfc/MVqXcf2o/qvEMEErozM4UM+65B1Y20ZFv1iyRhpWRKY8aT8/ESZSpOdFJhKRJQq1nFjIIjbtH0fCB5+JBqXdEmJfBBRRcjJvmX6wAe0IRBOjaRCdIwDWbaScOEBqbGcPBia9k9vZV1yPxUW7NaQwe8yKMPFGZ21AmZfmdli3ecJ8A4rv6JYU2g+FLQfOxZ7oQKBgQDV7tqNbim+sTXCPvsNsR7024wfEsGe4H2M+zpxf3p60NCbs8Jiwyda9LDPGjNPuyq0iC74h+7EtDq5oKqz80ZFFGiXDhlqbHa5w8aBlRAbMbzuWiTNF1/0AB8gmlMsXCdhuSQnOvaBlVohFnyDVYpPulZqLFDaAR8mYSG7sUsN5QKBgQDJHYLfARfByRqytSYe5Wdsilcfv32u/lmhsSpLwNfKtC6W0Gt8/tff5IH8+S2blxZ5WX6zT7GD3Iz6xCPLF+0u3k0I6wFMzT9dAoZ9ST16LeUw5ifvQad8cjptneOf1AFSCNCFDMHZ6Kg/LXkGNnGZxBvT+IYsYFGMqyUIAmTHjwKBgHMOni54dC0iA8avtrg7bWnFdkvz+3xmQkADkgAezpGlIrzK5h3V1aG+fiU0cypLgIFNyO1Ttl/GitrxBT349e8LNeEf7R1mrkfkeiuRLvNhQbpzct12191T/2m6dkciXO/a8g3DUXaKC8pF3LuJ0vRkRDugD+/fsJAkp07Z4ILdAoGBAKFzs5BbTDshuvEkQ8oh1/lmxbKTA87sGgCYPaA63AG6zHv+LYxW+e6ff0saruZtUHlywygoHhYBhJv7wdBVEO/DPoyePJjvXKLKWDVUCqp/FbM/0WddiZt6CDXfvtCcXcMBmIR3TVgmUosFclbudhw/NyfgJ7aQTGdlLYFUips5AoGBAKdtThDocCmbWKRj2kHdGtmkqxCXl1w5hlAGl1kQHK/PUZk8UiRgYvwyoGn6Ligk56Fiv3ajypcuhC/O0z7EqMQwBWTxEmGlFhLYQxGHAz+L3ohVa0ZirPMduixsn+HbSnGbmRkXYx+qDpuGMkzLLsQA2ZGjcBVnflvu+f6brBnU"
+  notify_url: "http://localhost:8080/admin/adminLogin"   #支付完成后跳转的页面，异步
+  return_url: "http://localhost:8080/admin/adminLogin"   #支付完成后跳转的页面，同步
+  URL: "https://openapi.alipaydev.com/gateway.do"
+  CHARSET: "UTF-8"
+  FORMAT: "json"
+  ALIPAY_PUBLIC_KEY: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArF3l2VJA+pncrDZoh9uTXuYhGw5iSPIP68KyXVq9hucfTSJa0snjwlC4ZAXE4jQ3b7ATinYuNk7vcL68QxttMjYfLf58TTypSgTyYpn/ZEoc4+SSDA1+YZqq4sx+F8qWDSwRTvOG3jDrNUtHklMFiUA0Idbn0mTSj95MgAGFuMJf61HtnVOXtV0M0TvTiTJu+cTq1kK/1SWNS+wusSjPiDpUoHRltXYUTLbY5l0V/6qUOiZTf6Mf6gYdGKAjZLJukgchonD4obCZw21LbMRTep6vbds/9jwymTCV/EP3yH1RodQM51pAzzLpIYS02XpHepbFj4yusRFqQPcHE3r4hwIDAQAB"
+  log_path: "/log"
+  SIGNTYPE: "RSA2"
+

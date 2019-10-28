@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html"
+      xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> 添加放映点</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+
+    <link href="css/plugins/chosen/chosen.css" rel="stylesheet">
+
+    <link href="css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+
+    <link href="css/plugins/cropper/cropper.min.css" rel="stylesheet">
+
+    <link href="css/plugins/switchery/switchery.css" rel="stylesheet">
+
+    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+
+    <link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+
+    <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+
+    <link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="layer/css/layui.css">
+
+    <!--全局样式js，不可删除-->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="layer/layui.js"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+    <script src="js/jqpaginator.js"></script>
+
+</head>
+<body>
+<div style="width: 90%;margin: 20px auto;" id="app">
+
+    <div>
+        <h2 class="text-center">放映点管理</h2>
+    </div>
+    <div>
+        <button type="button" class="btn btn-info" v-on:click="addShowSite()">添加</button>
+        <button type="button" class="btn btn-danger">批量删除</button>
+    </div>
+    <div style="margin-top: 0px">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox">
+                    </th>
+                    <th>序号</th>
+                    <th>放映点名称</th>
+                    <th>放映点图片</th>
+                    <th>放映点地址</th>
+                    <th>放映电话</th>
+                    <th>放映点服务</th>
+                    <th width="200px">放映点介绍</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(s,index) in show_site_list" style="height: 120px;">
+                    <th>
+                        <input type="checkbox">
+                    </th>
+                    <th>{{s.showSiteId}}</th>
+                    <th>{{s.showSiteName}}</th>
+                    <th>
+                        <img :src="s.showSiteImage" width="100px;">
+                    </th>
+                    <th width="200px;">{{s.showSiteAddress}}</th>
+                    <th>{{s.showSitePhone}}</th>
+                    <th>{{s.showSiteService}}</th>
+                    <th>{{s.showSiteDescription}}</th>
+                    <th>
+                        <button class="btn btn-warning" style="color: white" v-on:click="updateShowSite(s.showSiteId)">修改</button>
+                        <button class="btn btn-danger" style="color: white">删除</button>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="row text-center">
+        <div id="pager" class="pagination"></div>
+    </div>
+
+
+
+    <!--添加放映点-->
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加放映点</h4>
+                </div>
+                <div class="modal-body">
+                    <form  method="post" id="add_show_site" enctype="multipart/form-data" class="form-horizontal" >
+                        <div class="form-group">
+                            <label for="inputShowSiteName" class="col-sm-2 control-label">放映点名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSiteName" class="form-control" id="inputShowSiteName" placeholder="放映点名称">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputShowSiteAddress" class="col-sm-2 control-label">放映点地址</label>
+                            <div class="col-sm-10" id="addressError">
+                                <input type="text" name="showSiteAddress" class="form-control" id="inputShowSiteAddress" placeholder="放映点地址">
+                                <input  style="border: none;font-size: 12px;color: red" type="text" v-model:value="addressMessage" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputShowSitePhone" class="col-sm-2 control-label">放映点电话</label>
+                            <div class="col-sm-10" id="phoneError">
+                                <input type="text" name="showSitePhone" class="form-control" id="inputShowSitePhone" placeholder="放映点电话">
+                                <input  style="border: none;font-size: 12px;color: red;width: 400px;" type="text" v-model:value="phoneMessage" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputShowSiteService" class="col-sm-2 control-label">放映点服务</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSiteService" class="form-control" id="inputShowSiteService" placeholder="放映点服务">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputShowSiteDescription" class="col-sm-2 control-label">放映点介绍</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSiteDescription" class="form-control" id="inputShowSiteDescription" placeholder="放映点介绍">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="inputAddFile" class="col-sm-2 control-label">上传放映点图片</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="uploadImg" id="inputAddFile" />
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="closeAddMessage()">Close</button>
+                    <button type="button" v-on:click="save()" class="btn btn-primary">保&nbsp;&nbsp;存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--修改放映点-->
+
+    <div class="modal fade" id="updataModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="updateModalLabel">修改放映点</h4>
+                </div>
+                <div class="modal-body">
+                    <form  method="post" id="update_show_site" enctype="multipart/form-data" class="form-horizontal" >
+                        <div class="form-group">
+                            <label for="updateShowSiteName" class="col-sm-2 control-label">放映点名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSiteAddress" class="form-control" id="updateShowSiteName" placeholder="放映点名称">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updateShowSiteAddress" class="col-sm-2 control-label">放映点地址</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSiteAddress" class="form-control" id="updateShowSiteAddress" placeholder="放映点地址">
+                                <input  style="border: none;font-size: 12px;color: red" type="text" v-model:value="addressMessage" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updateShowSitePhone" class="col-sm-2 control-label">放映点电话</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSitePhone" class="form-control" id="updateShowSitePhone" placeholder="放映点电话">
+                                <input  style="border: none;font-size: 12px;color: red;width: 400px;" type="text" v-model:value="phoneMessage" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updateShowSiteService" class="col-sm-2 control-label">放映点服务</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSiteService" class="form-control" id="updateShowSiteService" placeholder="放映点服务">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updateShowSiteDescription" class="col-sm-2 control-label">放映点介绍</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="showSiteDescription" class="form-control" id="updateShowSiteDescription" placeholder="放映点介绍">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="updateAddFile" class="col-sm-2 control-label">上传放映点图片</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="uploadImg" id="updateAddFile" />
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" v-on:click="save()" class="btn btn-primary">保&nbsp;&nbsp;存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+
+<script>
+
+    let app=new Vue({
+        el:"#app",
+        data:{
+            show_site_list:[],
+            codeMessage:[],
+            addressMessage:[],
+            phoneMessage:[],
+        },
+        methods:{
+            save:function () {
+                let inputShowSiteName=$("#inputShowSiteName").val();
+                let inputShowSiteAddress=$("#inputShowSiteAddress").val();
+                let inputShowSitePhone=$("#inputShowSitePhone").val();
+                let inputShowSiteService=$("#inputShowSiteService").val();
+                let inputShowSiteDescription=$("#inputShowSiteDescription").val();
+                //let inputShowSiteImage=$("#inputShowSiteImage").val();
+                let flag=true;
+                if(inputShowSiteName==null||inputShowSiteAddress==null||inputShowSitePhone==null||inputShowSiteService==null||inputShowSiteDescription==null||
+                inputShowSiteName.toString().trim()==""||inputShowSiteAddress.toString().trim()==""||inputShowSitePhone.toString().trim()==""||inputShowSiteService.toString().trim()==""||inputShowSiteDescription.toString().trim()==""){
+                    flag=false;
+                }
+                if(flag){
+                    var form = new FormData($("#add_show_site").get(0));
+                    //console.log(form)
+                    $.ajax({
+                        url:"/show_site/addShowSite",
+                        type:"post",
+                        data:form,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success:function (data) {
+                            console.log(data);
+                            let code=parseInt(data.code);
+                            if(code==500){
+                                app.addressMessage=data.map.errors.address;
+                                app.phoneMessage=data.map.errors.phone;
+                                $("#inputShowSiteName").val("");
+                                $("#inputShowSiteAddress").val("");
+                                $("#inputShowSitePhone").val("");
+                                $("#inputShowSiteService").val("");
+                                $("#inputShowSiteDescription").val("");
+                            }else if (code==200){
+                                $("#inputShowSiteName").val("");
+                                $("#inputShowSiteAddress").val("");
+                                $("#inputShowSitePhone").val("");
+                                $("#inputShowSiteService").val("");
+                                $("#inputShowSiteDescription").val("");
+                                $("#myModal").modal('hide');
+                            }
+                        }
+                    })
+                }else {
+                    alert("输入框不能为空");
+                }
+            },
+            closeAddMessage:function () {
+                app.addressMessage=null;
+                app.phoneMessage=null;
+            }
+        }
+    });
+
+
+    function get_show_site() {
+        $.post("/show_site/get_show_site",{
+            pageNum:pageNum,
+            pageSize:4
+        },function (data) {
+            console.log(data.list)
+            app.show_site_list=data.list;
+            $('#pager').jqPaginator('option',{
+                totalPages:data.pageCount
+            });
+        });
+    }
+
+
+    //设置分页
+    function setpager(){
+        $('#pager').jqPaginator({
+            totalPages: 3,
+            currentPage: 1,
+            onPageChange: function (num, type) {
+                pageNum=num;
+                get_show_site();
+            }
+        });
+    }
+    setpager();
+
+    //弹出添加页面
+    function addShowSite() {
+        $('#myModal').modal({
+            keyboard: false
+            //"backdrop":"true"
+        })
+    }
+
+    //弹出修改页面
+    function updateShowSite(id) {
+        $('#updataModal').modal({
+            keyboard: false
+        })
+        $.post("/show_site/update_show_site",{},function (data) {
+
+        });
+    }
+
+
+
+</script>
+<!--&lt;!&ndash; 自定义js &ndash;&gt;-->
+<script src="js/content.js?v=1.0.0"></script>
+
+<!--&lt;!&ndash; iCheck &ndash;&gt;-->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+</script>
+</html>

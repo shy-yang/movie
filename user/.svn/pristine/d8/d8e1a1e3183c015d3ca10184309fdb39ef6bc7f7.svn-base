@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1024">
+    <title>个人中心</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/bootstrap4.3.1.min.css">
+    <link rel="stylesheet" href="css/mycss.css">
+    <link rel="stylesheet" href="layer/css/layui.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+    <script src="js/jqpaginator.js"></script>
+    <script src="just_layer/layer.js"></script>
+    <script src="js/moment-with-locales.js"></script>
+    <script src="layer/layui.js"></script>
+    <style>
+        .profileContainer {
+            display: inline-block;
+            margin-left: -5px;
+            padding-left: 45px;
+            width: 878px;
+            min-height: 800px;
+        }
+
+        .profileButtons {
+            display: inline-block;
+            width: 200px;
+            min-height: 805px;
+            background-color: #f4f3f4;
+            margin-bottom: -5px;
+        }
+
+        h1 {
+            display: inline-block;
+            float: left;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 400;
+            width: 100%;
+        }
+
+        .profile {
+            display: inline-block;
+            float: left;
+            font-weight: 400;
+            color: #333;
+            height: 40px;
+            width: 100%;
+            line-height: 40px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .title0 {
+            padding: 26px 0;
+            color: #ec443f;
+            font-size: 18px;
+            border-bottom: 1px solid #e1e1e1;
+            margin-bottom: 30px;
+            float: left;
+            width: 100%;
+        }
+
+        .orderBox {
+            display: inline-block;
+            float: left;
+            border: 1px solid #e5e5e5;
+            margin: 0 40px 30px 0;
+            height: 175px;
+            width: 793px;
+        }
+
+        .orderHead {
+            background-color: #f7f7f7;
+            font-size: 14px;
+            padding: 16px 20px;
+        }
+
+        .orderBody {
+            padding: 5px;
+            padding-right: 20px;
+            padding-right: 0;
+        }
+
+    </style>
+</head>
+<body>
+<div th:replace="~{common/header::header}"></div>
+<div style="width: 100%;padding-top: 100px;"></div>
+<div style="width: 80%; margin: 0 auto;border: 1px solid #e1e1e1;;">
+    <div class="profileButtons">
+        <h1>个人中心</h1>
+        <a href="/user/personalCenter">
+            <div class="profile">基本信息</div>
+        </a>
+        <a href="user/userOrder">
+            <div class="profile" style="background-color: #ed3931;color: white">我的订单</div>
+        </a>
+    </div>
+    <div id="content" class="profileContainer">
+        <div class="title0">我的订单</div>
+        <div class="orderBox" v-for="order in orders">
+            <div class="orderHead">{{order.orderCreateTime | moment}}
+                <span style="margin-left: 210px;">订单编号：{{order.orderNumber}}</span></div>
+            <div class="orderBody">
+                <div>
+                    <img style="display: inline-block;float:left;margin-left: 20px;margin-top: 10px;" height="91px"
+                         width="66px" :src="order.movie.moviePlacard">
+                    <div style="display: inline-block;float: left">
+                        <span style="display: inline-block ;font-weight: bold;">{{order.movie.movieName | textLen}}</span>
+                    </div>
+                    <div style="display: inline-block;float: left">
+                        <div style="position: relative;right: 105px;top: 66px;">
+                            <span v-for="seat in order.seats"> {{seat.seatY}}排{{seat.seatY}}座</span>
+                        </div>
+                        <div style="position: relative;right: 103px;top: 24px;">
+                            <span style="font-size: 12px;color: #999;">{{order.showSite}}</span>
+                        </div>
+                        <div style="position: relative;right: 84px;top: 49px;">
+                            <span style="font-size: 12px;color: #999;">{{order.showHall}}</span>
+                        </div>
+                    </div>
+
+
+                    <!--0:失效，1：已支付，2：未支付-->
+                    <div style="position: relative;right: -86px;top: 53px;">
+                        <span>{{order.totalPrice}}元</span>
+                    </div>
+                    <div style="position: relative;right: -177px;top: 34px;">
+
+                        <span v-if="order.orderState =='0'">失效</span><span v-if="order.orderState =='1'">已支付</span><span
+                            v-if="order.orderState =='2'">未支付</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="page" style="display: inline-block;float: left"></div>
+    </div>
+</div>
+<div style="position:absolute;top: 1100px;width: 100%;">
+    <div th:replace="~{common/footer::footer}"></div>
+</div>
+</body>
+<script>
+
+    var app = new Vue({
+        el: "#content",
+        data: {
+            orders: [],
+            page: []
+        },
+        methods: {},
+        filters: {
+            moment(value, formatString) {
+                formatString = formatString || 'YYYY-MM-DD HH:MM:SS';
+                return moment(value).format(formatString);
+            },
+            //设置文本长度
+            textLen(textInput) {
+                let text = textInput + '';
+                return text.length > 6 ? '《' + text.substring(0, 6) + '...' + '》' : text;
+            }
+        },
+        created: function () {
+            orderPages()
+        }
+    })
+
+    function getOrders(pageNum) {
+        orderPages(1)
+    }
+
+    function orderPages(pageNum) {
+        $.post(
+            '/order/getUserOrder',
+            {
+                pageNum: pageNum,
+            },
+            function (data) {
+                app.orders = data.map.orders.list
+                var count = data.map.orders.total
+                var limit = data.map.orders.size
+                var pageNow = data.map.orders.pageNum
+                layui.use('laypage', function () {
+                        var laypage = layui.laypage;
+                        laypage.render({
+                            elem: 'page'
+                            , count: parseInt(count) //数据总数
+                            , limit: 3
+                            , curr: pageNow
+                            , jump: function (obj, first) {
+                                if (!first) {
+                                    orderPages(obj.curr)
+                                }
+                            }
+                        })
+                    }
+                )
+            }
+        )
+    }
+
+
+</script>
+</html>

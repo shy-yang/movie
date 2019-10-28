@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 添加电影</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+    <link href="css/plugins/cropper/cropper.min.css" rel="stylesheet">
+    <link href="css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+    <link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+    <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+    <link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="layer/css/layui.css"  rel="stylesheet">
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <!-- 自定义js -->
+    <script src="js/content.js?v=1.0.0"></script>
+    <script src="//res.layui.com/layui/dist/layui.js" charset="utf-8"></script>
+    <script src="layer/layui.js"></script>
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>电影列表 <small>编辑,删除,查看详情</small></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="table_data_tables.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <!--<ul class="dropdown-menu dropdown-user">
+                            <li><a href="table_data_tables.html#">选项1</a>
+                            </li>
+                            <li><a href="table_data_tables.html#">选项2</a>
+                            </li>
+                        </ul>-->
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <form id="frm" method="post" class="form-horizontal">
+                        <div class="col-sm-3">
+                            <div class="form-group" style="height: 30px;" >
+                                <label class="col-sm-4 control-label">行数</label>
+                                <div class="col-sm-6">
+                                    <select  class="form-control m-b" style="height: 35px" name="pageSize">
+                                        <option value="10">10 条</option>
+                                        <option value="20">20 条</option>
+                                        <option value="50">50 条</option>
+                                        <option value="100">100 条</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                             <div class="form-group" style="height: 30px;" >
+                                    <label class="col-sm-4 control-label">影片名</label>
+                                    <div class="col-sm-6">
+                                        <input name="movieName" type="text" class="form-control">
+                                    </div>
+                             </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group" style="height: 30px;">
+                                <label class="col-sm-4 control-label">状态</label>
+                                <div class="col-sm-6">
+                                    <select  class="form-control m-b" style="height: 35px" name="movieStatus">
+                                        <option value="-1">全部</option>
+                                        <option value="0">未上映</option>
+                                        <option value="1">正在上映</option>
+                                        <option value="2">已下映</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class=" btn btn-success" onclick="searchWithCondition()">查询</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-striped table-bordered table-hover dataTables-example">
+                        <thead>
+                            <tr>
+                                <th><input id="selectAll" type="checkbox" onclick="selectAll()">全选</th>
+                                <th>编号</th>
+                                <th>电影名</th>
+                                <th>年代</th>
+                                <th>类型</th><th>语言</th><th>导演</th><th>国家</th>
+                                <th>海报</th>
+                                <th>电影状态</th>
+                                <th style="text-indent: 4em;">操作<button onclick="deleteAll()" class="btn btn-circle btn-danger">全删</button></th>
+                            </tr>
+                        </thead>
+                        <tbody id="movieBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-5" id="pageInfo">
+
+        </div>
+        <div class="col-sm-7" id="pageButton" style="margin-top: -20px;"></div>
+    </div>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+    //电影列表显示
+    $(function () {
+        page(1);
+    })
+
+    function page(pageNow) {
+        var params=$("#frm").serialize()
+        $.post(
+            "movie/film_list",
+            params+"&pageNow="+pageNow,
+            function(data){
+                //1、创建列表显示
+                parse_goods_table(data.map.pageInfo);
+                //2、分页信息
+                parse_page_info(data.map.pageInfo);
+                //3、分页栏
+                parse_page_nav(data.map.pageInfo);
+            },
+            "json",
+        )
+    }
+    //解析电影列表
+    function parse_goods_table(param) {
+        $("#movieBody").empty();
+        //获取商品集合数据
+        var movieList =param.list;
+        //循环此数据
+        $.each(movieList,function (index,movie) {
+            var input = $("<input type='checkbox' name='flag' />").val(movie.movieId);
+            var checkboxTd = $("<td></td>").append(input);
+            var codeTd = $("<td></td>").append(movie.movieId);
+            var movieNameTd = $("<td></td>").append(subToolong(movie.movieName));
+            var movieDecadeTd=$("<td></td>").append(movie.movieDecade)
+            var movieCountryTd=$("<td></td>").append(subToolong(movie.movieCountry))
+            var movieLevelTd=$("<td></td>").append(subToolong(movie.movieLevel))
+            var movieLanguageTd=$("<td></td>").append(subToolong(movie.movieLanguage))
+            var movieDirector=$("<td></td>").append(subToolong(movie.movieDirector));
+            var img = $("<img alt='图片' style='height:40px;width: 40px;'  />").attr("src",movie.moviePlacard);
+            var imgTd = $("<td></td>").append(img);
+            var movieStatus=function () {
+                if (movie.movieState=='0'){
+                    return "未上映"
+                } else if(movie.movieState=='1'){
+                    return "正在上映"
+                }else {
+                    return "已下映"
+                }
+            }
+            var statusTd=$("<td></td>").append(movieStatus())
+            var updateBtn = $("<a ></a>").attr('onclick',"show_movie_detail_update("+movie.movieId+")").addClass("J_menuItem btn btn-info btn-circle").append("<span class=\"glyphicon glyphicon-pencil\"></span>");
+            var delBtn = $("<a ></a>").attr("onclick","delete_film("+movie.movieId+")").addClass("J_menuItem btn btn-danger btn-circle").append("<i class=\"fa fa-times\"></i>")
+            var detelBtn = $("<a ></a>").attr("onclick","show_movie_detail("+movie.movieId+")").addClass("J_menuItem btn btn-warning btn-circle").append(
+                               "<span class=\" glyphicon glyphicon-align-justify \"></span>")
+            var addBtn = $("<a ></a>").attr("href","movie/add_film").addClass("J_menuItem btn btn-success btn-circle").append("<span class=\" glyphicon glyphicon-plus \"></span>")
+            var operatorBtn = $("<td></td>").append(updateBtn).append("  ").append(delBtn).append("  ").append(detelBtn).append("   ").append(addBtn);
+
+            $("<tr></tr>").append(checkboxTd)
+                .append(codeTd)
+                .append(movieNameTd)
+                .append(movieDecadeTd)
+                .append(movieLevelTd)
+                .append(movieLanguageTd)
+                .append(movieDirector)
+                .append(movieCountryTd)
+                .append(imgTd)
+                .append(statusTd)
+                .append(operatorBtn)
+                .appendTo("#movieBody")
+        })
+    }
+    //截取太长字符
+    function subToolong(param) {
+        return param.length>6?param.substring(0,6)+'...':param;
+    }
+    //条件查询
+    function searchWithCondition() {
+        page(1)
+    }
+    //分页信息
+    /*parse_page_info(data);*/
+    function parse_page_info(data) {
+            $("#pageInfo").empty()
+            $("#pageInfo").append("当前"+data.pageNum+"/"+data.pages+"页     "+"总共  :"+data.total+"条")
+    }
+    //分页插件（使用layer提供）
+    function parse_page_nav(data){
+        var d=data
+        layui.use(['laypage', 'layer'], function() {
+            var laypage = layui.laypage
+                , layer = layui.layer;
+
+            laypage.render({
+                elem: 'pageButton'
+                ,count: data.total
+                ,theme: '#82e9ff'
+                ,limit: data.pageSize
+                //进行分页的回显
+                ,curr:data.pageNum
+                ,jump: function(obj, first){
+                    if(!first){
+                        page(obj.curr);
+                }
+            }
+        })
+    })
+    }
+    //电影详细信息
+    function show_movie_detail(movieId) {
+            $.post(
+                "movie/film_detail",
+                "movieId="+movieId,
+                function (data) {
+                    layer.open({
+                        type: 2,
+                        area: ['800px', '600px'],
+                        fixed: false, //不固定
+                        maxmin: true,
+                        content: 'film_detail',
+                        success: function(layero, index){
+                            //注意这里的#sid是iframe页面中的一个标签id
+                            var i=layero.find("iframe")[0].contentWindow.document;
+                            var  movieName=$("#movieName",layero.find("iframe")[0].contentWindow.document )
+                            movieName.append(data.map.movie.movieName)
+                            $("#moviePlacard",i).attr("src",data.map.movie.moviePlacard);
+                            /*$("#movieName",layero.find("iframe")[0].contentWindow.document ).text(data.movie.movieName);
+                            alert(data.movie.movieName)*/
+                            $("#movieDecade",i).append(data.map.movie.movieDecade)
+                            $("#movieCountry",i).append(data.map.movie.movieCountry)
+                            $("#movieLevel",i).append(data.map.movie.movieLevel)
+                            $("#movieLanguage",i).append(data.map.movie.movieLanguage)
+                            $("#movieDuration",i).append(data.map.movie.movieDuration)
+                            $("#movieDirector",i).append(data.map.movie.movieDirector)
+                            $("#movieActors",i).append(data.map.movie.movieActors)
+                            $("#moviePublish",i).append(data.map.movie.moviePublish)
+                            $("#movieScore",i).append(data.map.movie.movieScore)
+                            $("#movieTotalScore",i).append(data.map.movie.movieTotalScore)
+                            $("#movieState",i).append(data.map.movie.movieState)
+                        },
+                    });
+                }
+            )
+    }
+    //删除电影
+    function delete_film(param) {
+        var movieId=param;
+        if (confirm('是否确认删除')){
+            $.post(
+                "movie/delete_film",
+                "movieId="+movieId,
+                function (data) {
+
+                    if (data.code == "200") {
+
+                        layer.msg(data.message, {icon: 1, time: 2000});
+                        setTimeout(function () {
+                            location.reload()
+                        },2000)
+
+                        return;
+                    }
+                    layer.msg(data.message, {icon: 2, time: 2000});
+                    setTimeout(function () {
+                        location.reload()
+                    },2000)
+
+                },
+                'json'
+            )
+        }
+
+    }
+    //电影详细信息：为了更改
+    function show_movie_detail_update(movieId){
+        var id=movieId;
+        $.post(
+            "movie/film_detail",
+            "movieId="+movieId,
+            function (data) {
+                console.log(data)
+                layer.open({
+                    type: 2,
+                    area: ['800px', '600px'],
+                    fixed: false, //不固定
+                    maxmin: true,
+                    content: 'film_update',
+                    success: function(layero, index){
+                        //注意这里的#sid是iframe页面中的一个标签id
+                        var i=layero.find("iframe")[0].contentWindow.document;
+                        $("#movieName_update",i).val(data.map.movie.movieName)
+                        $("#moviePlacard",i).attr("src",data.map.movie.moviePlacard);
+                        /*$("#movieName",layero.find("iframe")[0].contentWindow.document ).text(data.movie.movieName);
+                        alert(data.movie.movieName)*/
+                        $("#mid",i).val(data.map.movie.movieId)
+                        $("#movieDecade_update",i).val(data.map.movie.movieDecade)
+                        $("#movieCountry",i).val(data.map.movie.movieCountry)
+                        $("#movieLevel_update",i).val(data.map.movie.movieLevel)
+                        $("#movieLanguage_update",i).val(data.map.movie.movieLanguage)
+                        $("#movieDuration_update",i).val(data.map.movie.movieDuration)
+                        $("#movieDirector_update",i).val(data.map.movie.movieDirector)
+                        $("#movieActors_update",i).val(data.map.movie.movieActors)
+                        $("#moviePublish_update",i).val(data.map.movie.moviePublish)
+                        $("#movieScore_update",i).val(data.map.movie.movieScore)
+                        $("#movieTotalScore_update",i).val(data.map.movie.movieTotalScore)
+                        //上映状态的回显
+                        $('input[name="movieState"][value='+data.map.movie.movieState+']',i).prop('checked',true)
+                        //电影类型的回显
+                        var movieLevels=data.map.movie.movieLevel.split('/')
+                        //$('input[name="movieLevel"][value="科幻"]',i).prop('checked',true)
+                        for (var m=0;m<movieLevels.length;m++){
+
+                            $("input[name='movieLevel'][value='"+movieLevels[m].trim()+"']",i).prop('checked',true)
+
+                        }
+                        //电影国家的回显
+                        var movieCountries=data.map.movie.movieCountry.split('/')
+                        for (var n=0;n<movieCountries.length;n++){
+
+                            $("input[name='movieCountry'][value='"+movieCountries[n].trim()+"']",i).prop('checked',true)
+
+                        }
+                    },
+                });
+            }
+        )
+    }
+    //全选
+    function selectAll() {
+        $("input[name='flag']").prop('checked',$("#selectAll").prop('checked'))
+    }
+    //全删
+    function deleteAll() {
+        if (confirm("您确认删除吗？")){
+            var array=[]
+            $.each($("input[name='flag']:checked"),function () {
+                array.push($(this).val())
+            })
+            //console.log($("input[name='flag']:checked").val())
+
+            $.ajax({
+                type:'post',
+                url:'movie/delete_film_array',
+                contentType:'application/json;charset=utf-8',
+                data:JSON.stringify(array),
+                success:function (data) {
+                    if (data.code == "200") {
+
+                        layer.msg(data.message, {icon: 1, time: 2000});
+                        setTimeout(function () {
+                            location.reload()
+                        },2000)
+
+                        return;
+                    }
+                    layer.msg(data.message, {icon: 2, time: 2000});
+                    setTimeout(function () {
+                        location.reload()
+                    },2000)
+                },
+
+            })
+        }
+
+    }
+</script>
+</html>

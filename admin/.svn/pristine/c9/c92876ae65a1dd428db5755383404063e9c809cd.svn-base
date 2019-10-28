@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>在线选座</title>
+        <link rel="stylesheet" type="text/css" href="css/reset.css">
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.seat-charts.min.js"></script>
+        <script src="just_layer/layer.js"></script>
+        <style type="text/css">
+            .front {
+                width: 300px;
+                margin: 5px 32px 45px 32px;
+                background-color: #b5b5b5;
+                color: #666;
+                text-align: center;
+                padding: 3px;
+                border-radius: 5px;
+            }
+
+            .booking_area {
+                float: right;
+                position: relative;
+                width: 200px;
+                height: 450px;
+            }
+
+            .booking_area h3 {
+                margin: 5px 5px 0 0;
+                font-size: 16px;
+            }
+
+            .booking_area p {
+                line-height: 26px;
+                font-size: 16px;
+                color: #999
+            }
+
+            .booking_area p span {
+                color: #666
+            }
+
+            div.seatCharts-cell {
+                color: #182C4E;
+                height: 25px;
+                width: 25px;
+                line-height: 25px;
+                margin: 3px;
+                float: left;
+                text-align: center;
+                outline: none;
+                font-size: 13px;
+            }
+
+            div.seatCharts-seat {
+                color: #fff;
+                cursor: pointer;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+            }
+
+            div.seatCharts-row {
+                height: 35px;
+            }
+
+            div.seatCharts-seat.available {
+                background-color: #B9DEA0;
+            }
+
+            div.seatCharts-seat.focused {
+                background-color: #76B474;
+                border: none;
+            }
+
+            div.seatCharts-seat.selected {
+                background-color: #E6CAC4;
+            }
+
+            div.seatCharts-seat.unavailable {
+                background-color: #472B34;
+                cursor: not-allowed;
+            }
+
+            div.seatCharts-container {
+                border-right: 1px dotted #adadad;
+                width: 900px;
+                padding: 20px;
+                float: left;
+            }
+
+            div.seatCharts-legend {
+                padding-left: 0px;
+                position: absolute;
+                bottom: 16px;
+            }
+
+            ul.seatCharts-legendList {
+                padding-left: 0px;
+            }
+
+            .seatCharts-legendItem {
+                float: left;
+                width: 90px;
+                margin-top: 10px;
+                line-height: 2;
+            }
+
+            span.seatCharts-legendDescription {
+                margin-left: 5px;
+                line-height: 30px;
+            }
+
+            .checkout-button {
+                display: block;
+                width: 80px;
+                height: 24px;
+                line-height: 20px;
+                margin: 10px auto;
+                border: 1px solid #999;
+                font-size: 14px;
+                cursor: pointer
+            }
+
+            #seats_chose {
+                max-height: 150px;
+                overflow-y: auto;
+                overflow-x: none;
+                width: 200px;
+            }
+
+            #seats_chose li {
+                float: left;
+                width: 72px;
+                height: 26px;
+                line-height: 26px;
+                border: 1px solid #d3d3d3;
+                background: #f7f7f7;
+                margin: 6px;
+                font-size: 14px;
+                font-weight: bold;
+                text-align: center
+            }
+        </style>
+    </head>
+    <body>
+        <div class="demo clearfix">
+            <!---左边座位列表----->
+            <div id="seat_area">
+                <div class="front">屏幕</div>
+            </div>
+            <!---右边放映厅信息----->
+            <div class="booking_area">
+                <p>放映厅id：<input id="show_hall_id" type="number"></p><br>
+                <p><input type="button" class="btn" value="查询座位" onclick="getSeat()"></p><br>
+                <p>
+                    <input type="button" class="btn" value="全部选择" onclick="setAllSeat('selected')">
+                    <input type="button" class="btn" value="重置所有" onclick="setAllSeat('available')">
+                </p><br>
+                <p>
+                    <label>
+                        排：
+                        <input type="number" id="seat_y">
+                    </label>
+                    <label>
+                        列：
+                        <input type="number" id="seat_x">
+                    </label>
+                </p><br>
+                <p>
+                    <input type="button" class="btn" value="重新排列" onclick="resetSeat()">
+                    <input type="button" class="btn" value="默认排列" onclick=" resetSeat('default')">
+                </p>
+                <p>座位数：<span id="seatCount"></span></p>
+                <ul id="seats_chose"></ul>
+                <!--<p>票数：<span id="tickects_num">0</span></p>-->
+                <!--  <p>总价：<b>￥<span id="total_price">0</span></b></p>-->
+
+                <input type="button" class="btn" value="确认设置" onclick="setSeat()">
+
+                <div id="legend"></div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var price = 100; //电影票价
+            var scDemo;
+
+            function seat(seatMap) {
+                var $cart = $('#seats_chose'), //座位区
+                    $tickects_num = $('#tickects_num'), //票数
+                    $total_price = $('#total_price'); //票价总额
+                var sc = $('#seat_area').seatCharts({
+                    map: seatMap !== "default" ? seatMap : [//座位结构图 a 代表座位; 下划线 "_" 代表过道
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc',
+                        'cccccccccc'
+                    ],
+                    naming: {//设置行列等信息
+                        top: false, //不显示顶部横坐标（行）
+                        getLabel: function (character, row, column) { //返回座位信息
+                            return column;
+                        }
+                    },
+                    legend: {//定义图例
+                        node: $('#legend'),
+                        items: [
+                            ['c', 'available', '可选座'],
+                            ['c', 'selected', '已选择'],
+                            ['c', 'unavailable', '已售出']
+                        ]
+                    },
+                    click: function () {
+                        if (this.status() == 'available') { //若为可选座状态，添加座位
+                            /* $('<li>' + (this.settings.row + 1) + '排' + this.settings.label + '座</li>')
+                                 .attr('id', 'cart-item-' + this.settings.id)
+                                 .data('seatId', this.settings.id)
+                                 .appendTo($cart);
+ 
+                             $tickects_num.text(sc.find('selected').length + 1); //统计选票数量
+                             $total_price.text(getTotalPrice(sc) + price);//计算票价总金额*/
+
+                            return 'selected';
+                        } else if (this.status() == 'selected') { //若为选中状态
+
+                            /*   $tickects_num.text(sc.find('selected').length - 1);//更新票数量
+                               $total_price.text(getTotalPrice(sc) - price);//更新票价总金额
+                               $('#cart-item-' + this.settings.id).remove();//删除已预订座位*/
+
+                            return 'available';
+                        } else if (this.status() == 'unavailable') { //若为已售出状态
+                            return 'unavailable';
+                        } else {
+                            return this.style();
+                        }
+                    }
+                });
+                scDemo = sc;
+                return sc;
+                //设置已售出的座位
+                /*sc.get(['1_3', '1_4', '4_4', '4_5', '4_6', '4_7', '4_8']).status('unavailable');*/
+            }
+
+            /* $(document).ready(seat("default"));*/
+
+            //计算票价总额
+            function getTotalPrice(sc) {
+                var total = 0;
+                sc.find('selected').each(function () {
+                    total += price;
+                });
+                return total;
+            }
+
+            let selectedSeat = "";
+            let allSeat = "";
+
+            //根据选择重新排列座位
+            function resetSeat(isDefault) {
+                let x = parseInt($("#seat_x").val());
+                let y = parseInt($("#seat_y").val());
+                if (isDefault === "default") {
+                    x = 10;
+                    y = 10;
+                }
+                //如果x y中任意一个不为整数或小于等于0 就提示数字有误
+                if (x <= 0 || y <= 0 || x % 1 !== 0 || y % 1 !== 0) {
+                    layer.msg("请选择正确的数字", {icon: 5, time: 2000});
+                    return;
+                }
+                let seatMap = [];
+                for (let i = 0; i < y; i++) {
+                    let line = "";
+                    for (let j = 0; j < x; j++) {
+                        line += "c";
+                    }
+                    seatMap.push(line)
+                }
+                seat(seatMap);
+                $("#seat_area").prepend("<div class='front'>屏幕</div>");
+            }
+
+            //确认提交座位排布
+            function setSeat() {
+                let show_hall_id = $("#show_hall_id").val();
+                if (show_hall_id <= 0 || show_hall_id % 1 !== 0) {
+                    layer.msg("请输入正确的编号！", {icon: 7, time: 2000});
+                    return;
+                }
+                //确认操作
+                layer.confirm("确认设置？", {icon: 3},
+                    function (index) {
+                        const seats = scDemo.seats;
+                        const keys = Object.keys(seats);
+                        //循环json对象找出状态为selected的座位
+                        for (let k in keys) {
+                            if (seats[keys[k]].settings.status === "selected") {
+                                selectedSeat = "," + keys[k] + selectedSeat;
+                            }
+                        }
+                        selectedSeat = selectedSeat.substring(1);
+                        $.post(
+                            "/seat/change",
+                            {
+                                selectedSeats: selectedSeat,
+                                showHallId: show_hall_id
+                            },
+                            function (data) {
+                                if (data.code == "200") {
+                                    layer.msg(data.message, {icon: 1, time: 2000});
+                                    return;
+                                }
+                                layer.msg(data.message, {icon: 2, time: 2000})
+                            }
+                        );
+                        selectedSeat = "";
+                        layer.close(index);
+                    },
+                    function (index) {
+                        layer.msg("已取消", {icon: 7, time: 2000});
+                        layer.close(index);
+                    }
+                );
+            }
+
+            //统计已选择座位的数量
+            function selectedCount() {
+                let count = 0;
+                const seats = scDemo.seats;
+                const keys = Object.keys(seats);
+                //循环json对象找出状态为selected的座位
+                for (let k in keys) {
+                    if (seats[keys[k]].settings.status === "selected") {
+                        count++;
+                    }
+                }
+                $("#seatCount").text(count);
+                return count;
+            }
+
+            !function () {
+                seat("default");
+                setInterval(selectedCount, 250);
+            }();
+
+            //设置所有座位状态
+            function setAllSeat(status) {
+                const seats = scDemo.seats;
+                const keys = Object.keys(seats);
+                for (let k in keys) {
+                    allSeat = "," + keys[k] + allSeat;
+                }
+                allSeat = allSeat.substring(1);
+                scDemo.get(allSeat.split(",")).status(status);
+            }
+
+            //请求展厅座位排列
+            function getSeat() {
+                let show_hall_id = $("#show_hall_id").val();
+                if (show_hall_id <= 0 || show_hall_id % 1 !== 0) {
+                    layer.msg("请输入正确的编号！", {icon: 7, time: 2000});
+                    return;
+                }
+                $.get(
+                    "/seat/list",
+                    {
+                        showHallId: show_hall_id,
+                    },
+                    function (data) {
+                        if (data.code == "200") {
+                            layer.msg(data.message, {icon: 1, time: 2000});
+                            let x = parseInt(data.map.x) > 10 ? parseInt(data.map.x) : 10;
+                            let y = parseInt(data.map.y) > 10 ? parseInt(data.map.y) : 10;
+                            let seatMap = [];
+                            for (let i = 0; i < y; i++) {
+                                let line = "";
+                                for (let j = 0; j < x; j++) {
+                                    line += "c";
+                                }
+                                seatMap.push(line)
+                            }
+                            seat(seatMap);
+                            $("#seat_area").prepend("<div class='front'>屏幕</div>");
+                            $("#seatCount").text(data.map.seatCount);
+                            setAllSeat('available');
+                            scDemo.get(data.map.selectedSeat).status('selected');
+                            return;
+                        }
+                        layer.msg(data.message, {icon: 7, time: 2000});
+                    }
+                );
+            }
+        </script>
+
+    </body>
+</html>

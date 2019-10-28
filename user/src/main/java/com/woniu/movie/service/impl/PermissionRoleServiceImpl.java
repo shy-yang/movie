@@ -1,0 +1,29 @@
+package com.woniu.movie.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import com.woniu.movie.pojo.PermissionRole;
+import com.woniu.movie.mapper.PermissionRoleMapper;
+import com.woniu.movie.service.IPermissionRoleService;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class PermissionRoleServiceImpl implements IPermissionRoleService {
+
+    @Resource
+    private PermissionRoleMapper permissionRoleMapper;
+
+    @Override
+    public int add(PermissionRole record) {
+        return permissionRoleMapper.insert(record);
+    }
+
+    @Override
+    public int addSelective(PermissionRole record) {
+        return permissionRoleMapper.insertSelective(record);
+    }
+
+}

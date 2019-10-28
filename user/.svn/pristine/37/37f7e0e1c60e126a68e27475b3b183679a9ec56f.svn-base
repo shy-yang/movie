@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/bootstrap4.3.1.min.css">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link rel="stylesheet" href="maoyan/cinemas-list.81574a4d.css">
+    <link rel="stylesheet" href="maoyan/common.0a548310.css">
+    <link rel="stylesheet" href="maoyan/cinemas-cinema.c339c8d8.css">
+    <link rel="stylesheet" href="css/mycss.css">
+    <link rel="stylesheet" href="layer/css/layui.css">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+    <script src="layer/layui.js"></script>
+    <script src="laydate/laydate.js"></script>
+    <script src="js/moment-with-locales.js"></script>
+    <script src="maoyan/cinemas-list.da50b0b9.js"></script>
+    <script src="maoyan/common.9fc677f9.js"></script>
+    <script src="maoyan/owl_1.7.11.js"></script>
+    <script src="maoyan/stat.88d57c80.js"></script>
+    <script src="maoyan/cinemas-cinema.72ce3542.js"></script>
+    <script src="js/jqpaginator.js"></script>
+    <script type="text/javascript"
+            src="https://webapi.amap.com/maps?v=1.4.15&key=4f070bc68bf6f05f9b0ed975398b3cc0"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+
+        div {
+            white-space: nowrap;
+        }
+
+        .checked {
+            border-radius: 14px;
+            font-size: 14px;
+            padding: 4px 4px;
+            background: orangered;
+            color: white;
+        }
+
+        .movie-big {
+            border: 4px solid red;
+            width: 220px;
+            height: 300px;
+        }
+
+        a:hover {
+            color: #ef4238;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{common/header::header}"></div>
+<!--<img th:src="${#request.getAttribute('movie').moviePlacard}">-->
+<!--<img th:src="@{images/ImgBackground.png}">-->
+<div class="container-fluid" id="app" v-cloak>
+    <!--电影banner信息-->
+    <div class="row" style="margin-top: 60px;">
+        <div class="banner cinema-banner" style="height: 360px">
+            <div class="wrapper clearfix" style="margin-top: 30px">
+                <div class="cinema-left">
+                    <div class="avatar-shadow">
+                        <img class="avatar" :src="showSiteMessage.showSiteImage"/>
+                    </div>
+                </div>
+                <div class="cinema-main clearfix">
+                    <div class="cinema-brief-container">
+                        <h3 class="name text-ellipsis">{{showSiteMessage.showSiteName}}</h3>
+                        <div class="address text-ellipsis">{{showSiteMessage.showSiteAddress}}</div>
+                        <div class="telphone">电话{{showSiteMessage.showSitePhone}}</div>
+                        <div class="features-group">
+                            <div class="group-title">
+                                "影院服务"
+                            </div>
+                            <div class="feature" v-if="showSiteMessage.showSiteService!=null">
+                                <span class="tag">3D眼镜</span>
+                                <p class="desc text-ellipsis" :title="showSiteMessage.showSiteService">
+                                    {{showSiteMessage.showSiteService}}</p>
+                            </div>
+                            <div class="feature" v-if="showSiteMessage.showSiteDescription!=null">
+                                <span class="tag">儿童服务</span>
+                                <p class="desc text-ellipsis" :title="showSiteMessage.showSiteDescription">
+                                    {{showSiteMessage.showSiteDescription}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cinema-main" id="container"
+                     style="position: relative;background-color: rgb(229,227,223);overflow: hidden;transform: translateZ(0px);width: 200px;height: 200px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: -120px">
+        <div class="container">
+            <div class="movie-list-container">
+                <div class="movie-list" style="margin: 0 auto;">
+                    <div class="movie active" v-for="(m,index) in movies" v-if="m.movie.movieId==movieId" name="movie"
+                         v-bind:id="'movie'+index">
+                        <a href="javascript:" v-on:click="checkMovie(index,m.movie.movieId)"><img
+                                :src="m.movie.moviePlacard"></a>
+                    </div>
+                    <div class="movie" v-for="(m,index) in movies" v-if="m.movie.movieId!=movieId" name="movie"
+                         v-bind:id="'movie'+index">
+                        <a href="javascript:" v-on:click="checkMovie(index,m.movie.movieId)"><img
+                                :src="m.movie.moviePlacard"></a>
+                    </div>
+                    <!--<span class="scroll-prev scroll-btn" id="pre" v-on:click="pre(pageNum)"></span>
+                    <span class="scroll-next scroll-btn" id="next" v-on:click="next(pageNum)"></span>-->
+                </div>
+            </div>
+            <div class="show-list active">
+                <div class="movie-info">
+                    <div>
+                        <h3 class="movie-name">{{movieName}}</h3>
+                        <span class="score sc">{{movieMessage.movieScore}}</span>
+                    </div>
+                    <div class="movie-desc">
+                        <div>
+                            <span class="key">时长：</span>
+                            <span class="key">{{movieMessage.movieDuration}}</span>
+                        </div>
+                        <div>
+                            <span class="key">类型：</span>
+                            <span class="key">{{movieMessage.movieLevel}}</span>
+                        </div>
+                        <div>
+                            <span class="key">主演：</span>
+                            <span class="key">{{movieActor}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="show-date">
+                    <span>观影时间：</span>
+                    <span class="date-item text-white" name="date">
+                        <a href="javascript:" class="checked text-white" name="date" v-bind:id="'date'+'-1'"
+                           v-on:click="checkDate(-1,nowDate)">{{nowDate | moment}}</a>
+                    </span>
+                    <span class="date-item" v-for="(d,index) in dateList">
+                        <a href="javascript:" v-bind:value="d" name="date" v-bind:id="'date'+index"
+                           v-on:click="checkDate(index,d)">{{d | moment}}</a>
+                    </span>
+                </div>
+                <div class="plist-container active">
+                    <table class="plist" v-if="listLength!=0">
+                        <thead>
+                        <tr class="text-center">
+                            <th>放映时间</th>
+                            <th>语言版本</th>
+                            <th>放映厅</th>
+                            <th>售价（元）</th>
+                            <th>选座购票</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class v-for="s in movieSchedule">
+                            <td>
+                                <span class="begin-time">{{s.movieScheduleStartTime | minute}}</span><br>
+                                <span class="end-time">{{s.movieScheduleEndTime | minute}}散场</span>
+                            </td>
+                            <td>
+                                <span class="lang">{{s.movie.movieLanguage}}</span>
+                            </td>
+                            <td>
+                                <span class="hall">{{s.showHall.showHallName}}</span>
+                            </td>
+                            <td>
+                                    <span class="sell-price">
+                                        <span class="stonefont">{{s.movieSchedulePrice}}</span>
+                                    </span>
+                            </td>
+                            <th>
+                                <a :href="'movie_ticket/buy?movieScheduleId='+s.movieScheduleId" class="buy-btn normal">选座购票</a>
+                            </th>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="finished-all-shows" v-if="listLength==0">
+                        <div class="">
+                            <img th:src="@{images/finish.png}" width="100px;">
+                        </div>
+                        <span class="finish-text">当日次数已放映完</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input id="movieId" type="hidden" th:value="${#request.getAttribute('movieId')}">
+    <input id="showSiteId" type="hidden" th:value="${#request.getAttribute('showSiteId')}">
+</div>
+<div th:replace="~{common/footer::footer}"></div>
+</body>
+
+<script>
+    let app = new Vue({
+        el: "#app",
+        data: {
+            showSiteMessage: [],
+            movieMessage: [],
+            movieName: [],
+            movieActor: [],
+            movieSchedule: [],
+            nowDate: [],
+            dateList: [],
+            searchDate: [],
+            listLength: [],
+            movies: [],
+            movieId: [],
+            pageNum: 1,
+            nextPage: []
+        },
+        filters: {
+            //过滤电影名，取"/"之前的第一个名称
+            name(value) {
+                let newValue = value.split("/");
+                return newValue[0];
+            },
+            //将时间戳转换为指定格式 需要引入moment-with-locales.js
+            moment(value, formatString) {
+                formatString = formatString || 'MM月DD';
+                return moment(value).format(formatString);
+            },
+            minute(value, formatString) {
+                formatString = formatString || 'HH:mm';
+                return moment(value).format(formatString);
+            }
+        },
+        methods: {
+            checkDate: function (index, d) {
+                $("a[name=date],[class=checked]").removeClass('checked').removeClass("text-white");
+                let res = $("#date" + index).html();
+                this.searchDate = d;
+                $("#date" + index).addClass('checked').addClass("text-white");
+                allMovieMessage();
+            },
+            checkMovie: function (index, m) {
+                $("div[name=movie],[class=active]").removeClass('active');
+                let res = $("#movie" + index).html();
+                this.movieId = m;
+                //console.log(this.movieId)
+                $("#movie" + index).addClass('active');
+                allMovieMessage();
+            },
+            /*pre:function (pageNum) {
+                if(pageNum==1){
+                    this.pageNum=1
+                }else{
+                    this.pageNum--;
+                }
+                alert(pageNum)
+                getOtherMovie();
+            },
+            next:function (pageNum) {
+                if(this.nextPage!=0){
+                    this.pageNum++;
+                }
+                alert(pageNum)
+                getOtherMovie();
+            }*/
+        }
+    });
+
+    app.movieId = $("#movieId").val();
+
+    //放映点详细信息
+    function getShowSiteMessage() {
+        let showSiteId = $("#showSiteId").val();
+        $.post("/movieSchedule/getShowSiteMessage", {
+            showSiteId: showSiteId
+        }, function (data) {
+            //console.log(data)
+            app.showSiteMessage = data;
+            let coordinate = data.showSiteCoordinate;
+            let coordinateX = coordinate.split(",")[0];
+            let coordinateY = coordinate.split(",")[1];
+            //地图加载
+            let map = new AMap.Map('container', {
+                resizeEnable: true, //是否监控地图容器尺寸变化
+                zoom: 16, //初始化地图层级
+                center: [coordinateX, coordinateY] //初始化地图中心点
+            });
+            let marker = new AMap.Marker({
+                map: map,
+                position: [coordinateX, coordinateY]
+            });
+            AMap.plugin('AMap.ToolBar', function () {//异步加载插件
+                let toolbar = new AMap.ToolBar();
+                map.addControl(toolbar);
+            });
+        });
+    }
+
+    getShowSiteMessage();
+
+
+    //得到所有此电影排片信息
+    function allMovieMessage() {
+        //let movieId=$("#movieId").val();
+        let movieId = app.movieId;
+        let showSiteId = $("#showSiteId").val();
+        let showTime = formatDate(app.searchDate);
+        $.post("/movieSchedule/getMovieMessage", {
+            showSiteId: showSiteId,
+            movieId: movieId,
+            showTime: showTime,
+        }, function (data) {
+            //console.log(data)
+            app.movieMessage = data.map.movie;
+            let movieName = nameFilter(data.map.movie.movieName);
+            app.movieName = movieName;
+            app.movieActor = actorFilter(data.map.movie.movieActors);
+            app.movieSchedule = data.map.list;
+            app.listLength = data.map.list.length;
+        });
+    }
+
+    allMovieMessage();
+
+
+    //得到此放映点其他上映的影片
+    function getOtherMovie() {
+        let showSiteId = $("#showSiteId").val();
+        let movieId = $("#movieId").val();
+        let pageNum = app.pageNum;
+        $.post("/movieSchedule/getOtherMovie", {
+            showSiteId: showSiteId,
+            movieId: movieId,
+            pageNum: pageNum,
+            pageSize: 6,
+        }, function (data) {
+            console.log(data);
+            app.movies = data.map.movies.list;
+            app.nextPage = data.map.movies.nextPage;
+        });
+    }
+
+    getOtherMovie();
+
+    function actorFilter(actor) {
+        let newActor = actor.split(" ")[0];
+        return newActor;
+    }
+
+    function nameFilter(name) {
+        let newName = name.split("/")[0];
+        return newName;
+    }
+
+
+    function getDate() {
+        let newDate = new Date();
+        app.nowDate = newDate;
+        let timeStamp = Date.parse(new Date(newDate));
+        let arr = new Array();
+        let oneDay = 24 * 60 * 60 * 1000;
+        for (let i = 1; i < 8; i++) {
+            timeStamp = timeStamp + oneDay;
+            arr.push(new Date(timeStamp));
+        }
+        app.dateList = arr;
+    }
+
+    getDate();
+
+
+    //日期格式处理方式
+    function formatDate(date) {
+        let now = new Date(date);
+        let yyyy = now.getFullYear();
+        let MM = now.getMonth() + 1;
+        let dd = now.getDate();
+        return yyyy + "-" + MM + "-" + dd;
+    }
+</script>
+</html>

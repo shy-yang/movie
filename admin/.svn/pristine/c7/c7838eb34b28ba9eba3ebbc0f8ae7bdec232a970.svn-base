@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html"
+      xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>排片管理</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="layer/css/layui.css">
+
+    <!--全局样式js，不可删除-->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+    <script src="just_layer/layer.js"></script>
+    <script src="laydate/laydate.js"></script>
+    <script src="js/moment-with-locales.js"></script>
+    <script src="js/jqpaginator.js"></script>
+
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated " id="app">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>排片列表<small>编辑,删除,查看详情</small></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="table_data_tables.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <form id="frm" method="post" class="form-horizontal">
+                        <div class="col-sm-3">
+                            <div class="form-group" style="height: 30px;" >
+                                <label class="col-sm-3 control-label">行数</label>
+                                <div class="col-sm-6">
+                                    <select  class="form-control m-b" style="height: 35px" name="pageSize">
+                                        <option value="10">10 条</option>
+                                        <option value="20">20 条</option>
+                                        <option value="50">50 条</option>
+                                        <option value="100">100 条</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group" style="height: 30px;" >
+                                <label class="col-sm-3 control-label">影片名</label>
+                                <div class="col-sm-6">
+                                    <input name="movieName" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group" style="height: 30px;">
+                                <label class="col-sm-3 control-label">状态</label>
+                                <div class="col-sm-6">
+                                    <input name="movieStatus" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="col-sm-3 col-sm-offset-1">
+                                    <button type="button" class="btn btn-success " v-on:click="searchMovieSchedule()">查询</button>
+                                </div>
+                                <div class="col-sm-3" style="margin-left: 10px;">
+                                    <button type="button"  class="btn btn-info " v-on:click="addMovieSchedule()">添加</button>
+                                </div>
+                                <div class="col-sm-3" style="margin-left: 10px;">
+                                    <button type="button" class="btn btn-danger " v-on:click="deleteAll()">批量删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table class="table table-striped table-bordered table-hover dataTables-example">
+                        <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox"></th>
+                            <th>编号</th>
+                            <th>影片</th>
+                            <th>放映点</th>
+                            <th>放映厅</th>
+                            <th>开始时间</th>
+                            <th>结束时间</th>
+                            <th>价格</th>
+                            <th class="col-sm-1 text-center">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="m in movieSchedule">
+                            <th>
+                                <input type="checkbox" v-bind:value="m.movieScheduleId">
+                            </th>
+                            <th>{{m.movieScheduleId}}</th>
+                            <th>{{m.movie.movieName | name}}</th>
+                            <th>{{m.showSite.showSiteName}}</th>
+                            <th>{{m.showHall.showHallName}}</th>
+                            <th>{{m.movieScheduleStartTime | moment}}</th>
+                            <th>{{m.movieScheduleEndTime | moment}}</th>
+                            <th>￥{{m.movieSchedulePrice}}</th>
+                            <th class="text-center">
+                                <button class="J_menuItem btn btn-info btn-circle"><span class="glyphicon glyphicon-pencil"></span></button>
+                                <button class="J_menuItem btn btn-danger btn-circle"><i class="fa fa-times"></i></button>
+                            </th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!--分页插件-->
+    <div class="row text-center">
+        <div id="pager" class="pagination"></div>
+    </div>
+
+    <!--添加排片-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加排片</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="add_show_site" enctype="multipart/form-data" class="form-horizontal" >
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">影片搜索</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" placeholder="请输入影片名称" id="movieName"/>
+                            </div>
+                            <div style="margin-left: 10px;">
+                                <button type="button" class="btn btn-info" v-on:click="searchMovieName()"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMovieName" class="col-sm-3 control-label">电影名称</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="movieId" id="inputMovieName" v-on:change="getMovieTime()">
+                                    <option v-bind:value="0" selected>==请选择影片==</option>
+                                    <option v-bind:value="m.movieId" v-for="m in movieList">{{m.movieName | name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputShowSiteName" class="col-sm-3 control-label">放映点名称</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="showSiteId" id="inputShowSiteName" v-on:change="getShowSiteId()">
+                                    <option v-bind:value="0" selected>==请选择放映点==</option>
+                                    <option v-bind:value="s.showSiteId" v-for="s in showSiteList">{{s.showSiteName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputShowHallName" class="col-sm-3 control-label">展厅名称</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="showHallId" id="inputShowHallName" >
+                                    <option v-bind:value="0" selected>==请选择展厅==</option>
+                                    <option v-bind:value="h.showHallId" v-for="h in showHallList">{{h.showHallName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMovieScheduleStartTime" class="col-sm-3 control-label">开始时间</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="movieScheduleStartTime" class="form-control" id="inputMovieScheduleStartTime" placeholder="请输入开始时间">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMovieTime" class="col-sm-3 control-label">影片时间</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="inputMovieTime" v-bind:value="movieTime">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputRestTime" class="col-sm-3 control-label">换场时间</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="inputRestTime" v-on:change="getEndTime()">
+                                    <option value="0">==请选择换场时间==</option>
+                                    <option value="10">10分钟</option>
+                                    <option value="20">20分钟</option>
+                                    <option value="30">30分钟</option>
+                                    <option value="40">40分钟</option>
+                                    <option value="50">50分钟</option>
+                                    <option value="60">60分钟</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMovieScheduleEndTime" class="col-sm-3 control-label">结束时间</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="movieScheduleEndTime" class="form-control" id="inputMovieScheduleEndTime">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputMoviePrice" class="col-sm-3 control-label">价格</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="moviePrice" class="form-control" id="inputMoviePrice">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="closeAddMessage()">Close</button>
+                    <button type="button" v-on:click="save()" class="btn btn-primary">保&nbsp;&nbsp;存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+
+
+
+<script>
+    let app=new Vue({
+        el:"#app",
+        data:{
+            movieSchedule:[],
+            movieList:[],
+            movieTime:[],
+            showSiteList:[],
+            showHallList:[]
+        },
+        created:function(){
+            $.post("/movie_schedule/movie_list",{},function (data) {
+                //console.log(data)
+                app.movieList=data;
+            });
+            $.post("/movie_schedule/show_site_list",{},function (data) {
+                //console.log(data)
+                app.showSiteList=data;
+            });
+        },
+        filters:{
+            //过滤电影名，取"/"之前的第一个名称
+            name(value) {
+                let newValue = value.split("/");
+                return newValue[0];
+            },
+            //将时间戳转换为指定格式 需要引入moment-with-locales.js
+            moment(value, formatString) {
+                formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
+                return moment(value).format(formatString);
+            }
+        },
+        methods:{
+            //模糊搜索影片信息
+            searchMovieName:function(){
+                let movieName=$("#movieName").val();
+                $.post("/movie_schedule/movie_list",{
+                    movieName:movieName
+                },function (data) {
+                    //console.log(data)
+                    app.movieList=data;
+                });
+            },
+            //根据电影名称的id获取电影时间
+            getMovieTime:function(){
+                let movieId=$("#inputMovieName").val();
+                $.post("/movie_schedule/movie_one",{
+                    movieId:movieId
+                },function (data) {
+                    console.log(data)
+                    app.movieTime=data.movieDuration;
+                });
+            },
+            //得到放映点id，进一步得到展厅信息
+            getShowSiteId:function(){
+                let showSiteId=$("#inputShowSiteName").val();
+                $.post("/movie_schedule/show_hall_list",{
+                    showSiteId:showSiteId
+                },function (data) {
+                    console.log(data)
+                    app.showHallList=data;
+                })
+            },
+            //弹出排片框
+            addMovieSchedule:function () {
+                $('#myModal').modal({
+                    keyboard: false
+                })
+            },
+            //添加排片信息
+        }
+    });
+
+    //得到排片信息
+    function get_movie_schedule(pageNum) {
+        $.post("/movie_schedule/get_movie_schedule",{
+            pageNum:pageNum,
+            pageSize:4,
+        },function (data) {
+            console.log(data)
+            app.movieSchedule=data.map.pageInfo.list;
+            $('#pager').jqPaginator('option',{
+                totalPages:data.map.pageInfo.pages
+            });
+        });
+    }
+
+    //分页
+    function setPager() {
+        $("#pager").jqPaginator({
+            totalPages:3,
+            currentPage:1,
+            onPageChange:function (num,type) {
+                get_movie_schedule(num);
+            }
+        })
+    }
+    setPager();
+
+
+</script>
+
+
+<!--&lt;!&ndash; 自定义js &ndash;&gt;-->
+<script src="js/content.js?v=1.0.0"></script>
+
+<!--&lt;!&ndash; iCheck &ndash;&gt;-->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+</script>
+</html>

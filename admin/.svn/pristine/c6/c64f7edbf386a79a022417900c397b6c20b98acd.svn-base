@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    #数据源基本配置
+    username: luwc
+    password: luwc123
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://49.235.222.125:33061/movie?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+    type: com.alibaba.druid.pool.DruidDataSource
+    #   数据源其他配置
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+mybatis:
+  check-config-location: true
+  config-location: classpath:mybatis/mybaits_config.xml
+  type-aliases-package: com.woniu.movie
+# 根据mapper、所在包在控制台打印mybatis的sql日志
+logging:
+  level:
+    com:
+      woniu:
+        movie:
+          mapper: debug

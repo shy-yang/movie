@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:v-text="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-model="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--图标-->
+    <link href="css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="css/login.css" rel="stylesheet">
+    <script src="js/jquery.min.js?v=2.1.1"></script>
+    <link href="css/userLogin.css" rel="stylesheet" type="text/css"/>
+    <!--layui弹层-->
+    <script src="just_layer/layer.js"></script>
+    <!--vue框架-->
+    <script src="js/vue2.6.10_min.js"></script>
+    <!--引入layui功能模块-->
+    <script src="layer/layui.js"></script>
+    <style type="text/css" rel="stylesheet">
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0; /*清除掉浏览器默认的外边距 因为每个浏览器默认的不一定一样 所以为保一致 将他们重置*/
+            background-image: url("https://lizx-1300499917.cos.ap-shanghai.myqcloud.com/img02.jpg"); /*设置背景图片*/
+            background-repeat: no-repeat; /*no-repeat 背景图像将仅显示一次。repeat-y 背景图像将在垂直方向重复。 */
+            background-size: cover; /*保证背景图不变形*/
+        }
+
+        .address {
+            margin-left: 34%;
+            margin-top: 27%;
+            width: 30px;
+            height: 30px;
+            border-radius: 20px;
+            background-color: #182C4E;
+            border: 0px;
+        }
+    </style>
+</head>
+
+<body>
+<!--播放音乐-->
+<audio loop autoplay>
+    <source src="https://lizx-1300499917.cos.ap-shanghai.myqcloud.com/music01.mp3">
+</audio>
+<div id="app" class="container-fluid">
+    <button @click="register()" class="address"></button>
+    <div id="updateView" class="mt-3" style="display: none ">
+        <div class="col-sm-10 col-sm-offset-1">
+            <form class="form-horizontal" enctype="multipart/form-data" id="frm">
+                <div class="form-group">
+                    <label for="userName" class="col-sm-2 control-label">用户名:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="userName" class="form-control" id="userName" placeholder="请输入中文用户名"
+                               required maxlength="20"
+                               onblur="check(this)"
+                        >
+                        <div id="user_name"></div>
+                    </div>
+                </div>
+                <!--用户名正则-->
+                <script>
+                    function check(obj) {
+                        var userName = $(obj).val();
+                        if (userName.length == 0) {
+                            $("#user_name").html("<b style='color: red'>*您还未填入用户名</b>")
+                            return;
+                        }
+                        if (userName.length < 3) {
+                            $("#user_name").html("<b style='color: red'>*用户名长度3-20位</b>")
+                            return;
+                        }
+                        var reg = /^[a-zA-Z\u4e00-\u9fa5][a-zA-Z0-9\u4e00-\u9fa5]*$/;
+                        if (!reg.test(userName)) {
+                            $("#user_name").html("<b style='color: red'>*只能输入汉字、英文字母和数字，并且数字不能开头</b>");
+                        } else {
+                            $("#user_name").html("");
+                        }
+                    }
+
+                    /* /!*失去焦点判断*!/
+                     function check(x, y) {
+                         if (document.getElementById(x).value.length <= y) {
+                             document.getElementById(x).nextElementSibling.style.display = "block";
+                             setTimeout(function () {
+                                 document.getElementById(x).nextElementSibling.style.display = "none";
+                             }, 3000);
+                         }
+                     }*/
+                </script>
+
+                <div class="form-group">
+                    <label for="userNickName" class="col-sm-2 control-label">昵称:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="userNickname" class="form-control" id="userNickName"
+                               placeholder="请输入昵称" required maxlength="20">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userPassword" class="col-sm-2 control-label">密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" name="userPassword" class="form-control" id="userPassword"
+                               placeholder="请输入密码" required maxlength="20"
+                               onblur="pass(this)"
+                        >
+                        <div id="pass"></div>
+                    </div>
+                </div>
+                <script>
+                    function pass(obj) {
+                        var password = $(obj).val();
+                        if (password.length <= 6) {
+                            $("#pass").html("<b style='color: red'>*密码建议大于6位</b>")
+                            return;
+                        }
+                        var reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,10}$/;
+                        if (!reg.test(password)) {
+                            $("#pass").html("<b style='color: red'>*密码建议包含字母和数字</b>");
+                        } else {
+                            $("#pass").html("");
+                        }
+                    }
+                </script>
+
+                <div class="form-group">
+                    <label for="userPassword2" class="col-sm-2 control-label">确认密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="userPassword2" placeholder="请再次输入密码" required
+                               maxlength="20"
+                               onblur="password(this)"
+                        >
+                        <div id="password"></div>
+                    </div>
+                </div>
+                <script>
+                    function password(obj) {
+                        var password2 = $(obj).val();
+                        var password1 = $("#userPassword").val();
+                        if (password1 == password2) {
+                            $("#password").html("");
+                        } else {
+                            $("#password").html("<b style='color: red'>*两次密码不一致</b>")
+                        }
+                    }
+                </script>
+
+                <div class="form-group">
+                    <label for="userPhone" class="col-sm-2 control-label">手机号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="userPhone" class="form-control" id="userPhone" placeholder="请输入手机号"
+                               required
+                               onblur="isTelephone(this)"
+                        >
+                        <div id="phone"></div>
+                    </div>
+                </div>
+                <script>
+                    function isTelephone(obj) {
+                        var phone = $(obj).val();
+                        var reg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+                        if (!reg.test(phone)) {
+                            $("#phone").html("<b style='color: red'>*请输入正确的电话号码</b>");
+                        } else {
+                            $("#phone").html("");
+                        }
+                    }
+                </script>
+                <div class="form-group">
+                    <label for="userEmail" class="col-sm-2 control-label">邮箱:</label>
+                    <div class="col-sm-10">
+                        <input type="email" v-model:value="userEmail" name="userEmail" class="form-control"
+                               id="userEmail" placeholder="请输入邮箱" required
+                               onblur="email(this)"
+                        >
+                        <div id="email"></div>
+                    </div>
+                </div>
+                <script>
+                    function email(obj) {
+                        var email = $(obj).val();
+                        var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                        if (!reg.test(email)) {
+                            $("#email").html("<b style='color: red'>*请输入正确的邮箱</b>");
+                        } else {
+                            $("#email").html("");
+                        }
+                    }
+                </script>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">性别:</label>
+                    <div class="col-sm-10">
+                        <input type="radio" name="userSex" id="Radio1" value="男"> 男
+                        <input type="radio" name="userSex" id="Radio2" value="女"> 女
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userHeadImage" class="col-sm-2 control-label">头像:</label>
+                    <div class="col-sm-10">
+                        <input type="file" id="userHeadImage" name="uploadImg">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userDescription" class="col-sm-2 control-label">自我描述:</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" name="userDescription" rows="3" id="userDescription"
+                                  placeholder="说两句吧老铁"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userVerifyCode" class="col-sm-2 control-label">激活:</label>
+                    <div class="col-sm-7 ">
+                        <input type="text" class="form-control ml-10 " name="userVerifyCode" id="userVerifyCode"
+                               placeholder="请输入邮箱验证码" required>
+                    </div>
+                    <div class="col-sm-3  ">
+                        <input type="button" style="display: block" id="moBtn" class=" form-control" value="获取验证码"
+                               onclick="sendMsgCode()" @click="getVerifyCode()">
+                        <input type="button" style="display: none" id="secondShow" class="form-control" value="获取验证码">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" class="btn btn-default" @click="submitUser()">submit</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <!--注册信息结束-->
+    </div>
+
+</div>
+
+<script>
+    /*定义一个对象，用来使用layer的弹层方法*/
+    var modifyOpen;
+    const vueApp = new Vue({
+        el: "#app",
+        data: {
+            userEmail: ""
+        },
+        methods: {
+            register: function () {
+                modifyOpen = layer.open(
+                    {
+                        type: 1,   //表示页面层，如果是2那么打开的是个iframe
+                        content: $("#updateView"),  //这里放的是dom!dom最好放在body最外层！
+                        title: '<h4 class="text-center">用户注册</h4>',
+                        shadeClose: true,      //设置为true，那么点击弹层外区域也能关闭
+                        shade: 0.1,            //弹层外区域颜色
+                        area: ['50%', '80%'], //默认是自适应的！
+                        maxmin: true,      //可以选择把弹层开到最大！
+                        anim: 6,            //弹出时的动画效果，这里选择的渐显
+                        resize: false,     //是否允许拉伸
+                        end: function () {
+                            //setpager(); //无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。
+                        }
+                    })
+            },
+            /*提交用户注册信息*/
+            submitUser: () => {
+                var password1 = $("#pass").html();
+                var password2 = $("#password").html();
+                var phone = $("#phone").html();
+                var email = $("#email").html();
+                var username = $("#user_name").html();
+                if (password1 != "" || password2 != "" || phone != "" || email != "" || username != "") {
+                    layer.msg("信息不完整！")
+                    return;
+                }
+
+                let form = new FormData($("#frm").get(0));
+                console.log(form)
+                let params = $("#frm").serialize();//序列化之后图片就没有了！
+                console.log(params)
+                $.ajax({
+                    url: "/user/register",
+                    type: "post",
+                    data: form,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        layer.msg(data.message, {icon: 4, time: 2000})
+                        var timer = setInterval(function () {
+                            if (data.code == '400') {
+                                location.href = "/"
+                            }
+                        }, 2000)
+                    }
+                })
+            },
+            /*从后端获取验证码*/
+            getVerifyCode: () => {
+                var userEmail = vueApp.userEmail;
+                $.get(
+                    "user/email",
+                    {userEmail: userEmail},
+                    function (data) {
+                        layer.msg(data.message)
+                    },
+                    "json"
+                );
+            }
+        }
+    })
+
+    var countdown = 30;  // 时长 s
+    // 获取验证码按钮点击事件
+    function sendMsgCode() {
+        $("#moBtn").css('display', 'none');
+        $("#secondShow").css('display', 'block');
+        $("#secondShow").val('重新发送(' + countdown + 's)');
+        var timer = setInterval(function () {
+            if (countdown == 0) {
+                clearInterval(timer);
+                $("#secondShow").css('display', 'none');
+                $("#moBtn").css('display', 'block');
+                countdown = 30;
+            }
+            $("#secondShow").val('重新发送(' + (countdown - 1) + 's)');
+            countdown--;
+        }, 1000);
+    };
+
+
+</script>
+</body>
+</html>

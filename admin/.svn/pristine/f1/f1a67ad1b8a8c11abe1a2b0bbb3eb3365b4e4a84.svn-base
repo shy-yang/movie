@@ -1,0 +1,253 @@
+package com.woniu.movie.controller;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.sun.org.apache.xalan.internal.xsltc.dom.SAXImpl;
+import com.woniu.movie.pojo.Movie;
+import com.woniu.movie.pojo.MovieSchedule;
+import com.woniu.movie.pojo.ShowHall;
+import com.woniu.movie.pojo.ShowSite;
+import com.woniu.movie.response.ResponseResult;
+import com.woniu.movie.service.IMovieScheduleService;
+import com.woniu.movie.service.IMovieService;
+import com.woniu.movie.service.IShowHallService;
+import com.woniu.movie.service.IShowSiteService;
+import com.woniu.movie.vo.FilmQueryVo;
+import com.woniu.movie.vo.MovieScheduleQueryVo;
+import com.woniu.movie.vo.ShowHallQueryVo;
+import com.woniu.movie.vo.ShowSiteQueryVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.sound.midi.Soundbank;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 功能描述:<br>
+ * 〈排片管理〉
+ *
+ * @author 单海洋
+ * @create 2019/10/21
+ * @since 1.0.0
+ */
+@RequestMapping("/movie_schedule")
+@Controller
+public class MovieScheduleController {
+    @Autowired
+    IMovieScheduleService movieScheduleService;
+    @Autowired
+    IMovieService movieService;
+    @Autowired
+    IShowSiteService showSiteService;
+    @Autowired
+    IShowHallService showHallService;
+
+    /**
+     * 获取排片信息
+     * @param queryVo 查询信息qv
+     * @return
+     */
+    @RequestMapping("/get_movie_schedule")
+    @ResponseBody
+    public ResponseResult getMovieSchedule(MovieScheduleQueryVo queryVo){
+        System.out.println(queryVo+"----");
+        if(queryVo.getMovieName()!=null && queryVo.getMovieName()!=""){
+            FilmQueryVo filmQueryVo=new FilmQueryVo();
+            filmQueryVo.setMovieName(queryVo.getMovieName());
+            List<Movie> movies=movieService.findAllMovie(filmQueryVo);
+            queryVo.setMovieId(movies.get(0).getMovieId());
+        }
+        System.out.println("查询信息："+queryVo);
+        PageHelper.startPage(queryVo.getPageNum(),queryVo.getPageSize());
+        List<MovieScheduleQueryVo> list=movieScheduleService.findAllMovieSchedule(queryVo);
+        PageInfo<MovieScheduleQueryVo> pageInfo=new PageInfo<>(list,3);
+        System.out.println(pageInfo);
+        return new ResponseResult("200","操作成功").add("pageInfo",pageInfo);
+    }
+
+    /**
+     * 查询所有影片
+     * @param queryVo 电影查询qv
+     * @return
+     */
+    @RequestMapping("/movie_list")
+    @ResponseBody
+    public List<Movie> movieList(FilmQueryVo queryVo){
+        List<Movie> movies=movieService.findAllMovie(queryVo);
+        //System.out.println(movies);
+        return movies;
+    }
+
+    /**
+     * 根据所选影片的id得到影片的时长
+     * @param movieId
+     * @return
+     */
+    @RequestMapping("/movie_one")
+    @ResponseBody
+    public Movie movieOne(Integer movieId){
+        Movie movie=movieService.selectByPrimaryKey(movieId);
+        System.out.println(movieId);
+        return movieService.selectByPrimaryKey(movieId);
+    }
+
+    /**
+     * 查询所有放映点
+     * @param queryVo
+     * @return
+     */
+    @RequestMapping("/show_site_list")
+    @ResponseBody
+    public List<ShowSite> showSiteList(ShowSiteQueryVo queryVo){
+        List<ShowSite> showSites=showSiteService.findAllShowSite(queryVo);
+        //System.out.println(showSites);
+        return showSites;
+    }
+
+    /**
+     * 根据放映点id得到所有的展厅信息
+     * @param queryVo
+     * @return
+     */
+    @RequestMapping("/show_hall_list")
+    @ResponseBody
+    public List<ShowHall> showHallList(ShowHallQueryVo queryVo){
+        System.out.println(queryVo);
+        List<ShowHall> showHalls=showHallService.findAllByShowSiteId(queryVo);
+        System.out.println(showHalls);
+        return showHalls;
+    }
+
+    /**
+     * 添加排片信息
+     * @param movieSchedule 接收添加信息
+     * @param movieStartTime 开始时间 text类型
+     * @param movieEndTime 结束时间 text类型
+     * @return
+     */
+    @RequestMapping("/addMovieSchedule")
+    @ResponseBody
+    public ResponseResult addMovieSchedule(MovieSchedule movieSchedule, @RequestParam("movieStartTime") String movieStartTime, @RequestParam("movieEndTime") String movieEndTime) throws ParseException {
+        //将string类型的时间格式改为date类型并加入到queryVo中
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date newMovieStartTime=sdf.parse(movieStartTime);
+        Date newMovieEndTime=sdf.parse(movieEndTime);
+        movieSchedule.setMovieScheduleStartTime(newMovieStartTime);
+        movieSchedule.setMovieScheduleEndTime(newMovieEndTime);
+
+        System.out.println("添加信息："+movieSchedule);
+        List<MovieScheduleQueryVo> list=movieScheduleService.findMovieChecked(movieSchedule);
+        System.out.println("搜索信息："+list);
+        int count=0;
+        for(MovieScheduleQueryVo m:list){
+            if(movieSchedule.getMovieScheduleStartTime().after(m.getMovieScheduleStartTime())&&movieSchedule.getMovieScheduleStartTime().before(m.getMovieScheduleEndTime())||movieSchedule.getMovieScheduleStartTime().equals(m.getMovieScheduleStartTime())){
+                count++;
+            }
+        }
+        System.out.println("次数："+count);
+        if(count==0){
+            //添加排片信息
+            movieScheduleService.add(movieSchedule);
+            //根据影片的id更改影片的状态
+            Movie movie=movieService.selectByPrimaryKey(movieSchedule.getMovieId());
+            movie.setMovieState(1);
+            movieService.updateByPrimaryKeySelective(movie);
+            return new ResponseResult("200","操作成功");
+        }else {
+            System.out.println("111111111111111");
+            return new ResponseResult("500","操作失败").add("error","此时间段已有影片安排");
+        }
+    }
+
+    /**
+     * 根据影片id得到影片的信息
+     * @param id
+     * @return
+     */
+    @RequestMapping("/getMovieScheduleById")
+    @ResponseBody
+    public MovieScheduleQueryVo update_movie_schedule(Integer id){
+        MovieScheduleQueryVo queryVo=movieScheduleService.findMovieScheduleByMovieScheduleId(id);
+        System.out.println(queryVo);
+        return queryVo;
+    }
+
+    /**
+     * 修该排片的信息
+     * @param movieSchedule
+     * @param movieStartTime
+     * @param movieEndTime
+     * @return
+     * @throws ParseException
+     */
+    @RequestMapping("/updateMovieSchedule")
+    @ResponseBody
+    public ResponseResult updateMovieSchedule(MovieSchedule movieSchedule, @RequestParam("movieStartTime") String movieStartTime, @RequestParam("movieEndTime") String movieEndTime) throws ParseException {
+        System.out.println(movieSchedule);
+        System.out.println(movieStartTime);
+        System.out.println(movieEndTime);
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date newMovieStartTime=sdf.parse(movieStartTime);
+        Date newMovieEndTime=sdf.parse(movieEndTime);
+        movieSchedule.setMovieScheduleStartTime(newMovieStartTime);
+        movieSchedule.setMovieScheduleEndTime(newMovieEndTime);
+        int res1=movieScheduleService.modifyMovieScheduleByMovieScheduleIdSelective(movieSchedule);
+        if(res1==1){
+            return new ResponseResult("200","操作成功");
+        }else {
+            return new ResponseResult("500","操作失败");
+        }
+    }
+
+    /**
+     * 根据排片id删除排片信息，并将电影状态改为0
+     * @param id
+     * @return
+     */
+    @RequestMapping("/deleteMovieSchedule")
+    @ResponseBody
+    public ResponseResult deleteMovieSchedule(Integer id){
+        MovieScheduleQueryVo queryVo=movieScheduleService.findMovieScheduleByMovieScheduleId(id);
+        Movie movie=movieService.selectByPrimaryKey(queryVo.getMovieId());
+        movie.setMovieState(0);
+        int res1=movieService.updateByPrimaryKeySelective(movie);
+        int res2=movieScheduleService.removeMovieScheduleByMovieScheduleId(id);
+        if((res1+res2)==2){
+            return new ResponseResult("200","操作成功");
+        }else {
+            return new ResponseResult("500","操作失败");
+        }
+    }
+
+    /**
+     * 根据id批量删除
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/deleteAllMovieSchedule")
+    @ResponseBody
+    public ResponseResult deleteAllMovieSchedule(String ids){
+        String[] str=ids.split(",");
+        System.out.println(str);
+        for(String s:str){
+            Integer id=Integer.parseInt(s);
+            MovieScheduleQueryVo queryVo=movieScheduleService.findMovieScheduleByMovieScheduleId(id);
+            Movie movie=movieService.selectByPrimaryKey(queryVo.getMovieId());
+            movie.setMovieState(0);
+            movieService.updateByPrimaryKeySelective(movie);
+        }
+        int res1=movieScheduleService.removeMovieSchedules(str);
+        if(res1>=1){
+            return new ResponseResult("200","操作成功");
+        }else {
+            return new ResponseResult("500", "操作失败");
+        }
+    }
+}

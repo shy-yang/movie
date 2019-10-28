@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>放映厅</title>
+        <link href="css/bootstrap4.3.1.min.css?v=3.3.6" rel="stylesheet">
+        <link href="css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+        <link href="css/style.css?v=4.1.0" rel="stylesheet">
+        <script src="js/jquery.min.js?v=2.1.4"></script>
+        <script src="js/jqpaginator.js"></script>
+        <script src="js/vue2.6.10_min.js"></script>
+        <script src="just_layer/layer.js"></script>
+        <script src="laydate/laydate.js"></script>
+        <script src="js/moment-with-locales.js"></script>
+        <script src="js/jqpaginator.js"></script>
+        <style type="text/css">
+            [v-cloak] {
+                display: none;
+            }
+
+            .mySearchTitle {
+                font-weight: bold;
+                font-size: larger
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid" id="app" v-cloak>
+            <div class="mt-3 row">
+                <button class="btn btn-sm btn-outline btn-outline-primary ml-1" @click="addShowHall()">添加放映厅</button>
+                <button class="btn btn-sm btn-outline-danger ml-2" @click="batchSetShowHallState(0)">批量设为关闭</button>
+                <button class="btn btn-sm btn-outline-success ml-2" @click="batchSetShowHallState(1)">批量设为开放</button>
+            </div>
+
+            <div class="form-row mt-3">
+                <div class="form-group col-2">
+                    <label class="control-label mySearchTitle">单页显示条数：</label>
+                    <select class="form-control" id="pageSize" v-model="pageSize">
+                        <option>5</option>
+                        <option>10</option>
+                        <option>15</option>
+                        <option>20</option>
+                    </select>
+                </div>
+                <div class="form-group col-2 ml-2">
+                    <label class="control-label mySearchTitle">放映厅名：</label>
+                    <input type="text" id="showHallName" v-model="showHallName">
+                </div>
+                <div class="form-group col-2">
+                    <label class="control-label mySearchTitle">放映厅类型：</label>
+                    <input type="text" id="showHallType" v-model="showHallType">
+                </div>
+                <div class="form-group col-2">
+                    <label class="control-label mySearchTitle">放映点名：</label>
+                    <input type="text" id="searchShowSiteName" v-model="searchShowSiteName">
+                </div>
+                <div class="form-group col-1">
+                    <label class="control-label mySearchTitle">点击搜索</label>
+                    <button class="btn btn-sm btn-block btn-info" @click="search()">搜索</button>
+                </div>
+                <div class="form-group col-1">
+                    <label class="control-label mySearchTitle">重置条件</label>
+                    <button class="btn btn-sm btn-block btn-dark" @click="reSet()">清空</button>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <table class="table table-hover table-bordered table-striped text-center">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll" onclick="selectAll(this)"></th>
+                        <th>放映厅id</th>
+                        <th>放映厅编号</th>
+                        <th>放映厅名</th>
+                        <th>放映厅类型</th>
+                        <th>座位数</th>
+                        <th>所在放映点</th>
+                        <th>放映厅状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="s in showHallVos">
+                        <td><input type="checkbox" name="flag" :value="s.showHallId"></td>
+                        <td>{{s.showHallId}}</td>
+                        <td>{{s.showHallNumber}}</td>
+                        <td>{{s.showHallName}}</td>
+                        <td>{{s.showHallType}}</td>
+                        <td>{{s.showHallSeatCount}}</td>
+                        <td>{{s.showSiteName}}</td>
+                        <td v-if="s.showHallState==1" class="text-success">开放</td>
+                        <td v-if="s.showHallState==0" class="text-danger">未开放</td>
+                        <td>
+                            <button class="btn-sm btn btn-outline-info" @click="updateShowHallView(s.showHallId)">编辑放映厅
+                            </button>
+                            <button v-if="s.showHallState==1" class="btn-sm btn btn-outline-danger"
+                                    @click="setShowHallState(0,s.showHallId)">设为不开放
+                            </button>
+                            <button v-if="s.showHallState==0" class="btn-sm btn btn-outline-success"
+                                    @click="setShowHallState(1,s.showHallId)">设为开放
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <!--分页小工具 start-->
+                <div class="mt-2 row">
+                    <div class="col-4 offset-4">
+                        <ul id="pager" class="pagination"></ul>
+                    </div>
+                </div>
+                <!--分页小工具 end-->
+            </div>
+
+            <!--添加放映厅界面开始-->
+            <div id="addView" class="mt-3" style="display: none">
+                <div class="col-8 offset-2">
+                    <form id="uploadForm">
+                        <div class="card">
+                            <div class="card-header text-center font-weight-bold">添加放映厅</div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    放映厅编号:
+                                    <input type="text" name="showHallNumber" class="form-control">
+                                </div>
+                                <div>
+                                    放映厅名称:
+                                    <input type="text" id="start" name="showHallName" class="form-control">
+                                </div>
+                                <div>
+                                    放映厅类型:
+                                    <input type="text" id="end" name="showHallType" class="form-control">
+                                </div>
+                                <div>
+                                    座位数:
+                                    <input type="number" name="showHallSeatCount" class="form-control">
+                                </div>
+                                <div class="mt-1">
+                                    是否开放：
+                                    <input type="radio" name="showHallState" value="1" checked>是
+                                    <input type="radio" name="showHallState" value="0">否
+                                </div>
+                                <div class="mt-1">
+                                    放映点归属:
+                                    <input type="text" v-model="showSiteName">
+                                    <button class="btn btn-sm btn-info ml-2" @click="searchShowSite(showSiteName)"
+                                            type="button">搜索
+                                    </button>
+                                </div>
+                                <div class="mt-1">
+                                    <select name="showSiteId">
+                                        <option v-for="ss in showSites" :value="ss.showSiteId">
+                                            {{ss.showSiteName}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-success mt-2" @click="addNewShowHall()"
+                                            type="button">确认添加
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--添加放映厅界面结束-->
+
+            <!--编辑放映厅界面开始-->
+            <div id="updateView" class="mt-3" style="display: none">
+                <div class="col-8 offset-2">
+                    <form id="updateForm">
+                        <div class="card">
+                            <div class="card-header text-center font-weight-bold">编辑放映厅</div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    放映厅编号:
+                                    <input type="text" name="showHallNumber" class="form-control"
+                                           :value="showHallVo.showHallNumber">
+                                    <input type="hidden" :value="showHallVo.showHallId" name="showHallId">
+                                </div>
+                                <div>
+                                    放映厅名称:
+                                    <input type="text" name="showHallName" class="form-control"
+                                           :value="showHallVo.showHallName">
+                                </div>
+                                <div>
+                                    放映厅类型:
+                                    <input type="text" name="showHallType" class="form-control"
+                                           :value="showHallVo.showHallType">
+                                </div>
+                                <div>
+                                    座位数:
+                                    <input type="number" name="showHallSeatCount" class="form-control"
+                                           :value="showHallVo.showHallSeatCount">
+                                </div>
+                                <div class="mt-1">
+                                    是否开放：
+                                    <input type="radio" name="showHallState" value="1"
+                                           v-if="showHallVo.showHallState==1" checked>是
+                                    <input type="radio" name="showHallState" value="1"
+                                           v-else>是
+
+                                    <input type="radio" name="showHallState" value="0"
+                                           v-if="showHallVo.showHallState==0" checked>否
+                                    <input type="radio" name="showHallState" value="0"
+                                           v-else>否
+                                </div>
+                                <div class="mt-1">
+                                    放映点归属:
+                                    <input type="text" v-model="upShowSiteName">
+                                    <button class="btn btn-sm btn-info ml-2" @click="searchShowSite(upShowSiteName)"
+                                            type="button">搜索
+                                    </button>
+                                </div>
+                                <div class="mt-1">
+                                    <select name="showSiteId" :value="showHallVo.showSiteId">
+                                        <option v-for="ss in showSites" :value="ss.showSiteId">
+                                            {{ss.showSiteName}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary mt-2" @click="updateShowHall()"
+                                            type="button">确认编辑
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--编辑放映厅界面结束-->
+        </div>
+    </body>
+    <script>
+        var addOpen;
+        var updateOpen;
+        const app = new Vue({
+            el: "#app",
+            data: {
+                searchShowSiteName: "",
+                showHallType: "",
+                showHallName: "",
+                showSiteName: "",
+                upShowSiteName: "",
+                pageSize: 10,
+                showHallVos: [],
+                showHallVo: {},
+                showSites: []
+            },
+            methods: {
+                //搜索放映点
+                searchShowSite: (name) => {
+                    $.get(
+                        "/show_site/get_show_site",
+                        {
+                            isShowAll: 1,
+                            showSiteName: name
+                        },
+                        function (data) {
+                            app.showSites = data.map.showSites;
+                        }
+                    );
+                },
+                //搜索放映厅
+                search: () => {
+                    getShowHallView();
+                },
+                reSet: () => {
+                    app.searchShowSiteName = "";
+                    app.showHallType = "";
+                    app.showHallName = "";
+                },
+                //打开编辑放映厅弹窗
+                updateShowHallView: (showHallId) => {
+                    $.get(
+                        "/show_site/get_show_site",
+                        {
+                            isShowAll: 1
+                        },
+                        function (data) {
+                            app.showSites = data.map.showSites;
+                        }
+                    );
+                    //后端请求该放映厅的信息 显示在编辑表单内
+                    $.get(
+                        "/show_hall/list",
+                        {
+                            showHallId: showHallId
+                        },
+                        function (data) {
+                            app.showHallVo = data.map.showHallVos.list[0];
+                        }
+                    );
+                    updateOpen = layer.open(
+                        {
+                            type: 1,
+                            content: $("#updateView"),
+                            title: '编辑优惠券',
+                            shadeClose: true,
+                            shade: 0.1,
+                            area: ['44%', '70%'],
+                            maxmin: false,
+                            anim: 3,
+                            resize: false,
+                            end: function () {
+                                getShowHallView();
+                            }
+                        }
+                    );
+                },
+                //上传放映厅更新
+                updateShowHall: () => {
+                    $.ajax({
+                        url: '/show_hall/update',
+                        type: 'POST',
+                        cache: false,
+                        data: new FormData($('#updateForm')[0]),
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data.code === "200") {
+                                layer.close(updateOpen);
+                                getShowHallView();
+                                layer.msg(data.message, {icon: 1, time: 2000});
+                                return;
+                            }
+                            layer.msg(data.message, {icon: 2, time: 2000});
+                        }
+                    });
+                },
+                //打开添加放映厅弹窗
+                addShowHall: () => {
+                    $.get(
+                        "/show_site/get_show_site",
+                        {
+                            isShowAll: 1
+                        },
+                        function (data) {
+                            app.showSites = data.map.showSites;
+                        }
+                    );
+                    addOpen = layer.open(
+                        {
+                            type: 1,
+                            content: $("#addView"),
+                            title: '添加放映厅',
+                            shadeClose: true,
+                            shade: 0.1,
+                            area: ['44%', '70%'],
+                            maxmin: false,
+                            anim: 4,
+                            resize: false,
+                            end: function () {
+                                getShowHallView();
+                            }
+                        }
+                    );
+                },
+                //设置单个放映厅的状态
+                setShowHallState: (showHallState, showHallId) => {
+                    //确认操作
+                    layer.confirm("确认设置？", {icon: 3},
+                        function (index) {
+                            $.post(
+                                "/show_hall/setShowHallState",
+                                {
+                                    showHallState: showHallState,
+                                    showHallId: showHallId
+                                },
+                                function (data) {
+                                    getShowHallView();
+                                    if (data.code === "200") {
+                                        layer.msg(data.message, {icon: 1, time: 2000});
+                                        return;
+                                    }
+                                    layer.msg(data.message, {icon: 2, time: 2000});
+                                }
+                            );
+                            layer.close(index);
+                        },
+                        function (index) {
+                            layer.msg("已取消", {icon: 7, time: 2000});
+                            layer.close(index);
+                        }
+                    );
+                },
+                //批量设置放映厅的状态
+                batchSetShowHallState: (showHallState) => {
+                    let checks = $("input[name=flag]:checked");
+                    if (checks.length < 1) {
+                        layer.msg("请至少选择一个放映厅", {icon: 5, time: 2000});
+                        return;
+                    }
+                    let ids = "";
+                    checks.each(function () {
+                        ids += "," + this.value;
+                    });
+                    ids = ids.substring(1);
+                    //确认操作
+                    layer.confirm("确认设置？", {icon: 3},
+                        function (index) {
+                            $.post(
+                                "/show_hall/batchSetShowHallState",
+                                {
+                                    showHallState: showHallState,
+                                    showHallIds: ids
+                                },
+                                function (data) {
+                                    getShowHallView();
+                                    if (data.code === "200") {
+                                        layer.msg(data.message, {icon: 1, time: 2000});
+                                        return;
+                                    }
+                                    layer.msg(data.message, {icon: 2, time: 2000});
+                                }
+                            );
+                            layer.close(index);
+                        },
+                        function (index) {
+                            layer.msg("已取消", {icon: 7, time: 2000});
+                            layer.close(index);
+                        }
+                    );
+                },
+                //发送添加放映厅请求
+                addNewShowHall: () => {
+                    $.ajax({
+                        url: '/show_hall/add',
+                        type: 'POST',
+                        cache: false,
+                        data: new FormData($('#uploadForm')[0]),
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            getShowHallView();
+                            if (data.code === "200") {
+                                layer.close(addOpen);
+                                layer.msg(data.message, {icon: 1, time: 2000});
+                                return;
+                            }
+                            layer.msg(data.message, {icon: 2, time: 2000});
+                        }
+                    });
+                },
+            },
+            filters: {
+                //保留2位小数点过滤器 不四舍五入
+                number(value) {
+                    var toFixedNum = Number(value).toFixed(3);
+                    return toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                },
+                //将时间戳转换为指定格式 需要引入moment-with-locales.js
+                moment(value, formatString) {
+                    formatString = formatString || 'YYYY-MM-DD';
+                    return moment(value).format(formatString);
+                }
+            },
+
+            created: function () {
+
+            },
+            mounted: function () {
+                getShowHallView();
+            }
+        });
+
+        //条件分页查询
+        function ShowHallPages(num) {
+            $.get(
+                "/show_hall/list",
+                {
+                    showHallName: $("#showHallName").val(),
+                    showSiteName: $("#searchShowSiteName").val(),
+                    showHallType: $("#showHallType").val(),
+                    pageNum: num,
+                    pageSize: $("#pageSize").val(),
+                },
+                function (data) {
+                    app.showHallVos = data.map.showHallVos.list;
+                    let total = data.map.showHallVos.pages;
+                    total = parseInt(total) > 0 ? total : 1;
+                    let visible = 10;
+                    if (parseInt(num) > parseInt(total)) {
+                        visible = parseInt(num)
+                    }
+                    $("#pager").jqPaginator('option', {
+                        totalPages: parseInt(total),
+                        visiblePages: parseInt(visible)
+                    });
+                }
+            );
+        }
+
+        function getShowHallView() {
+            ShowHallPages(1);
+            $("#pager").jqPaginator({
+                totalPages: 1,
+                visiblePages: 1,
+                currentPage: 1,
+                //更改页数时触发
+                onPageChange: function (num, type) {
+                    ShowHallPages(num);
+                }
+            });
+        }
+
+        //全选复选框点击事件
+        function selectAll(e) {
+            $("input[name=flag]").prop("checked", $(e).prop("checked"))
+        }
+
+
+    </script>
+</html>

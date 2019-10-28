@@ -1,0 +1,69 @@
+package com.woniu.movie.controller;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.woniu.movie.pojo.User;
+import com.woniu.movie.response.ResponseResult;
+import com.woniu.movie.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 功能描述:<br>
+ * 〈用户数据的增删改查〉
+ *
+ * @author 李志祥
+ * @create 2019/10/18
+ * @since 1.0.0
+ */
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+    @Autowired
+    IUserService userService;
+
+    /*页面显示、分页*/
+    @PostMapping("/list")
+    @ResponseBody
+    public ResponseResult findAllUser(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum){
+        PageHelper.startPage(pageNum,2);
+        List<User> list=userService.findAllUser();
+        PageInfo<User> pageInfo=new PageInfo<>(list,2);
+        return new ResponseResult("200","操作成功").add("pageInfo",pageInfo);
+    }
+    /*
+    * 单个封号
+    *  @param i  用户id
+     * */
+    @PostMapping("/forbid/{i}")
+    @ResponseBody
+    public ResponseResult forbid(@PathVariable("i") Integer userid){
+        User user=new User();
+        user.setUserId(userid);
+        user.setUserState("0");
+        int num=userService.updateUserStateById(user);
+        if(num<1){
+            return new ResponseResult("200","失败");
+        }
+        return new ResponseResult("100","修改成功");
+    }
+    /*
+    * 批量封号
+    * @param  ids   多个用户的id，需要用split转换成数组
+     * */
+    @PostMapping("/forbidAll")
+    @ResponseBody
+    public ResponseResult deleteAll(String ids){
+        int num=userService.updateUserStateByArray(ids.split(","));
+        if(num>0) {
+            return new ResponseResult("100", "封号成功");
+        }else{
+            return new ResponseResult("200", "封号失败，请重新选择");
+        }
+    }
+}

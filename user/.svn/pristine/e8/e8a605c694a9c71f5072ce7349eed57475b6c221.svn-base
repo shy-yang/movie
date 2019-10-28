@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.MovieTicketMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.MovieTicket">
+        <!--@mbg.generated-->
+        <!--@Table movie_ticket-->
+        <id column="movie_ticket_id" jdbcType="INTEGER" property="movieTicketId"/>
+        <result column="movie_schedule_id" jdbcType="INTEGER" property="movieScheduleId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="movie_ticket_seat_x" jdbcType="VARCHAR" property="movieTicketSeatX"/>
+        <result column="movie_ticket_seat_y" jdbcType="VARCHAR" property="movieTicketSeatY"/>
+        <result column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="movie_ticket_seat_state" jdbcType="VARCHAR" property="movieTicketSeatState"/>
+    </resultMap>
+
+    <resultMap id="VoResultMap" type="movieTicketVo">
+        <!--@mbg.generated-->
+        <!--@Table movie_ticket-->
+        <id column="movie_ticket_id" jdbcType="INTEGER" property="movieTicketId"/>
+        <result column="movie_schedule_id" jdbcType="INTEGER" property="movieScheduleId"/>
+        <result column="movie_ticket_seat_x" jdbcType="VARCHAR" property="movieTicketSeatX"/>
+        <result column="movie_ticket_seat_y" jdbcType="VARCHAR" property="movieTicketSeatY"/>
+        <result column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="movie_ticket_seat_state" jdbcType="VARCHAR" property="movieTicketSeatState"/>
+        <result column="movie_scheduleId" jdbcType="INTEGER" property="movieScheduleId"/>
+        <result column="movie_schedule_start_time" jdbcType="TIMESTAMP" property="movieScheduleStartTime"/>
+        <result column="movie_schedule_end_time" jdbcType="TIMESTAMP" property="movieScheduleEndTime"/>
+        <result column="movie_schedule_price" property="movieSchedulePrice"/>
+        <association property="movie" javaType="com.woniu.movie.pojo.Movie">
+            <id column="movie_id" jdbcType="INTEGER" property="movieId"/>
+            <result column="movie_name" jdbcType="VARCHAR" property="movieName"/>
+            <result column="movie_decade" jdbcType="VARCHAR" property="movieDecade"/>
+            <result column="movie_country" jdbcType="VARCHAR" property="movieCountry"/>
+            <result column="movie_level" jdbcType="VARCHAR" property="movieLevel"/>
+            <result column="movie_language" jdbcType="VARCHAR" property="movieLanguage"/>
+            <result column="movie_duration" jdbcType="VARCHAR" property="movieDuration"/>
+            <result column="movie_director" jdbcType="VARCHAR" property="movieDirector"/>
+            <result column="movie_actors" jdbcType="VARCHAR" property="movieActors"/>
+            <result column="movie_placard" jdbcType="VARCHAR" property="moviePlacard"/>
+            <result column="movie_publish" jdbcType="DATE" property="moviePublish"/>
+            <result column="movie_score" jdbcType="DOUBLE" property="movieScore"/>
+            <result column="movie_total_score" jdbcType="DOUBLE" property="movieTotalScore"/>
+            <result column="movie_score_times" jdbcType="INTEGER" property="movieScoreTimes"/>
+            <result column="movie_description" jdbcType="VARCHAR" property="movieDescription"/>
+            <result column="movie_box_office" jdbcType="DECIMAL" property="movieBoxOffice"/>
+            <result column="movie_state" jdbcType="INTEGER" property="movieState"/>
+        </association>
+        <association property="showHall" javaType="com.woniu.movie.pojo.ShowHall">
+            <id column="show_hall_id" jdbcType="INTEGER" property="showHallId"/>
+            <result column="show_hall_number" jdbcType="VARCHAR" property="showHallNumber"/>
+            <result column="show_hall_name" jdbcType="VARCHAR" property="showHallName"/>
+            <result column="show_hall_type" jdbcType="VARCHAR" property="showHallType"/>
+            <result column="show_hall_seat_count" jdbcType="INTEGER" property="showHallSeatCount"/>
+            <result column="show_hall_state" jdbcType="VARCHAR" property="showHallState"/>
+            <result column="show_site_id" jdbcType="INTEGER" property="showSiteId"/>
+        </association>
+        <association property="showSite" javaType="com.woniu.movie.pojo.ShowSite">
+            <id column="show_site_id" jdbcType="INTEGER" property="showSiteId"/>
+            <result column="show_site_name" jdbcType="VARCHAR" property="showSiteName"/>
+            <result column="show_site_address" jdbcType="VARCHAR" property="showSiteAddress"/>
+            <result column="show_site_coordinate" jdbcType="VARCHAR" property="showSiteCoordinate"/>
+            <result column="show_site_phone" jdbcType="VARCHAR" property="showSitePhone"/>
+            <result column="show_site_service" jdbcType="VARCHAR" property="showSiteService"/>
+            <result column="show_site_image" jdbcType="VARCHAR" property="showSiteImage"/>
+            <result column="show_site_description" jdbcType="VARCHAR" property="showSiteDescription"/>
+            <result column="cinema_id" jdbcType="INTEGER" property="cinemaId"/>
+        </association>
+        <association property="cinema" javaType="com.woniu.movie.pojo.Cinema">
+            <id column="cinema_id" jdbcType="INTEGER" property="cinemaId"/>
+            <result column="cinema_name" jdbcType="VARCHAR" property="cinemaName"/>
+            <result column="cinema_address" jdbcType="VARCHAR" property="cinemaAddress"/>
+            <result column="cinema_phone" jdbcType="VARCHAR" property="cinemaPhone"/>
+            <result column="cinema_service" jdbcType="VARCHAR" property="cinemaService"/>
+            <result column="cinema_image" jdbcType="VARCHAR" property="cinemaImage"/>
+            <result column="cinema_description" jdbcType="VARCHAR" property="cinemaDescription"/>
+        </association>
+        <association property="user" javaType="user">
+            <id column="user_id" jdbcType="INTEGER" property="userId"/>
+            <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+            <result column="user_password" jdbcType="VARCHAR" property="userPassword"/>
+            <result column="user_nickname" jdbcType="VARCHAR" property="userNickname"/>
+            <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+            <result column="user_email" jdbcType="VARCHAR" property="userEmail"/>
+            <result column="user_sex" jdbcType="VARCHAR" property="userSex"/>
+            <result column="user_head_image" jdbcType="VARCHAR" property="userHeadImage"/>
+            <result column="user_description" jdbcType="VARCHAR" property="userDescription"/>
+            <result column="user_score_active" jdbcType="INTEGER" property="userScoreActive"/>
+            <result column="user_score_sum" jdbcType="INTEGER" property="userScoreSum"/>
+            <result column="user_level" jdbcType="INTEGER" property="userLevel"/>
+            <result column="user_state" jdbcType="VARCHAR" property="userState"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        movie_ticket_id, movie_schedule_id, user_id, movie_ticket_seat_x, movie_ticket_seat_y,
+        order_id, movie_ticket_seat_state
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from movie_ticket
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from movie_ticket
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="movie_ticket_id" keyProperty="movieTicketId"
+            parameterType="com.woniu.movie.pojo.MovieTicket" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into movie_ticket (movie_schedule_id, user_id, movie_ticket_seat_x,
+        movie_ticket_seat_y, order_id, movie_ticket_seat_state
+        )
+        values (#{movieScheduleId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{movieTicketSeatX,jdbcType=VARCHAR},
+        #{movieTicketSeatY,jdbcType=VARCHAR}, #{orderId,jdbcType=INTEGER}, #{movieTicketSeatState,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" keyColumn="movie_ticket_id" keyProperty="movieTicketId"
+            parameterType="com.woniu.movie.pojo.MovieTicket" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into movie_ticket
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="movieScheduleId != null">
+                movie_schedule_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="movieTicketSeatX != null">
+                movie_ticket_seat_x,
+            </if>
+            <if test="movieTicketSeatY != null">
+                movie_ticket_seat_y,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="movieTicketSeatState != null">
+                movie_ticket_seat_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="movieScheduleId != null">
+                #{movieScheduleId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatX != null">
+                #{movieTicketSeatX,jdbcType=VARCHAR},
+            </if>
+            <if test="movieTicketSeatY != null">
+                #{movieTicketSeatY,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatState != null">
+                #{movieTicketSeatState,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.MovieTicket">
+        <!--@mbg.generated-->
+        update movie_ticket
+        <set>
+            <if test="movieScheduleId != null">
+                movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatX != null">
+                movie_ticket_seat_x = #{movieTicketSeatX,jdbcType=VARCHAR},
+            </if>
+            <if test="movieTicketSeatY != null">
+                movie_ticket_seat_y = #{movieTicketSeatY,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatState != null">
+                movie_ticket_seat_state = #{movieTicketSeatState,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.MovieTicket">
+        <!--@mbg.generated-->
+        update movie_ticket
+        set movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=INTEGER},
+        movie_ticket_seat_x = #{movieTicketSeatX,jdbcType=VARCHAR},
+        movie_ticket_seat_y = #{movieTicketSeatY,jdbcType=VARCHAR},
+        order_id = #{orderId,jdbcType=INTEGER},
+        movie_ticket_seat_state = #{movieTicketSeatState,jdbcType=VARCHAR}
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </update>
+    <sql id="mtqv">
+        <if test="mtqv!=null">
+            <if test="mtqv.movieTicketId!=null">
+                and mt.movie_ticket_id=#{mtqv.movieTicketId,jdbcType=INTEGER}
+            </if>
+            <if test="mtqv.movieScheduleId != null">
+                and mt.movie_schedule_id=#{mtqv.movieScheduleId,jdbcType=INTEGER}
+            </if>
+            <if test="mtqv.userId!=null and mtqv.userId>0">
+                and mt.user_id=u.user_id
+            </if>
+        </if>
+        and mt.movie_schedule_id=ms.movie_schedule_id
+        and ms.movie_id=m.movie_id
+        and ms.show_hall_id=sh.show_hall_id
+        and ms.show_site_id=ss.show_site_id
+        and ss.cinema_id=c.cinema_id
+    </sql>
+    <select id="selectMovieTicketVoByMovieTicketQueryVo" resultMap="VoResultMap">
+        select
+        mt.movie_ticket_id,mt.movie_ticket_seat_x,mt.movie_ticket_seat_y,mt.movie_ticket_seat_state,
+        ms.movie_schedule_id,ms.movie_schedule_start_time,ms.movie_schedule_end_time,ms.movie_schedule_price,
+        m.*,
+        sh.show_hall_id,sh.show_hall_number,sh.show_hall_name,sh.show_hall_type,sh.show_hall_seat_count,sh.show_hall_state,
+        ss.*,
+        c.cinema_name,c.cinema_address,c.cinema_phone,c.cinema_description,c.cinema_service,c.cinema_image
+        from
+        movie_ticket mt,
+        movie_schedule ms,
+        movie m,
+        show_hall sh,
+        show_site ss,
+        cinema c
+        <if test="mtqv.userId!=null and mtqv.userId>0">
+            ,user u
+        </if>
+
+        <where>
+            <include refid="mtqv"/>
+        </where>
+    </select>
+    <select id="selectMovieTicketPriceByMovieTicketId" resultType="java.math.BigDecimal">
+        select
+        ms.movie_schedule_price
+        from
+        movie_schedule ms,
+        movie_ticket mt
+        where
+        ms.movie_schedule_id=mt.movie_schedule_id and
+        mt.movie_ticket_id=#{movieTicketId,jdbcType=INTEGER}
+    </select>
+    <select id="selectTotalPriceByMovieTicketIds" resultType="java.math.BigDecimal">
+        select
+        sum(ms.movie_schedule_price)
+        from
+        movie_ticket mt,
+        movie_schedule ms
+        where
+        ms.movie_schedule_id=mt.movie_schedule_id and
+        mt.movie_ticket_id in
+        <foreach collection="movieTicketIds" item="mtId" separator="," open="(" close=")">
+            #{mtId,jdbcType=INTEGER}
+        </foreach>
+        and movie_ticket_seat_state='1'
+    </select>
+    <update id="updateByMovieTicketIdsSelective">
+        update movie_ticket
+        <set>
+            <if test="movieTicket.movieScheduleId != null">
+                movie_schedule_id = #{movieTicket.movieScheduleId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicket.userId != null">
+                user_id = #{movieTicket.userId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicket.movieTicketSeatX != null">
+                movie_ticket_seat_x = #{movieTicket.movieTicketSeatX,jdbcType=VARCHAR},
+            </if>
+            <if test="movieTicket.movieTicketSeatY != null">
+                movie_ticket_seat_y = #{movieTicket.movieTicketSeatY,jdbcType=VARCHAR},
+            </if>
+            <if test="movieTicket.orderId != null">
+                order_id = #{movieTicket.orderId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicket.movieTicketSeatState != null">
+                movie_ticket_seat_state = #{movieTicket.movieTicketSeatState,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where movie_ticket_id in
+        <foreach collection="movieTicketIds" item="mtId" separator="," open="(" close=")">
+            #{mtId,jdbcType=INTEGER}
+        </foreach>
+        and movie_ticket_seat_state='1'
+    </update>
+    <select id="selectUntouchableMovieTicketByMovieTicketIds" resultMap="BaseResultMap">
+        select
+        *
+        from
+        movie_ticket
+        where
+        movie_ticket_id in
+        <foreach collection="movieTicketIds" item="mtId" separator="," open="(" close=")">
+            #{mtId,jdbcType=INTEGER}
+        </foreach>
+        and movie_ticket_seat_state='0'
+    </select>
+</mapper>

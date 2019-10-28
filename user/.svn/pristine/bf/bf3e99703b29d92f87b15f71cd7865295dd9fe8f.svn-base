@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>影院首页</title>
+
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/bootstrap4.3.1.min.css">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/script.js"></script>
+        <script src="js/vue2.6.10_min.js"></script>
+        <script src="js/jqpaginator.js"></script>
+        <script src="just_layer/layer.js"></script>
+        <style type="text/css">
+            [v-cloak] {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app" v-cloak>
+
+            <div th:replace="~{common/header::header}"></div>
+
+            <div class="main">
+                <div class="main-inner body-width">
+                    <!--轮播图 推荐栏start-->
+                    <div class="banner clearfix">
+                        <div class="slider" id="slider">
+                            <ul class="slider-wrapper">
+                                <li class="item" data-title="这位上神！速速到我的本子里来">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img1.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="想换上新衣去旅行！" data-author="by 占秋">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img2.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="你的书写工具需要一个庇护所" data-author="by Moollly">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img3.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="气温起伏，一件外套保护你" data-author="by 郑南音">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img4.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="鲜为人知的泰国小众小城——董里">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img5.jpg" alt="#"></a>
+                                </li>
+                            </ul>
+                            <a href="javascript:;" class="slider-prev"></a>
+                            <a href="javascript:;" class="slider-next"></a>
+                            <div class="slider-title">
+                                <h2></h2>
+                                <span></span>
+                            </div>
+                            <div class="slider-btns">
+                                <span class="item"></span>
+                                <span class="item"></span>
+                                <span class="item"></span>
+                                <span class="item"></span>
+                                <span class="item"></span>
+                            </div>
+                        </div>
+                        <div class="banner-info">
+                            <div class="news body-border">
+                                <ul>
+                                    <li class="title">社区热点</li>
+                                    <li class="link">
+                                        <a href="#">冬天</a>
+                                        <span></span>
+                                        <a href="#">把生活过成一首诗</a>
+                                        <span></span>
+                                        <a href="#">早餐</a>
+                                        <span></span>
+                                        <a href="#">记下时间走过的路</a>
+                                        <span></span>
+                                        <a href="#">穿搭</a>
+                                        <span></span>
+                                        <a href="#">家居</a>
+                                        <span></span>
+                                        <a href="#">原创</a>
+                                        <span></span>
+                                    </li>
+                                    <li class="choose">
+                                        <a href="#">『人气连衣裙精选』 大合集</a>
+                                        <span class="icon-text__pink">精选</span>
+                                    </li>
+                                    <li class="assistant">
+                                        <p>收图小助手: <a href="#">tang收集工具</a></p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="app body-border"><a href="#"></a></div>
+                        </div>
+                    </div>
+                    <!--轮播图 推荐栏end-->
+                    <div class="main-cont main-recommend">
+                        <div class="main-cont__title">
+                            <h3>所有电影</h3>
+                            <p class="list">
+                                <em>良品购：</em>
+                                <a href="#">全部</a>
+                                <span>|</span>
+                                <a href="#">上衣</a>
+                                <span>|</span>
+                                <a href="#">裙裤</a>
+                                <span>|</span>
+                                <a href="#">配饰</a>
+                                <span>|</span>
+                                <a href="#">鞋子</a>
+                                <span>|</span>
+                                <a href="#">包袋</a>
+                                <span>|</span>
+                                <a href="#">日杂</a>
+                            </p>
+                        </div>
+                        <ul class="main-cont__list clearfix">
+                            <li class="item mt-3" v-for="m in movies">
+                                <a :href="'/movie/detail?movieId='+m.movieId" class="pic">
+                                    <img :src="m.moviePlacard" :alt="m.movieName" style="width: 224px;height: 224px">
+                                </a>
+                                <div class="info">
+                                    <a :href="'/movie/detail?movieId='+m.movieId"
+                                       class="title text-info text-decoration-none">{{m.movieName
+                                        | textLen}}
+                                        <div class="float-right mr-3">{{m.movieScore | number}}</div>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                    <span>{{m.movieLevel | textLen}}</span>
+                                    <span v-if="m.movieState==0" class="icon-text__pink purchase">未上映</span>
+                                    <a v-if="m.movieState==1" :href="'/movie/buy?movieState='+m.movieState"
+                                       class="icon-text__pink register">购票</a>
+                                    <span v-if="m.movieState==2" class="icon-text__pink ">已下映</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--分页小工具 start-->
+                    <div class="mt-4 row">
+                        <div class="col-4 offset-3">
+                            <ul id="pager" class="pagination"></ul>
+                        </div>
+                    </div>
+                    <!--分页小工具 end-->
+                </div>
+            </div>
+
+            <div th:replace="~{common/footer::footer}"></div>
+
+        </div>
+    </body>
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                movies: []
+            },
+            methods: {},
+            filters: {
+                //保留1位小数点过滤器 四舍五入
+                number(value) {
+                    var toFixedNum = Number(value).toFixed(2);
+                    return value - toFixedNum >= 0.05 ? (toFixedNum + 0.1).substring(0, toFixedNum.toString().length - 1) : toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                },
+                //将时间戳转换为指定格式 需要引入moment-with-locales.js
+                moment(value, formatString) {
+                    formatString = formatString || 'YYYY-MM-DD';
+                    return moment(value).format(formatString);
+                },
+                //设置文本长度
+                textLen(value) {
+                    var text = value + "";
+                    var newText = text.substring(0, 6) + "...";
+                    return text.length > 6 ? newText : text;
+                }
+            },
+            created: function () {
+                getMovieView();
+            }
+        });
+
+        //分页查询
+        function getMovieView() {
+            moviePages(1);
+            $("#pager").jqPaginator({
+                totalPages: 1,
+                visiblePages: 1,
+                currentPage: 1,
+                //更改页数时触发
+                onPageChange: function (num, type) {
+                    moviePages(num);
+                    /*$('#now_page').html('当前第' + num + '/' + total + '页');*/
+                }
+            });
+        }
+
+        function moviePages(num) {
+            $.get(
+                "/movie/list",
+                {
+                    page: num,
+                    pageSize: 20,
+                },
+                function (data) {
+                    app.movies = data.map.movies.list;
+                    let total = data.map.movies.pages;
+                    let visible = 10;
+                    if (parseInt(num) > parseInt(total)) {
+                        visible = parseInt(num)
+                    }
+                    $("#pager").jqPaginator('option', {
+                        totalPages: parseInt(total),
+                        visiblePages: parseInt(visible)
+                    });
+                }
+            );
+        }
+
+        !function () {
+            getMovieView();
+        }();
+    </script>
+</html>

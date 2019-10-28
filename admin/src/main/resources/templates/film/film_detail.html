@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title> 添加电影</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+
+    <link href="css/plugins/chosen/chosen.css" rel="stylesheet">
+
+    <link href="css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+
+    <link href="css/plugins/cropper/cropper.min.css" rel="stylesheet">
+
+    <link href="css/plugins/switchery/switchery.css" rel="stylesheet">
+
+    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+
+    <link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+
+    <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+    <link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+
+    <link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="layer/css/layui.css"  rel="stylesheet">
+
+</head>
+<body>
+    <div class="wrapper wrapper-content">
+    <div class="row animated fadeInRight">
+
+        <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>影片详情</h5>
+                </div>
+                <div>
+                    <div class="ibox-content no-padding border-left-right">
+                        <img id="moviePlacard" style="margin: 0 auto;height: 300px" class="img-responsive">
+                    </div>
+
+                        <div class="ibox-content no-padding" >
+                            <ul class="list-group">
+                                <li class="list-group-item" id="movieName">
+                                    <span class="badge badge-primary">16</span>影片名称：
+                                </li>
+                                <li class="list-group-item " id="movieDecade">
+                                    <span class="badge badge-info">12</span>年代：
+                                </li>
+                                <li class="list-group-item" id="movieCountry">
+                                    <span class="badge badge-danger">10</span>国家：
+                                </li>
+                                <li class="list-group-item"id="movieLevel">
+                                    <span class="badge badge-success">10</span>类别：
+                                </li>
+                                <li class="list-group-item"id="movieLanguage">
+                                    <span class="badge badge-success">10</span>语言：
+                                </li>
+                                <li class="list-group-item"id="movieDuration">
+                                    <span class="badge badge-success">10</span>年代：
+                                </li>
+                                <li class="list-group-item"id="movieDirector">
+                                    <span class="badge badge-success">10</span>导演：
+                                </li>
+                                <li class="list-group-item"id="movieActors">
+                                    <span class="badge badge-success">10</span>演员：
+                                </li>
+                                <li class="list-group-item"id="moviePubish">
+                                    <span class="badge badge-success">10</span>上映日期：
+                                </li>
+                                <li class="list-group-item"id="movieScore">
+                                <span class="badge badge-success">10</span>电影评分：
+                            </li>
+                                <li class="list-group-item"id="movieDiscription">
+                                    <span class="badge badge-success">10</span>电影简介：
+                                </li>
+                                <li class="list-group-item"id="movieState">
+                                    <span class="badge badge-success">10</span>状态：
+                                </li>
+                            </ul>
+                        </div>
+                        <!--
+                        <p id="movieLanguage">语言：</p>
+                        <p id="movieDuration">年代：</p>
+                        <p id="movieDirector">导演：</p>
+                        <p id="movieActors">演员：</p>
+                        <p id="moviePublish">上映日期：</p>
+                        <p id="movieScore">电影评分：</p>
+                        <p id="movieTotalScore">电影总分：</p>
+                        <p id="movieDiscription">影片简介：</p>
+                        <p id="movieState">影片状态</p>-->
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>最新动态</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="profile.html#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="profile.html#">选项1</a>
+                            </li>
+                            <li><a href="profile.html#">选项2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <div>
+                        <div class="feed-activity-list">
+
+                            <div class="feed-element">
+                                <a href="profile.html#" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a1.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right text-navy">1天前</small>
+                                    <strong>奔波儿灞</strong> 关注了 <strong>灞波儿奔</strong>.
+                                    <br>
+                                    <small class="text-muted">54分钟前 来自 皮皮时光机</small>
+                                    <div class="actions">
+                                        <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> 赞 </a>
+                                        <a class="btn btn-xs btn-danger"><i class="fa fa-heart"></i> 收藏</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="feed-element">
+                                <a href="profile.html#" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/profile.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right">5分钟前</small>
+                                    <strong>作家崔成浩</strong> 发布了一篇文章
+                                    <br>
+                                    <small class="text-muted">今天 10:20 来自 iPhone 6 Plus</small>
+
+                                </div>
+                            </div>
+
+                            <div class="feed-element">
+                                <a href="profile.html#" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a2.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right">2小时前</small>
+                                    <strong>作家崔成浩</strong> 抽奖中了20万
+                                    <br>
+                                    <small class="text-muted">今天 09:27 来自 Koryolink iPhone</small>
+                                    <div class="well">
+                                        抽奖，人民币2000元，从转发这个微博的粉丝中抽取一人。11月16日平台开奖。随手一转，万一中了呢？
+                                    </div>
+                                    <div class="pull-right">
+                                        <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> 赞 </a>
+                                        <a class="btn btn-xs btn-white"><i class="fa fa-heart"></i> 收藏</a>
+                                        <a class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i> 评论</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="feed-element">
+                                <a href="profile.html#" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a3.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right">2天前</small>
+                                    <strong>天猫</strong> 上传了2张图片
+                                    <br>
+                                    <small class="text-muted">11月7日 11:56 来自 微博 weibo.com</small>
+                                    <div class="photos">
+                                        <a target="_blank" href="http://24.media.tumblr.com/20a9c501846f50c1271210639987000f/tumblr_n4vje69pJm1st5lhmo1_1280.jpg">
+                                            <img alt="image" class="feed-photo" src="img/p1.jpg">
+                                        </a>
+                                        <a target="_blank" href="http://37.media.tumblr.com/9afe602b3e624aff6681b0b51f5a062b/tumblr_n4ef69szs71st5lhmo1_1280.jpg">
+                                            <img alt="image" class="feed-photo" src="img/p3.jpg">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="feed-element">
+                                <a href="profile.html#" class="pull-left">
+                                    <img alt="image" class="img-circle" src="img/a4.jpg">
+                                </a>
+                                <div class="media-body ">
+                                    <small class="pull-right text-navy">5小时前</small>
+                                    <strong>在水一方Y</strong> 关注了 <strong>那二十年的单身</strong>.
+                                    <br>
+                                    <small class="text-muted">今天 10:39 来自 iPhone客户端</small>
+                                    <div class="actions">
+                                        <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> 赞 </a>
+                                        <a class="btn btn-xs btn-white"><i class="fa fa-heart"></i> 收藏</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-primary btn-block m"><i class="fa fa-arrow-down"></i> 显示更多</button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/jquery.min.js?v=2.1.4"></script>
+<script src="js/bootstrap.min.js?v=3.3.6"></script>
+
+<!-- 自定义js -->
+<script src="js/content.js?v=1.0.0"></script>
+<script src="//res.layui.com/layui/dist/layui.js" charset="utf-8"></script>
+<script src="layer/layui.js"></script>
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+    /*评分不用
+layui.use(['rate'], function(){
+var rate = layui.rate;
+rate.render({
+    elem: '#rate'
+    ,value: 3.5
+    ,half: true
+    ,text: true
+})
+});*/
+    layui.use('upload', function() {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        upload.render({
+            elem: '#test10'
+            , url: '/upload/'
+            , done: function (res) {
+                console.log(res)
+            }
+        });
+    });
+</script>
+</html>

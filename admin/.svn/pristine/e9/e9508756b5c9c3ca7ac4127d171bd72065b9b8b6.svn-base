@@ -1,0 +1,27 @@
+package com.woniu.movie.util;
+
+import com.woniu.movie.pojo.Seat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 处理座位数据的工具类
+ */
+public class SeatUtil {
+    /**
+     * 将x_y形式的座位数据转换为Seat对象数组
+     *
+     * @param seats x_y形式的座位坐标字符串，坐标之间用,隔开
+     * @return 返回一个座位对象集合
+     */
+    public static List<Seat> transStringToSeats(String seats) {
+        List<Seat> seatList = new ArrayList<>();
+        String[] seatPosition = seats.split(",");
+        for (String sp : seatPosition) {
+            String[] yAndX = sp.split("_");
+            seatList.add(new Seat(yAndX[1], yAndX[0]));
+        }
+        return seatList;
+    }
+}

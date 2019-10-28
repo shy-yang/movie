@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="@{/}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1024">
+    <title>影院首页</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/bootstrap4.3.1.min.css">
+    <link rel="stylesheet" href="css/mycss.css">
+    <link rel="stylesheet" href="layer/css/layui.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+    <script src="js/jqpaginator.js"></script>
+    <script src="just_layer/layer.js"></script>
+    <script src="layer/layui.js"></script>
+
+    <style type="text/css">
+        body {
+            width: 1366px;
+            height: auto;
+            overflow: auto;
+            margin: 0 auto;
+        }
+
+        div {
+            white-space: nowrap;
+        }
+
+        .noScore {
+            padding-top: 58px;
+            margin-bottom: 15px;
+        }
+
+        .score {
+            line-height: 50px;
+            text-align: center;
+            color: #ffc600;
+            margin-bottom: 15px;
+        }
+
+        .score .num {
+            font-size: 36px;
+        }
+
+        #commentForm {
+            width: 90%;
+            height: 435px;
+            margin: 15px auto 0px;
+            padding-top: 28px;
+        }
+
+        .scoreMessage {
+            margin-bottom: 15px;
+            color: #ffc600;
+            text-align: center;
+        }
+
+        #stars {
+            padding-left: 187px;
+        }
+
+        .textContent {
+            width: 470px;
+            height: 200px;
+            margin: 0 15px 20px;
+            border: 1px solid #d8d8d8;
+            border-radius: 4px;
+            padding: 10px 10px 30px;
+        }
+
+        .textContentActive {
+            width: 470px;
+            height: 200px;
+            margin: 0 15px 20px;
+            border: 1px solid #df2d2d;
+            border-radius: 4px;
+            padding: 10px 10px 30px;
+
+        }
+
+        #submitComment {
+            float: right;
+
+        }
+
+        .wordCountInfo {
+            position: absolute;
+            right: 60px;
+            bottom: 85px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{common/header::header}"></div>
+<!--<img th:src="${#request.getAttribute('movie').moviePlacard}">-->
+<!--<img th:src="@{images/ImgBackground.png}">-->
+<div class="container-fluid">
+    <!--电影banner信息-->
+
+    <div class="row" style="margin-top: 60px;">
+        <img id="bannerImg" height="360px" src="images/ImgBackground.png">
+        <div class="col-sm-4">
+            <div class=" img_background">
+                <img width="232px" height="322px" th:src="${#request.getAttribute('movie').moviePlacard}">
+            </div>
+        </div>
+        <div class="col-sm-3 banner_font" style="padding-top: 50px;">
+            <input id="movieId" th:value="${#request.getAttribute('movie').movieId}" type="hidden">
+            <h3 th:text="${#strings.arraySplit(#request.getAttribute('movie').movieName,'/')[0]}"></h3>
+            <div th:if="${#arrays.length(#strings.arraySplit(#request.getAttribute('movie').movieName,'/'))>1}">
+                <div class="banner_subtitle"
+                     th:text="${#strings.arraySplit(#request.getAttribute('movie').movieName,'/')[1]}"></div>
+            </div>
+            <div th:text="${#request.getAttribute('movie').movieLevel}"></div>
+            <div>
+                <span th:text="${#request.getAttribute('movie').movieCountry}"></span>
+                <span>/</span>
+                <span th:text="${#strings.replace(#request.getAttribute('movie').movieLanguage,'/',',')}"></span>
+            </div>
+            <div style="height: 60px;"
+                 th:text="${#dates.format(#request.getAttribute('movie').moviePublish,'yyyy-MM-dd')}">
+
+            </div>
+            <div style="margin-top: 30px;">
+                <div style="display: flex;justify-content: space-between;">
+                    <button class="btn " style="width: 48%;background-color: #756189;color: white;">想看</button>
+                    <button class="btn " style="width: 48%; background-color: #756189;color: white;">评分</button>
+                </div>
+                <div style="margin-top: 20px;">
+                    <a th:href="@{/movieSchedule/movie_schedule_view(movieId=${#request.getAttribute('movie').movieId})}"
+                       class="btn btn-danger btn-block">
+                        特惠购票
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3 banner_font" style="padding-top: 190px;">
+            <div>用户评分</div>
+            <div>
+                <span style="font-size: 50px;color: #ffc600;" id="score"></span>
+                <div style="display: inline-block;height: 10px;">
+
+                    <div>
+                        <div id="test03"></div>
+                    </div>
+                    <div th:text="${#request.getAttribute('movie').movieScoreTimes+'次评论'}"></div>
+                </div>
+            </div>
+            <div>累计票房</div>
+            <div th:text="${#request.getAttribute('movie').movieBoxOffice}">0</div>
+        </div>
+    </div>
+    <div class="row" style=" margin-top: 100px;">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-6" style="display: inline-block;color: #ef4238;border-bottom: 2px solid #eee;">
+            <div style="display: inline-block;font-size: 18px;border-bottom: #ef4238;">介绍</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-6">
+            <h5 style="line-height: 80px">
+                剧情简介
+            </h5>
+            <input id="description" type="hidden" th:value="${#request.getAttribute('movie').movieDescription}">
+            <p id="descriptionDiv">
+
+            </p>
+            <!--<div th:text="${#request.getAttribute('movie').movieDescription}">
+
+            </div>-->
+            <h5 style="line-height: 80px">
+                导演
+            </h5>
+            <div th:text="${#request.getAttribute('movie').movieDirector}">
+
+            </div>
+            <h5 style="line-height: 80px">
+                演员
+            </h5>
+            <input id="actors" type="hidden" th:value="${#request.getAttribute('movie').movieActors}">
+            <p id="actorsDiv">
+
+            </p>
+            <h5 style="line-height: 80px">
+                热门评论
+                <button onclick="comment()" class="btn btn-sm btn-outline-danger"
+                        style="float: right;margin-top: 30px;">写短评
+                </button>
+            </h5>
+            <div class="ibox-content">
+                <div>
+                    <div class="feed-activity-list">
+
+                        <div class="feed-element">
+                            <a href="profile.html#" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/a1.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right text-navy">1天前</small>
+                                <strong>奔波儿灞</strong> 关注了 <strong>灞波儿奔</strong>.
+                                <br>
+                                <small class="text-muted">54分钟前 来自 皮皮时光机</small>
+                            </div>
+                        </div>
+
+                        <div class="feed-element">
+                            <a href="profile.html#" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/profile.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right">5分钟前</small>
+                                <strong>作家崔成浩</strong> 发布了一篇文章
+                                <br>
+                                <small class="text-muted">今天 10:20 来自 iPhone 6 Plus</small>
+
+                            </div>
+                        </div>
+
+                        <div class="feed-element">
+                            <a href="profile.html#" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/a2.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right">2小时前</small>
+                                <strong>作家崔成浩</strong> 抽奖中了20万
+                                <br>
+                                <small class="text-muted">今天 09:27 来自 Koryolink iPhone</small>
+                                <div class="well">
+                                    抽奖，人民币2000元，从转发这个微博的粉丝中抽取一人。11月16日平台开奖。随手一转，万一中了呢？
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feed-element">
+                            <a href="profile.html#" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/a3.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right">2天前</small>
+                                <strong>天猫</strong> 上传了2张图片
+                                <br>
+                                <small class="text-muted">11月7日 11:56 来自 微博 weibo.com</small>
+                                <div class="photos">
+                                    <a target="_blank"
+                                       href="http://24.media.tumblr.com/20a9c501846f50c1271210639987000f/tumblr_n4vje69pJm1st5lhmo1_1280.jpg">
+                                        <img alt="image" class="feed-photo" src="img/p1.jpg">
+                                    </a>
+                                    <a target="_blank"
+                                       href="http://37.media.tumblr.com/9afe602b3e624aff6681b0b51f5a062b/tumblr_n4ef69szs71st5lhmo1_1280.jpg">
+                                        <img alt="image" class="feed-photo" src="img/p3.jpg">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feed-element">
+                            <a href="profile.html#" class="pull-left">
+                                <img alt="image" class="img-circle" src="img/a4.jpg">
+                            </a>
+                            <div class="media-body ">
+                                <small class="pull-right text-navy">5小时前</small>
+                                <strong>在水一方Y</strong> 关注了 <strong>那二十年的单身</strong>.
+                                <br>
+                                <small class="text-muted">今天 10:39 来自 iPhone客户端</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button class="btn btn-primary btn-block m"><i class="fa fa-arrow-down"></i> 显示更多</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <input id="totalScore" type="hidden" th:value="${#request.getAttribute('movie').movieTotalScore}">
+    <input id="scoreTimes" type="hidden" th:value="${#request.getAttribute('movie').movieScoreTimes}">
+</div>
+<div th:replace="~{common/footer::footer}"></div>
+</body>
+<script>
+    $(function () {
+        var actorStr = $('#actors').val();
+        for (var i = 0; i < actorStr.length; i++) {
+            if ((i + 1) % 80 == 0) {
+                actorStr = insertStr(actorStr, '<br>', i)
+            }
+        }
+        $("#actorsDiv").html(actorStr)
+        var descriptionStr = $('#description').val();
+        for (var i = 0; i < descriptionStr.length; i++) {
+            if ((i + 1) % 50 == 0) {
+                descriptionStr = insertStr(descriptionStr, '<br>', i)
+            }
+        }
+        $("#descriptionDiv").html(descriptionStr)
+    })
+
+    //字符串指定位置插入字符串
+    function insertStr(oldStr, insertStr, index) {
+        return oldStr.slice(0, index) + insertStr + oldStr.slice(index);
+    }
+
+    $("#actorsDiv").html('<p style="width: 100%">' + $('#actors').val() + '</p>')
+    //显示电影详情的评分
+    layui.use(['rate'], function () {
+        var totalScore = parseInt($("#totalScore").val());
+        var scoreTimes = parseInt($("#scoreTimes").val())
+        var score = totalScore / scoreTimes;
+
+        //保留一位小数
+        if (Number.isNaN(score)) {
+            score = 0;
+            $("#score").text('0.0')
+        } else {
+            score = score.toFixed(1)
+            $("#score").text(score)
+        }
+
+        var rate = layui.rate;
+        rate.render({
+            elem: '#test03'
+            , value: score
+            , half: true
+            , readonly: true
+        })
+    })
+    let starTotal = 0;
+    let commentStr = '';
+
+    //打开评论弹框
+    function comment() {
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            shadeClose: true,
+            area: ['550px', '470px'],
+            skin: '.blue',
+            content: '<div id="commentForm"></div>'
+        });
+        var noscoreDiv = $('<div class="noScore"></div>')
+        var scoreDiv = $('<div class="score"><span class="num">1</span>分</div>')
+        var scoreMessageDiv = $('<div class="scoreMessage">请选择评分</div>')
+        var starDiv = $('<div id="stars"></div>')
+        var textContent = $("<div class='textContent'></div>")
+        var textArea = $("<textarea placeholder='快来说说你的看法吧'  cols='55' rows='8' style='font-size:16px;margin-left: 4px;border: 0;resize: none;'></textarea>")
+        textArea.appendTo(textContent)
+        $("#commentForm").append(noscoreDiv)
+            .append(scoreMessageDiv)
+            .append(starDiv)
+            .append(textContent)
+            .append('<div><button id="submitComment" onclick="submitComment()" class="layui-btn layui-btn-danger layui-btn-disabled">提交评论</button></div>')
+
+        var star = 1;
+        var starFlag = false;
+        var textFlag = false;
+        var arrays = {
+            0.5: '狗血烂片，还我票钱'
+            , 1: '极差'
+            , 1.5: '很差'
+            , 2: '差'
+            , 2.5: '一般'
+            , 3: '中等'
+            , 3.5: '比较好'
+            , 4: '好'
+            , 4.5: '很好'
+            , 5: '完美'
+        }
+        layui.use(['rate'], function () {
+            var rate = layui.rate;
+            rate.render({
+                elem: '#stars'
+                , value: star
+                , half: true
+                , choose: function (value) {
+                    starFlag = !starFlag
+                    star = new Number(value)
+                    starTotal = star;
+                    $('.scoreMessage').text(arrays[star])
+                    $("#commentForm .noScore").replaceWith(scoreDiv)
+                    $(".num").text(value)
+                    if (starFlag && textFlag) {
+                        $('#submitComment').removeClass('layui-btn-disabled')
+                    }
+                }
+            })
+        })
+
+        textArea.on("focus", function () {
+            textContent.removeClass('textContent')
+            textContent.addClass('textContentActive')
+            textArea.keyup(function () {
+                var text = textArea.val()
+                if (text.length < 6) {
+                    $('#submitComment').addClass('layui-btn-disabled')
+                    var i = 6 - text.length
+                    $('.wordCountInfo').remove()
+                    textContent.append($('<span class="wordCountInfo">还需输入' + i + '个字符</span>'))
+                } else {
+                    $('.wordCountInfo').remove()
+                    textFlag = true;
+                    if (starFlag && textFlag) {
+                        $('#submitComment').removeClass('layui-btn-disabled')
+                    }
+                }
+            })
+        })
+        textArea.on("blur", function () {
+            textContent.removeClass('textContentActive')
+            textContent.addClass('textContent')
+
+        })
+
+    }
+
+    //提交评论
+    function submitComment() {
+        var commentC = $('textarea').val()
+        var commentS = starTotal;
+        var movieId = $("#movieId").val()
+        var userId = 0
+        $.post(
+            '/comment/addComment',
+            {
+                commentContent: commentC,
+                commentScore: commentS,
+                movieId: movieId,
+                userId: userId
+            },
+            function (data) {
+                if (data.code == '200') {
+                    layer.closeAll();
+                    layer.msg(data.message, {icon: 6});
+                } else {
+                    layer.closeAll();
+                    layer.msg(data.message, {icon: 5});
+                }
+            },
+            'json'
+        )
+    }
+</script>
+</html>

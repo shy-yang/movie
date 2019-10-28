@@ -1,0 +1,24 @@
+package com.woniu.movie.service;
+
+import com.woniu.movie.pojo.Movie;
+
+import java.util.List;
+
+public interface IMovieService {
+
+
+    int deleteByPrimaryKey(Integer movieId);
+
+    int insert(Movie record);
+
+    int insertSelective(Movie record);
+
+    Movie selectByPrimaryKey(Integer movieId);
+
+    int updateByPrimaryKeySelective(Movie record);
+
+    int updateByPrimaryKey(Movie record);
+
+    List<Movie> findAllMovie();
+
+}

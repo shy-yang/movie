@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.MovieMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.Movie">
+        <!--@mbg.generated-->
+        <!--@Table movie-->
+        <id column="movie_id" jdbcType="INTEGER" property="movieId"/>
+        <result column="movie_name" jdbcType="VARCHAR" property="movieName"/>
+        <result column="movie_decade" jdbcType="VARCHAR" property="movieDecade"/>
+        <result column="movie_country" jdbcType="VARCHAR" property="movieCountry"/>
+        <result column="movie_level" jdbcType="VARCHAR" property="movieLevel"/>
+        <result column="movie_language" jdbcType="VARCHAR" property="movieLanguage"/>
+        <result column="movie_duration" jdbcType="VARCHAR" property="movieDuration"/>
+        <result column="movie_director" jdbcType="VARCHAR" property="movieDirector"/>
+        <result column="movie_actors" jdbcType="VARCHAR" property="movieActors"/>
+        <result column="movie_placard" jdbcType="VARCHAR" property="moviePlacard"/>
+        <result column="movie_publish" jdbcType="DATE" property="moviePublish"/>
+        <result column="movie_score" jdbcType="DOUBLE" property="movieScore"/>
+        <result column="movie_total_score" jdbcType="DOUBLE" property="movieTotalScore"/>
+        <result column="movie_score_times" jdbcType="INTEGER" property="movieScoreTimes"/>
+        <result column="movie_description" jdbcType="VARCHAR" property="movieDescription"/>
+        <result column="movie_box_office" jdbcType="DECIMAL" property="movieBoxOffice"/>
+        <result column="movie_state" jdbcType="INTEGER" property="movieState"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        movie_id, movie_name, movie_decade, movie_country, movie_level, movie_language, movie_duration,
+        movie_director, movie_actors, movie_placard, movie_publish, movie_score, movie_total_score,
+        movie_score_times, movie_description, movie_box_office, movie_state
+    </sql>
+    <select id="findMovieByMovieId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from movie
+        where movie_id = #{movieId,jdbcType=INTEGER}
+    </select>
+    <select id="selectAllMovie" resultMap="BaseResultMap">
+        select * from movie
+        <where>
+            <include refid="mqv"></include>
+        </where>
+    </select>
+    <sql id="mqv">
+        <if test="qv!=null">
+            <if test="qv.movieName!=null and qv.movieName.toString().trim!=''">
+                and movie_name like '%${qv.movieName}%'
+            </if>
+            <if test="qv.movieStatus!=null">
+                and movie_state =#{qv.movieStatus}
+            </if>
+        </if>
+    </sql>
+    <delete id="removeMovieByMovieId" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from movie
+        where movie_id = #{movieId,jdbcType=INTEGER}
+    </delete>
+    <delete id="removeMovieByArray">
+        delete from movie
+        where movie_id in
+        <foreach collection="array" open="(" separator="," close=")" item="movieId">
+            #{movieId}
+        </foreach>
+    </delete>
+    <insert id="add" keyColumn="movie_id" keyProperty="movieId" parameterType="com.woniu.movie.pojo.Movie"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into movie (movie_name, movie_decade, movie_country,
+        movie_level, movie_language, movie_duration,
+        movie_director, movie_actors, movie_placard,
+        movie_publish, movie_score, movie_total_score,
+        movie_score_times, movie_description, movie_box_office,
+        movie_state)
+        values (#{movieName,jdbcType=VARCHAR}, #{movieDecade,jdbcType=VARCHAR}, #{movieCountry,jdbcType=VARCHAR},
+        #{movieLevel,jdbcType=VARCHAR}, #{movieLanguage,jdbcType=VARCHAR}, #{movieDuration,jdbcType=VARCHAR},
+        #{movieDirector,jdbcType=VARCHAR}, #{movieActors,jdbcType=VARCHAR}, #{moviePlacard,jdbcType=VARCHAR},
+        #{moviePublish,jdbcType=DATE}, #{movieScore,jdbcType=DOUBLE}, #{movieTotalScore,jdbcType=DOUBLE},
+        #{movieScoreTimes,jdbcType=INTEGER}, #{movieDescription,jdbcType=VARCHAR}, #{movieBoxOffice,jdbcType=DECIMAL},
+        #{movieState,jdbcType=INTEGER})
+    </insert>
+    <insert id="addSelective" keyColumn="movie_id" keyProperty="movieId" parameterType="com.woniu.movie.pojo.Movie"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into movie
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="movieName != null">
+                movie_name,
+            </if>
+            <if test="movieDecade != null">
+                movie_decade,
+            </if>
+            <if test="movieCountry != null">
+                movie_country,
+            </if>
+            <if test="movieLevel != null">
+                movie_level,
+            </if>
+            <if test="movieLanguage != null">
+                movie_language,
+            </if>
+            <if test="movieDuration != null">
+                movie_duration,
+            </if>
+            <if test="movieDirector != null">
+                movie_director,
+            </if>
+            <if test="movieActors != null">
+                movie_actors,
+            </if>
+            <if test="moviePlacard != null">
+                movie_placard,
+            </if>
+            <if test="moviePublish != null">
+                movie_publish,
+            </if>
+            <if test="movieScore != null">
+                movie_score,
+            </if>
+            <if test="movieTotalScore != null">
+                movie_total_score,
+            </if>
+            <if test="movieScoreTimes != null">
+                movie_score_times,
+            </if>
+            <if test="movieDescription != null">
+                movie_description,
+            </if>
+            <if test="movieBoxOffice != null">
+                movie_box_office,
+            </if>
+            <if test="movieState != null">
+                movie_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="movieName != null">
+                #{movieName,jdbcType=VARCHAR},
+            </if>
+            <if test="movieDecade != null">
+                #{movieDecade,jdbcType=VARCHAR},
+            </if>
+            <if test="movieCountry != null">
+                #{movieCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="movieLevel != null">
+                #{movieLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="movieLanguage != null">
+                #{movieLanguage,jdbcType=VARCHAR},
+            </if>
+            <if test="movieDuration != null">
+                #{movieDuration,jdbcType=VARCHAR},
+            </if>
+            <if test="movieDirector != null">
+                #{movieDirector,jdbcType=VARCHAR},
+            </if>
+            <if test="movieActors != null">
+                #{movieActors,jdbcType=VARCHAR},
+            </if>
+            <if test="moviePlacard != null">
+                #{moviePlacard,jdbcType=VARCHAR},
+            </if>
+            <if test="moviePublish != null">
+                #{moviePublish,jdbcType=DATE},
+            </if>
+            <if test="movieScore != null">
+                #{movieScore,jdbcType=DOUBLE},
+            </if>
+            <if test="movieTotalScore != null">
+                #{movieTotalScore,jdbcType=DOUBLE},
+            </if>
+            <if test="movieScoreTimes != null">
+                #{movieScoreTimes,jdbcType=INTEGER},
+            </if>
+            <if test="movieDescription != null">
+                #{movieDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="movieBoxOffice != null">
+                #{movieBoxOffice,jdbcType=DECIMAL},
+            </if>
+            <if test="movieState != null">
+                #{movieState,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateMovieStates" keyProperty="java.util.List">
+        <foreach collection="movies" item="m"  index="index">
+            update movie
+            set movie_state = #{m.movieState,jdbcType=INTEGER}
+            where  movie_id = #{m.movieId,jdbcType=INTEGER};
+        </foreach>
+    </update>
+
+    <update id="modifyMovieByMovieIdSelective" parameterType="com.woniu.movie.pojo.Movie">
+        <!--@mbg.generated-->
+        update movie
+        <set>
+            <if test="movieName != null">
+                movie_name = #{movieName,jdbcType=VARCHAR},
+            </if>
+            <if test="movieDecade != null">
+                movie_decade = #{movieDecade,jdbcType=VARCHAR},
+            </if>
+            <if test="movieCountry != null">
+                movie_country = #{movieCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="movieLevel != null">
+                movie_level = #{movieLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="movieLanguage != null">
+                movie_language = #{movieLanguage,jdbcType=VARCHAR},
+            </if>
+            <if test="movieDuration != null">
+                movie_duration = #{movieDuration,jdbcType=VARCHAR},
+            </if>
+            <if test="movieDirector != null">
+                movie_director = #{movieDirector,jdbcType=VARCHAR},
+            </if>
+            <if test="movieActors != null">
+                movie_actors = #{movieActors,jdbcType=VARCHAR},
+            </if>
+            <if test="moviePlacard != null">
+                movie_placard = #{moviePlacard,jdbcType=VARCHAR},
+            </if>
+            <if test="moviePublish != null">
+                movie_publish = #{moviePublish,jdbcType=DATE},
+            </if>
+            <if test="movieScore != null">
+                movie_score = #{movieScore,jdbcType=DOUBLE},
+            </if>
+            <if test="movieTotalScore != null">
+                movie_total_score = #{movieTotalScore,jdbcType=DOUBLE},
+            </if>
+            <if test="movieScoreTimes != null">
+                movie_score_times = #{movieScoreTimes,jdbcType=INTEGER},
+            </if>
+            <if test="movieDescription != null">
+                movie_description = #{movieDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="movieBoxOffice != null">
+                movie_box_office = #{movieBoxOffice,jdbcType=DECIMAL},
+            </if>
+            <if test="movieState != null">
+                movie_state = #{movieState,jdbcType=INTEGER},
+            </if>
+        </set>
+        where movie_id = #{movieId,jdbcType=INTEGER}
+    </update>
+    <update id="modifyMovieByMovieId" parameterType="com.woniu.movie.pojo.Movie">
+        <!--@mbg.generated-->
+        update movie
+        set movie_name = #{movieName,jdbcType=VARCHAR},
+        movie_decade = #{movieDecade,jdbcType=VARCHAR},
+        movie_country = #{movieCountry,jdbcType=VARCHAR},
+        movie_level = #{movieLevel,jdbcType=VARCHAR},
+        movie_language = #{movieLanguage,jdbcType=VARCHAR},
+        movie_duration = #{movieDuration,jdbcType=VARCHAR},
+        movie_director = #{movieDirector,jdbcType=VARCHAR},
+        movie_actors = #{movieActors,jdbcType=VARCHAR},
+        movie_placard = #{moviePlacard,jdbcType=VARCHAR},
+        movie_publish = #{moviePublish,jdbcType=DATE},
+        movie_score = #{movieScore,jdbcType=DOUBLE},
+        movie_total_score = #{movieTotalScore,jdbcType=DOUBLE},
+        movie_score_times = #{movieScoreTimes,jdbcType=INTEGER},
+        movie_description = #{movieDescription,jdbcType=VARCHAR},
+        movie_box_office = #{movieBoxOffice,jdbcType=DECIMAL},
+        movie_state = #{movieState,jdbcType=INTEGER}
+        where movie_id = #{movieId,jdbcType=INTEGER}
+    </update>
+</mapper>

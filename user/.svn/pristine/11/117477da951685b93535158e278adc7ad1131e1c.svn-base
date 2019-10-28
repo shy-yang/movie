@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>顶部</title>
+    </head>
+    <body>
+        <header class="header" th:fragment="header">
+            <div class="header-inner body-width">
+                <a href="#" class="logo"></a>
+
+                <div class="category">
+                    <!--<a href="#" class="category-link">分类</a>
+                    <i class="icon-arrow"></i>
+                    <div class="category-result"></div>
+                    &lt;!&ndash; 边框 &ndash;&gt;
+                    <span class="btn-border"></span>
+                    <span class="result-border"></span>
+                    <span class="neck-border"></span>-->
+                </div>
+                <div class="search">
+                    <input type="text" class="search-text" placeholder="Seach here...">
+                    <button class="search-btn"><i class="icon-search"></i></button>
+                </div>
+                <nav class="header-nav">
+                    <ul>
+                        <li>
+                            <span class="line"></span>
+                            <a href="/" class="dreamer">影院首页</a>
+                        </li>
+                        <li th:if="${session.user==null}">
+                            <span class="line"></span>
+                            <a href="/user/userRegister" class="icon-text__pink register">注册</a>
+                        </li>
+                        <li th:if="${session.user==null}">
+                            <span class="line"></span>
+                            <a href="/user/userLogin">登录</a>
+                        </li>
+                        <li th:if="${session.user!=null}">
+                            <span class="line"></span>
+                            <a href="/">
+                                <span th:text="${session.user.getUserName()}"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="header-shadow"></div>
+        </header>
+    </body>
+</html>

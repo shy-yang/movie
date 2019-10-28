@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.AdminMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.Admin">
+        <!--@mbg.generated-->
+        <!--@Table admin-->
+        <id column="admin_id" jdbcType="INTEGER" property="adminId"/>
+        <result column="admin_account" jdbcType="VARCHAR" property="adminAccount"/>
+        <result column="admin_password" jdbcType="VARCHAR" property="adminPassword"/>
+        <result column="admin_real_name" jdbcType="VARCHAR" property="adminRealName"/>
+        <result column="admin_phone" jdbcType="VARCHAR" property="adminPhone"/>
+        <result column="admin_state" jdbcType="VARCHAR" property="adminState"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        admin_id, admin_account, admin_password, admin_real_name, admin_phone, admin_state
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from admin
+        where admin_id = #{adminId,jdbcType=INTEGER}
+    </select>
+    <select id="selectByPrimaryAccount" parameterType="java.lang.String" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        *
+        from admin
+        where admin_account = #{adminAccount}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from admin
+        where admin_id = #{adminId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="admin_id" keyProperty="adminId" parameterType="com.woniu.movie.pojo.Admin"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into admin (admin_account, admin_password, admin_real_name,
+        admin_phone, admin_state)
+        values (#{adminAccount,jdbcType=VARCHAR}, #{adminPassword,jdbcType=VARCHAR}, #{adminRealName,jdbcType=VARCHAR},
+        #{adminPhone,jdbcType=VARCHAR}, #{adminState,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="admin_id" keyProperty="adminId" parameterType="com.woniu.movie.pojo.Admin"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into admin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adminAccount != null">
+                admin_account,
+            </if>
+            <if test="adminPassword != null">
+                admin_password,
+            </if>
+            <if test="adminRealName != null">
+                admin_real_name,
+            </if>
+            <if test="adminPhone != null">
+                admin_phone,
+            </if>
+            <if test="adminState != null">
+                admin_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adminAccount != null">
+                #{adminAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null">
+                #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="adminRealName != null">
+                #{adminRealName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPhone != null">
+                #{adminPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="adminState != null">
+                #{adminState,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.Admin">
+        <!--@mbg.generated-->
+        update admin
+        <set>
+            <if test="adminAccount != null">
+                admin_account = #{adminAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null">
+                admin_password = #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="adminRealName != null">
+                admin_real_name = #{adminRealName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPhone != null">
+                admin_phone = #{adminPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="adminState != null">
+                admin_state = #{adminState,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where admin_id = #{adminId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.Admin">
+        <!--@mbg.generated-->
+        update admin
+        set admin_account = #{adminAccount,jdbcType=VARCHAR},
+        admin_password = #{adminPassword,jdbcType=VARCHAR},
+        admin_real_name = #{adminRealName,jdbcType=VARCHAR},
+        admin_phone = #{adminPhone,jdbcType=VARCHAR},
+        admin_state = #{adminState,jdbcType=VARCHAR}
+        where admin_id = #{adminId,jdbcType=INTEGER}
+    </update>
+</mapper>

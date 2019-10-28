@@ -1,0 +1,45 @@
+package com.woniu.movie.controller;
+
+import com.woniu.movie.pojo.User;
+import com.woniu.movie.response.ResponseResult;
+import com.woniu.movie.service.IMovieService;
+import com.woniu.movie.service.IOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
+@Controller
+@RequestMapping("/order")
+public class OrderController {
+    @Autowired
+    private IOrderService orderService;
+    @Autowired
+    private IMovieService movieService;
+
+    /**
+     * 生成订单
+     *
+     * @param tickets 电影票的id
+     * @return 返回后台处理状态
+     */
+    @PostMapping("/create")
+    @ResponseBody
+    public ResponseResult createNewOrder(@RequestParam(required = false, value = "tickets[]") List<Integer> tickets, HttpServletRequest req) {
+        if (tickets.size() < 1) {
+            return new ResponseResult("300", "至少选择1张电影票！！");
+        }
+        //去重
+        Set<Integer> temp = new HashSet<>(tickets);
+        tickets = new ArrayList<>(temp);
+        Date createTime = new Date();
+        User user = (User) req.getSession().getAttribute("user");
+        int success = orderService.createOrderByTicketsAndUserId(tickets, user.getUserId(), createTime);
+        if (success == 0) {
+            return new ResponseResult("200", "创建订单失败！");
+        }
+        return new ResponseResult("200", "成功创建订单！");
+    }
+}

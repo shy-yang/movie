@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.SeatMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.Seat">
+        <!--@mbg.generated-->
+        <!--@Table seat-->
+        <id column="seat_id" jdbcType="INTEGER" property="seatId"/>
+        <result column="seat_x" jdbcType="VARCHAR" property="seatX"/>
+        <result column="seat_y" jdbcType="VARCHAR" property="seatY"/>
+        <result column="show_hall_id" jdbcType="INTEGER" property="showHallId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        seat_id, seat_x, seat_y, show_hall_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from seat
+        where seat_id = #{seatId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from seat
+        where seat_id = #{seatId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="seat_id" keyProperty="seatId" parameterType="com.woniu.movie.pojo.Seat"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into seat (seat_x, seat_y, show_hall_id
+        )
+        values (#{seatX,jdbcType=VARCHAR}, #{seatY,jdbcType=VARCHAR}, #{showHallId,jdbcType=INTEGER}
+        )
+    </insert>
+    <insert id="insertSelective" keyColumn="seat_id" keyProperty="seatId" parameterType="com.woniu.movie.pojo.Seat"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into seat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="seatX != null">
+                seat_x,
+            </if>
+            <if test="seatY != null">
+                seat_y,
+            </if>
+            <if test="showHallId != null">
+                show_hall_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="seatX != null">
+                #{seatX,jdbcType=VARCHAR},
+            </if>
+            <if test="seatY != null">
+                #{seatY,jdbcType=VARCHAR},
+            </if>
+            <if test="showHallId != null">
+                #{showHallId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.Seat">
+        <!--@mbg.generated-->
+        update seat
+        <set>
+            <if test="seatX != null">
+                seat_x = #{seatX,jdbcType=VARCHAR},
+            </if>
+            <if test="seatY != null">
+                seat_y = #{seatY,jdbcType=VARCHAR},
+            </if>
+            <if test="showHallId != null">
+                show_hall_id = #{showHallId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where seat_id = #{seatId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.Seat">
+        <!--@mbg.generated-->
+        update seat
+        set seat_x = #{seatX,jdbcType=VARCHAR},
+        seat_y = #{seatY,jdbcType=VARCHAR},
+        show_hall_id = #{showHallId,jdbcType=INTEGER}
+        where seat_id = #{seatId,jdbcType=INTEGER}
+    </update>
+</mapper>

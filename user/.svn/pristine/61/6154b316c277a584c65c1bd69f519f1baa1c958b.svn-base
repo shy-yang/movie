@@ -1,0 +1,57 @@
+package com.woniu.movie.controller;
+
+import com.woniu.movie.pojo.Movie;
+import com.woniu.movie.response.ResponseResult;
+import com.woniu.movie.service.IMovieScheduleService;
+import com.woniu.movie.service.IMovieService;
+import com.woniu.movie.vo.MovieScheduleQueryVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
+
+/**
+ * 功能描述:<br>
+ * 〈根据影片选取影院〉
+ *
+ * @author 单海洋
+ * @create 2019/10/23
+ * @since 1.0.0
+ */
+@Controller
+@RequestMapping("/movieSchedule")
+public class MovieScheduleController {
+    @Autowired
+    IMovieService movieService;
+    @Autowired
+    IMovieScheduleService movieScheduleService;
+
+    /**
+     * 转到影院选择界面
+     *
+     * @return
+     */
+    @RequestMapping("/movie_schedule_view")
+    public String cinemaView(Integer movieId, Map map) {
+        Movie movie = movieService.selectByPrimaryKey(movieId);
+        map.put("movie", movie);
+        return "movieSchedule/movie_schedule_view";
+    }
+
+    @RequestMapping("/getMovieScheduleMessage")
+    @ResponseBody
+    public ResponseResult getMovieScheduleMessage(MovieScheduleQueryVo queryVo) {
+        System.out.println("movieId:" + queryVo.getMovieId());
+        List<MovieScheduleQueryVo> movieScheduleQueryVos = movieScheduleService.findAllMovieSchedule(queryVo);
+        for (MovieScheduleQueryVo m : movieScheduleQueryVos) {
+            System.out.println(m);
+        }
+        return new ResponseResult("200", "操作成功").add("movieSchedule", movieScheduleQueryVos);
+    }
+
+}

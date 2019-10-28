@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.User">
+        <!--@mbg.generated-->
+        <!--@Table user-->
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_password" jdbcType="VARCHAR" property="userPassword"/>
+        <result column="user_nickname" jdbcType="VARCHAR" property="userNickname"/>
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="user_email" jdbcType="VARCHAR" property="userEmail"/>
+        <result column="user_sex" jdbcType="VARCHAR" property="userSex"/>
+        <result column="user_head_image" jdbcType="VARCHAR" property="userHeadImage"/>
+        <result column="user_description" jdbcType="VARCHAR" property="userDescription"/>
+        <result column="user_score_active" jdbcType="INTEGER" property="userScoreActive"/>
+        <result column="user_score_sum" jdbcType="INTEGER" property="userScoreSum"/>
+        <result column="user_level" jdbcType="INTEGER" property="userLevel"/>
+        <result column="user_state" jdbcType="VARCHAR" property="userState"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        user_id, user_name, user_password, user_nickname, user_phone, user_email, user_sex,
+        user_head_image, user_description, user_score_active, user_score_sum, user_level,
+        user_state
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll"  resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from user
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from user
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" keyColumn="user_id" keyProperty="userId" parameterType="com.woniu.movie.pojo.User"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into user (user_name, user_password, user_nickname,
+        user_phone, user_email, user_sex,
+        user_head_image, user_description, user_score_active,
+        user_score_sum, user_level, user_state
+        )
+        values (#{userName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, #{userNickname,jdbcType=VARCHAR},
+        #{userPhone,jdbcType=VARCHAR}, #{userEmail,jdbcType=VARCHAR}, #{userSex,jdbcType=VARCHAR},
+        #{userHeadImage,jdbcType=VARCHAR}, #{userDescription,jdbcType=VARCHAR}, #{userScoreActive,jdbcType=INTEGER},
+        #{userScoreSum,jdbcType=INTEGER}, #{userLevel,jdbcType=INTEGER}, #{userState,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" keyColumn="user_id" keyProperty="userId" parameterType="com.woniu.movie.pojo.User"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userPassword != null">
+                user_password,
+            </if>
+            <if test="userNickname != null">
+                user_nickname,
+            </if>
+            <if test="userPhone != null">
+                user_phone,
+            </if>
+            <if test="userEmail != null">
+                user_email,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="userHeadImage != null">
+                user_head_image,
+            </if>
+            <if test="userDescription != null">
+                user_description,
+            </if>
+            <if test="userScoreActive != null">
+                user_score_active,
+            </if>
+            <if test="userScoreSum != null">
+                user_score_sum,
+            </if>
+            <if test="userLevel != null">
+                user_level,
+            </if>
+            <if test="userState != null">
+                user_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userNickname != null">
+                #{userNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userSex != null">
+                #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="userHeadImage != null">
+                #{userHeadImage,jdbcType=VARCHAR},
+            </if>
+            <if test="userDescription != null">
+                #{userDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="userScoreActive != null">
+                #{userScoreActive,jdbcType=INTEGER},
+            </if>
+            <if test="userScoreSum != null">
+                #{userScoreSum,jdbcType=INTEGER},
+            </if>
+            <if test="userLevel != null">
+                #{userLevel,jdbcType=INTEGER},
+            </if>
+            <if test="userState != null">
+                #{userState,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.User">
+        <!--@mbg.generated-->
+        update user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                user_password = #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userNickname != null">
+                user_nickname = #{userNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null">
+                user_phone = #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                user_email = #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userSex != null">
+                user_sex = #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="userHeadImage != null">
+                user_head_image = #{userHeadImage,jdbcType=VARCHAR},
+            </if>
+            <if test="userDescription != null">
+                user_description = #{userDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="userScoreActive != null">
+                user_score_active = #{userScoreActive,jdbcType=INTEGER},
+            </if>
+            <if test="userScoreSum != null">
+                user_score_sum = #{userScoreSum,jdbcType=INTEGER},
+            </if>
+            <if test="userLevel != null">
+                user_level = #{userLevel,jdbcType=INTEGER},
+            </if>
+            <if test="userState != null">
+                user_state = #{userState,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByArray" parameterType="com.woniu.movie.pojo.User">
+
+    update user
+    set user_state = '0'
+    where user_id in
+    <foreach collection="array" item="id" open="(" close=")" separator=",">
+        #{id}
+    </foreach>
+
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.User">
+        <!--@mbg.generated-->
+        update user
+        set user_name = #{userName,jdbcType=VARCHAR},
+        user_password = #{userPassword,jdbcType=VARCHAR},
+        user_nickname = #{userNickname,jdbcType=VARCHAR},
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+        user_email = #{userEmail,jdbcType=VARCHAR},
+        user_sex = #{userSex,jdbcType=VARCHAR},
+        user_head_image = #{userHeadImage,jdbcType=VARCHAR},
+        user_description = #{userDescription,jdbcType=VARCHAR},
+        user_score_active = #{userScoreActive,jdbcType=INTEGER},
+        user_score_sum = #{userScoreSum,jdbcType=INTEGER},
+        user_level = #{userLevel,jdbcType=INTEGER},
+        user_state = #{userState,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+</mapper>

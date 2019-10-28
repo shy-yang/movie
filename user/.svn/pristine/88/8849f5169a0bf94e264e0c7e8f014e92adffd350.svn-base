@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:v-text="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-model="http://www.w3.org/1999/xhtml">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>影院首页</title>
+
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/bootstrap4.3.1.min.css">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/script.js"></script>
+        <script src="js/vue2.6.10_min.js"></script>
+        <script src="js/jqpaginator.js"></script>
+        <script src="just_layer/layer.js"></script>
+        <style type="text/css">
+            [v-cloak] {
+                display: none;
+            }
+
+            a:hover {
+                color: #ef4238;
+                text-decoration: none;
+            }
+
+            .a_background {
+                border-radius: 14px;
+                padding: 3px 9px;
+                display: inline-block;
+                margin-left: 12px;
+                font-size: 14px;
+            }
+
+            .a_background .active {
+                border-radius: 14px;
+                font-size: 14px;
+                padding: 3px 4px;
+
+                background: #f34d41;
+                color: white;
+            }
+
+            .a_background a {
+                color: #000;
+            }
+
+            .a_background .active a {
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app" v-cloak>
+
+            <div th:replace="~{common/header::header}"></div>
+
+            <div class="main">
+                <div class="main-inner body-width">
+                    <!--轮播图 推荐栏start-->
+                    <div class="banner clearfix">
+                        <div class="slider" id="slider">
+                            <ul class="slider-wrapper">
+                                <li class="item" data-title="这位上神！速速到我的本子里来">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img1.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="想换上新衣去旅行！" data-author="by 占秋">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img2.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="你的书写工具需要一个庇护所" data-author="by Moollly">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img3.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="气温起伏，一件外套保护你" data-author="by 郑南音">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img4.jpg" alt="#"></a>
+                                </li>
+                                <li class="item" data-title="鲜为人知的泰国小众小城——董里">
+                                    <a href="#" class="pic"><img src="images/cont/slider_img5.jpg" alt="#"></a>
+                                </li>
+                            </ul>
+                            <a href="javascript:;" class="slider-prev"></a>
+                            <a href="javascript:;" class="slider-next"></a>
+                            <div class="slider-title">
+                                <h2></h2>
+                                <span></span>
+                            </div>
+                            <div class="slider-btns">
+                                <span class="item"></span>
+                                <span class="item"></span>
+                                <span class="item"></span>
+                                <span class="item"></span>
+                                <span class="item"></span>
+                            </div>
+                        </div>
+                        <div class="banner-info">
+                            <div class="news body-border">
+                                <ul>
+                                    <li class="title">社区热点</li>
+                                    <li class="link">
+                                        <a href="#">冬天</a>
+                                        <span></span>
+                                        <a href="#">把生活过成一首诗</a>
+                                        <span></span>
+                                        <a href="#">早餐</a>
+                                        <span></span>
+                                        <a href="#">记下时间走过的路</a>
+                                        <span></span>
+                                        <a href="#">穿搭</a>
+                                        <span></span>
+                                        <a href="#">家居</a>
+                                        <span></span>
+                                        <a href="#">原创</a>
+                                        <span></span>
+                                    </li>
+                                    <li class="choose">
+                                        <a href="#">『人气连衣裙精选』 大合集</a>
+                                        <span class="icon-text__pink">精选</span>
+                                    </li>
+                                    <li class="assistant">
+                                        <p>收图小助手: <a href="#">tang收集工具</a></p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="app body-border"><a href="#"></a></div>
+                        </div>
+                    </div>
+                    <!--轮播图 推荐栏end-->
+                    <div class="main-cont main-recommend">
+
+                        <div class="main-cont__title">
+                            <h3>所有电影</h3>
+                            <form role="form">
+                                <div class="form-group col-sm-5" style="display: inline-block;margin-left: 600px;">
+                                    <label style="color: #999;font-size: 14px;">影片名</label>
+                                    <input class="form-control" type="text" href="javascript:;"
+                                           v-on:keydown.ctrl="selectByName()" v-model:value="movieNameForSearch"
+                                           placeholder="请输入影片名后按ctrl">
+                                </div>
+                                <!--<div class="form-group col-sm-6" style="display: inline-block">
+                                    <label style="color: #999;font-size: 14px;">上映状态</label>
+                                    <select id="movieState" class="form-control" v-model:option="movieState">
+                                        <option @click="searchByState(-1)" value="-1">全部</option>
+                                        <option @click="searchByState(0)" value="0">未上映</option>
+                                        <option @click="searchByState(1)" value="1">已上映</option>
+                                        <option @click="searchByState(2)" value="2">已下映</option>
+                                    </select>
+                                </div>-->
+                                <div class="form-group col-sm-12" style="padding-left: 20px;">
+                                    <div style="border:1px solid #e5e5e5">
+                                        <div id="stateRow" style="border-bottom: 1px solid #e5e5e5;">
+                                            <div class="row">
+                                                <div class="col-sm-1">
+                                                    <label style="color: #999;font-size: 14px;">电影状态</label>
+                                                </div>
+                                                <div class="col-sm-11">
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground('全部0','stateRow')">
+                                                        <div id="全部0" class="active">
+                                                            <a href="javascript:;" v-on:click="searchByState(-1)">全部</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground('state0','stateRow')">
+                                                        <div id="state0">
+                                                            <a v-on:click="searchByState(0)"
+                                                               href="javascript:;">未上映</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground('state1','stateRow')">
+                                                        <div id="state1">
+                                                            <a v-on:click="searchByState(1)"
+                                                               href="javascript:;">已上映</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground('state2','stateRow')">
+                                                        <div id="state2">
+                                                            <a v-on:click="searchByState(2)"
+                                                               href="javascript:;">已下映</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="levelRow" style="border-bottom: 1px solid #e5e5e5;">
+                                            <div class="row">
+                                                <div class="col-sm-1">
+                                                    <label style="color: #999;font-size: 14px;">电影类型</label>
+                                                </div>
+                                                <div class="col-sm-11">
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground('全部','levelRow')">
+                                                        <div id="全部" class="active">
+                                                            <a href="javascript:;" v-on:click="selectByLevel()">全部</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground(movieLevel,'levelRow')"
+                                                         v-for="movieLevel,index in movieLevels">
+                                                        <div v-bind:id="movieLevel">
+                                                            <a v-on:click="selectByLevel(movieLevel)"
+                                                               href="javascript:;">{{movieLevel}}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="border-bottom: 1px solid #e5e5e5;">
+                                            <div id="countryRow" class="row">
+                                                <div class="col-sm-1">
+                                                    <label style="color: #999;font-size: 14px;">电影区域</label>
+                                                </div>
+                                                <div class="col-sm-11">
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground('全部2','countryRow')">
+
+                                                        <div id="全部2" class="active">
+                                                            <a href="javascript:;" v-on:click="selectByMovieCountry()">全部</a>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground(movieCountry+'mc','countryRow')"
+                                                         v-for="movieCountry in movieCountries">
+                                                        <div v-bind:id="movieCountry+'mc'">
+                                                            <a v-on:click="selectByMovieCountry(movieCountry)"
+                                                               href="javascript:;">{{movieCountry}}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="row" id="decadeRow">
+                                                <div class="col-sm-1">
+                                                    <label style="color: #999;font-size: 14px;">电影年代</label>
+                                                </div>
+                                                <div class="col-sm-11">
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground('全部3','decadeRow')">
+
+                                                        <div id="全部3" class="active">
+                                                            <a href="javascript:;" v-on:click="selectByDecade(0)">全部</a>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="a_background"
+                                                         v-on:click="changeBackground(movieDecade+'md','decadeRow')"
+                                                         v-for="movieDecade in getMovieDecade">
+                                                        <div v-bind:id="movieDecade+'md'">
+                                                            <a v-on:click="selectByDecade(movieDecade)"
+                                                               href="javascript:;">{{movieDecade}}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1"></div>
+                                <div class="form-group col-sm-11">
+                                </div>
+                            </form>
+                        </div>
+                        <div style="margin-top: 340px;">
+                            <ul class="main-cont__list clearfix">
+                            <li class="item mt-3" v-for="m in movies">
+                                <a :href="'/movie/detail?movieId='+m.movieId" class="pic">
+                                    <img :src="m.moviePlacard" :alt="m.movieName" style="width: 224px;height: 224px">
+                                </a>
+                                <div class="info">
+                                    <a :href="'/movie/detail?movieId='+m.movieId"
+                                       class="title text-info text-decoration-none">{{m.movieName
+                                        | textLen}}
+                                        <div class="float-right mr-3">{{m.movieScore | number}}</div>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                    <span>{{m.movieLevel | textLen}}</span>
+                                    <span v-if="m.movieState==0" class="icon-text__pink purchase">未上映</span>
+                                    <a v-if="m.movieState==1" :href="'/movie/buy?movieState='+m.movieState"
+                                       class="icon-text__pink register">购票</a>
+                                    <span v-if="m.movieState==2" class="icon-text__pink ">已下映</span>
+                                </div>
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
+                    <!--分页小工具 start-->
+                    <div class="mt-4 row">
+                        <div class="col-4 offset-3">
+                            <ul id="pager" class="pagination"></ul>
+                        </div>
+                    </div>
+                    <!--分页小工具 end-->
+                </div>
+            </div>
+
+            <div th:replace="~{common/footer::footer}"></div>
+            <!--<a href="/user/personalCenter">adsfio sdjfio </a>-->
+
+        </div>
+    </body>
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                movies: [],
+                movieLevels: [],
+                movieCountries: [],
+                getMovieDecade: [],
+                movieNameForSearch: '',
+                movieLevelForSearch: '',
+                movieState: '',
+                movieCountryForSearch: '',
+                movieDecadeForSearch: '',
+            },
+            methods: {
+                selectByLevel: function (level) {
+                    this.movieLevelForSearch = level;
+                    getMovieView(this.movieLevelForSearch, this.movieNameForSearch, this.movieState, this.movieCountryForSearch, this.movieDecadeForSearch)
+                },
+                selectByName: function () {
+                    getMovieView(this.movieLevelForSearch, this.movieNameForSearch, this.movieState, this.movieCountryForSearch, this.movieDecadeForSearch)
+                },
+                searchByState: function (state) {
+                    if (state == '-1') {
+                        $('input[value="-1"]').prop('selected', true)
+                        this.movieState = null;
+                    } else {
+                        $('input[value="' + state + '"]').prop('selected', true)
+                        this.movieState = state;
+                    }
+
+                    getMovieView(this.movieLevelForSearch, this.movieNameForSearch, this.movieState, this.movieCountryForSearch, this.movieDecadeForSearch)
+                },
+                changeBackground: function (id, idRow) {
+                    $("#" + idRow + " .active").removeClass('active')
+
+                    $("#" + idRow + " #" + id).addClass('active')
+
+                    $("#" + idRow + ' #' + id + 'a').css('color', 'white')
+                },
+                selectByMovieCountry: function (movieCountry) {
+                    this.movieCountryForSearch = movieCountry;
+                    getMovieView(this.movieLevelForSearch, this.movieNameForSearch, this.movieState, this.movieCountryForSearch, this.movieDecadeForSearch)
+                },
+                selectByDecade: function (movieDecade) {
+                    if (movieDecade == 0) {
+                        this.movieDecadeForSearch = null;
+                        getMovieView(this.movieLevelForSearch, this.movieNameForSearch, this.movieState, this.movieCountryForSearch, this.movieDecadeForSearch)
+                    } else {
+                        this.movieDecadeForSearch = parseInt(movieDecade);
+                        getMovieView(this.movieLevelForSearch, this.movieNameForSearch, this.movieState, this.movieCountryForSearch, this.movieDecadeForSearch)
+                    }
+                }
+            },
+            filters: {
+                //保留1位小数点过滤器 四舍五入
+                number(value) {
+                    var toFixedNum = Number(value).toFixed(2);
+                    return value - toFixedNum >= 0.05 ? (toFixedNum + 0.1).substring(0, toFixedNum.toString().length - 1) : toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                },
+                //将时间戳转换为指定格式 需要引入moment-with-locales.js
+                moment(value, formatString) {
+                    formatString = formatString || 'YYYY-MM-DD';
+                    return moment(value).format(formatString);
+                },
+                //设置文本长度
+                textLen(value) {
+                    var text = value + "";
+                    var newText = text.substring(0, 6) + "...";
+                    return text.length > 6 ? newText : text;
+                }
+            },
+            created: function () {
+                getMovieView();
+                getMovieLevels();
+                getMovieCountries();
+                getMovieDecade();
+
+            },
+            updated: function () {
+
+            }
+        });
+
+        //分页查询
+        function getMovieView(level, moviename, state, country, decade) {
+
+            moviePages(level, 1, moviename, state, country, decade);
+            $("#pager").jqPaginator({
+                totalPages: 1,
+                visiblePages: 1,
+                currentPage: 1,
+                //更改页数时触发
+                onPageChange: function (num) {
+                    moviePages(level, num, moviename, state, country, decade);
+                    /*$('#now_page').html('当前第' + num + '/' + total + '页');*/
+                }
+            });
+        }
+
+        function moviePages(level, num, name, state, country, decade) {
+            $.get(
+                "/movie/list",
+                {
+                    page: num,
+                    pageSize: 20,
+                    movieLevel: level,
+                    movieName: name,
+                    movieStatus: state,
+                    movieCountry: country,
+                    movieDecade: decade,
+                },
+                function (data) {
+                    app.movies = data.map.movies.list;
+                    let total = data.map.movies.pages;
+                    let visible = 10;
+                    if (parseInt(num) > parseInt(total)) {
+                        visible = parseInt(num)
+                    }
+                    $("#pager").jqPaginator('option', {
+                        totalPages: parseInt(total),
+                        visiblePages: parseInt(visible)
+                    });
+                }
+            );
+        }
+
+        //获取电影类型
+        function getMovieLevels() {
+            $.post(
+                '/movie/getMovieLevels',
+                {},
+                function (data) {
+                    app.movieLevels = data.map.movieLevels;
+                },
+                'json'
+            );
+        }
+
+        //获取电影区域
+        function getMovieCountries() {
+            $.post(
+                '/movie/getMovieCountries',
+                {},
+                function (data) {
+                    app.movieCountries = data.map.movieCountries;
+
+                },
+                'json'
+            )
+        }
+
+        //获取电影年代
+        function getMovieDecade() {
+            $.post(
+                '/movie/movieDecade',
+                {},
+                function (data) {
+
+                    app.getMovieDecade = data.map.movieDecade;
+                    var decades = app.getMovieDecade;
+
+
+                    for (var m = 0; m < decades.length; m++) {
+                        decades[m] = parseInt(decades[m]);
+                    }
+                    for (var i = 0; i < decades.length; i++) {
+                        for (var j = 0; j < decades.length - i - 1; j++) {
+                            if (decades[j] < decades[j + 1]) {
+                                var temp = decades[j];
+                                decades[j] = decades[j + 1];
+
+                                decades[j + 1] = temp;
+                            }
+                        }
+                    }
+                    for (var n = 0; n < decades.length; n++) {
+                        if (decades[n] < 2000) {
+                            if (decades[n] < 100) {
+                                decades[n] = decades[n] + "年代"
+                            }
+                        }
+                    }
+                    console.log(decades)
+                },
+                'json'
+            )
+        }
+        !function () {
+            getMovieView();
+
+        }();
+    </script>
+</html>

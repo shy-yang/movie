@@ -1,0 +1,17 @@
+package com.woniu.movie.vo;
+
+import lombok.Data;
+
+/**
+ * 功能描述:<br>
+ * 〈〉
+ *
+ * @author justin
+ * @create 2019/10/19
+ * @since 1.0.0
+ */
+@Data
+public class FilmQueryVo {
+    private String movieName;
+    private Integer movieStatus;
+}

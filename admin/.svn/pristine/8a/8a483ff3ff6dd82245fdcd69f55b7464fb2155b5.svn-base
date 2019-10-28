@@ -1,0 +1,31 @@
+package com.woniu.movie.pojo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import lombok.Data;
+
+@Data
+public class Coupon implements Serializable {
+    /**
+     * 优惠券id
+     */
+    private Integer couponId;
+
+    /**
+     * 优惠金额
+     */
+    private Long couponBenefitPrice;
+
+    /**
+     * 优惠券开始时间
+     */
+    private Date couponStartTime;
+
+    /**
+     * 优惠券过期时间
+     */
+    private Date couponEndTime;
+
+    private static final long serialVersionUID = 1L;
+}

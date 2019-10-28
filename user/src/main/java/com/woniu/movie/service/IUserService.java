@@ -1,0 +1,28 @@
+package com.woniu.movie.service;
+
+import com.woniu.movie.pojo.Order;
+import com.woniu.movie.pojo.User;
+
+import java.util.List;
+
+public interface IUserService {
+
+
+    int removeUserByUserId(Integer userId);
+
+    int add(User record);
+
+    int addSelective(User record);
+
+    User findUserByUserId(Integer userId);
+
+    int modifyUserByUserIdSelective(User record);
+
+    int modifyUserByUserId(User record);
+
+    List<User> findAllUser();
+
+    User findUserByUserName(String userName);
+
+    int modifyUserByOrderNumberSelective(Order order);
+}

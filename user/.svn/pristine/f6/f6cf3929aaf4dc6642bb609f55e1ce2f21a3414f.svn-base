@@ -1,0 +1,151 @@
+package com.woniu.movie.controller;
+
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.woniu.movie.pojo.*;
+import com.woniu.movie.response.ResponseResult;
+import com.woniu.movie.service.IMovieTicketService;
+import com.woniu.movie.service.IOrderService;
+import com.woniu.movie.service.IUserService;
+import com.woniu.movie.util.AlipayUtil;
+import com.woniu.movie.vo.MovieTicketQueryVo;
+import com.woniu.movie.vo.MovieTicketVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+
+@Controller
+@RequestMapping("/order")
+public class OrderController {
+    @Autowired
+    private IOrderService orderService;
+    @Autowired
+    private IMovieTicketService movieTicketService;
+    @Autowired
+    private AlipayUtil alipayUtil;
+    @Autowired
+    AlipayConfig alipayConfig;
+    @Autowired
+    private IUserService userService;
+
+    /**
+     * 生成订单
+     *
+     * @param tickets 电影票的id
+     * @return 返回后台处理状态
+     */
+    @PostMapping("/create")
+    @ResponseBody
+    public ResponseResult createNewOrder(@RequestParam(required = false, value = "tickets[]") List<Integer> tickets, HttpServletRequest req) {
+        if (tickets.size() < 1) {
+            return new ResponseResult("300", "至少选择1张电影票！！");
+        }
+        //去重
+        Set<Integer> temp = new HashSet<>(tickets);
+        tickets = new ArrayList<>(temp);
+        //根据用户选择的电影票id判断其中是否有电影票已售出
+        List<MovieTicket> untouchable = movieTicketService.findUntouchableMovieTicketByMovieTicketIds(tickets);
+        if (untouchable.size() > 0) {
+            return new ResponseResult("400", "所选票中部分已售出！");
+        }
+        Date createTime = new Date();
+        User user = (User) req.getSession().getAttribute("user");
+        int orderId = orderService.createOrderByTicketsAndUserId(tickets, user.getUserId(), createTime);
+        if (orderId == 0) {
+            return new ResponseResult("300", "创建订单失败！");
+        }
+        return new ResponseResult("200", "成功创建订单！").add("orderId", orderId);
+    }
+
+    /**
+     * 根据订单编号获取订单信息，跳转至支付宝沙箱
+     *
+     * @param req     http请求
+     * @param resp    http响应
+     * @param orderId 订单id
+     * @throws IOException        io异常
+     * @throws AlipayApiException 阿里支付异常
+     */
+    @RequestMapping("/pay")
+    public void payOrder(HttpServletRequest req, HttpServletResponse resp, Integer orderId) throws IOException, AlipayApiException {
+        Order order = orderService.findOrderByOrderId(orderId);
+        alipayUtil.goAlipay(order, req, resp);
+    }
+
+    /**
+     * 根据沙箱支付回调支付状态
+     *
+     * @param request http请求
+     * @return 根据支付状态返回不同页面
+     * @throws AlipayApiException 阿里支付异常
+     */
+    @RequestMapping("/pay_back")
+    public String payBack(HttpServletRequest request) throws AlipayApiException {
+        //获取支付宝POST过来反馈信息
+        Map<String, String> params = new HashMap<>();
+        Map requestParams = request.getParameterMap();
+        for (Object o : requestParams.keySet()) {
+            String name = (String) o;
+            String[] values = (String[]) requestParams.get(name);
+            String valueStr = "";
+            for (int i = 0; i < values.length; i++) {
+                valueStr = (i == values.length - 1) ? valueStr + values[i]
+                        : valueStr + values[i] + ",";
+            }
+            //乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+            //valueStr = new String(valueStr.getBytes("ISO-8859-1"), "gbk");
+            params.put(name, valueStr);
+        }
+        boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.getALIPAY_PUBLIC_KEY(),
+                alipayConfig.CHARSET, alipayConfig.getSIGNTYPE());
+        //如果支付成功
+        if (signVerified) {
+            String orderNumber = params.get("out_trade_no");
+            Order order = new Order();
+            order.setTotalPrice(new BigDecimal(params.get("total_amount")));
+            order.setOrderNumber(orderNumber);
+            order.setOrderState("1");
+            //设置订单状态为已支付
+            orderService.modifyOrderByOrderNumberSelective(order);
+            //设置用户积分等级
+            userService.modifyUserByOrderNumberSelective(order);
+            return "redirect:/";
+        }
+        return "redirect:/user/userLogin";
+    }
+
+    @RequestMapping("getUserOrder")
+    @ResponseBody
+    public ResponseResult getUserOrder(@RequestParam(name = "pageNum", defaultValue = "0") Integer pageNum, HttpServletRequest req) {
+        User user = (User) req.getSession().getAttribute("user");
+        PageHelper.startPage(pageNum, 3);
+        List<Order> list = orderService.findOrderByUserId(user.getUserId());
+        List<MovieTicketVo> movieTickets = new LinkedList<>();
+        for (Order o : list) {
+            MovieTicketQueryVo vo = new MovieTicketQueryVo();
+            vo.setOrderId(o.getOrderId());
+            movieTickets = movieTicketService.findMovieTicketVoByMovieTicketQueryVo(vo);
+            o.setMovie(movieTickets.get(0).getMovie());
+            o.setShowSite(movieTickets.get(0).getShowSite().getShowSiteName());
+            o.setShowHall(movieTickets.get(0).getShowHall().getShowHallName());
+            List<Seat> seats = new LinkedList<>();
+            for (MovieTicketVo movieTicketQueryVo : movieTickets) {
+                Seat seat = new Seat();
+                seat.setSeatX(movieTicketQueryVo.getMovieTicketSeatX());
+                seat.setSeatY(movieTicketQueryVo.getMovieTicketSeatY());
+                seats.add(seat);
+            }
+            o.setSeats(seats);
+        }
+        return new ResponseResult().add("orders", new PageInfo(list));
+    }
+}

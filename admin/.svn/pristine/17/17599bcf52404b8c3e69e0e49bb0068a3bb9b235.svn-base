@@ -1,0 +1,20 @@
+package com.woniu.movie.service;
+
+import com.woniu.movie.pojo.Order;
+
+public interface IOrderService {
+
+
+    int removeOrderByOrderId(Integer orderId);
+
+    int add(Order record);
+
+    int addSelective(Order record);
+
+    Order findOrderByOrderId(Integer orderId);
+
+    int modifyOrderByOrderIdSelective(Order record);
+
+    int modifyOrderByOrderId(Order record);
+
+}

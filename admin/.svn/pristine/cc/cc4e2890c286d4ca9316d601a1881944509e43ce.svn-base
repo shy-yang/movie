@@ -1,0 +1,20 @@
+package com.woniu.movie.service;
+
+import com.woniu.movie.pojo.MovieSchedule;
+
+public interface IMovieScheduleService {
+
+
+    int removeMovieScheduleByMovieScheduleId(Integer movieScheduleId);
+
+    int add(MovieSchedule record);
+
+    int addSelective(MovieSchedule record);
+
+    MovieSchedule findMovieScheduleByMovieScheduleId(Integer movieScheduleId);
+
+    int modifyMovieScheduleByMovieScheduleIdSelective(MovieSchedule record);
+
+    int modifyMovieScheduleByMovieScheduleId(MovieSchedule record);
+
+}

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.CouponMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.Coupon">
+        <!--@mbg.generated-->
+        <!--@Table coupon-->
+        <id column="coupon_id" jdbcType="INTEGER" property="couponId"/>
+        <result column="coupon_benefit_price" jdbcType="DECIMAL" property="couponBenefitPrice"/>
+        <result column="coupon_start_time" jdbcType="TIMESTAMP" property="couponStartTime"/>
+        <result column="coupon_end_time" jdbcType="TIMESTAMP" property="couponEndTime"/>
+        <result column="coupon_state" jdbcType="VARCHAR" property="couponState"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        coupon_id, coupon_benefit_price, coupon_start_time, coupon_end_time, coupon_state
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from coupon
+        where coupon_id = #{couponId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from coupon
+        where coupon_id = #{couponId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="coupon_id" keyProperty="couponId" parameterType="com.woniu.movie.pojo.Coupon"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into coupon (coupon_benefit_price, coupon_start_time,
+        coupon_end_time, coupon_state)
+        values (#{couponBenefitPrice,jdbcType=DECIMAL}, #{couponStartTime,jdbcType=TIMESTAMP},
+        #{couponEndTime,jdbcType=TIMESTAMP}, #{couponState,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="coupon_id" keyProperty="couponId"
+            parameterType="com.woniu.movie.pojo.Coupon" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into coupon
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="couponBenefitPrice != null">
+                coupon_benefit_price,
+            </if>
+            <if test="couponStartTime != null">
+                coupon_start_time,
+            </if>
+            <if test="couponEndTime != null">
+                coupon_end_time,
+            </if>
+            <if test="couponState != null">
+                coupon_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="couponBenefitPrice != null">
+                #{couponBenefitPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="couponStartTime != null">
+                #{couponStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="couponEndTime != null">
+                #{couponEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="couponState != null">
+                #{couponState,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.Coupon">
+        <!--@mbg.generated-->
+        update coupon
+        <set>
+            <if test="couponBenefitPrice != null">
+                coupon_benefit_price = #{couponBenefitPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="couponStartTime != null">
+                coupon_start_time = #{couponStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="couponEndTime != null">
+                coupon_end_time = #{couponEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="couponState != null">
+                coupon_state = #{couponState,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where coupon_id = #{couponId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.Coupon">
+        <!--@mbg.generated-->
+        update coupon
+        set coupon_benefit_price = #{couponBenefitPrice,jdbcType=DECIMAL},
+        coupon_start_time = #{couponStartTime,jdbcType=TIMESTAMP},
+        coupon_end_time = #{couponEndTime,jdbcType=TIMESTAMP},
+        coupon_state = #{couponState,jdbcType=VARCHAR}
+        where coupon_id = #{couponId,jdbcType=INTEGER}
+    </update>
+
+    <sql id="cqv">
+        <if test="cqv!=null">
+            <if test="cqv.couponId!=null">
+                coupon_id=#{cqv.couponId}
+            </if>
+            <if test="cqv.couponBenefitPrice!=null">
+                oupon_benefit_price=#{cqv.couponBenefitPrice}
+            </if>
+            <if test="cqv.couponState!=null">
+                coupon_state=#{cqv.couponState}
+            </if>
+        </if>
+    </sql>
+    <select id="selectAllCouponByCouponQueryVo" resultMap="BaseResultMap">
+        select * from coupon
+        <where>
+            <include refid="cqv"/>
+        </where>
+    </select>
+    <update id="batchUpdateCouponStateByCouponIds">
+        update coupon set coupon_state=#{couponState,jdbcType=VARCHAR} where coupon_id in
+        <foreach collection="couponIds" open="(" close=")" separator="," item="couponId">
+            #{couponId}
+        </foreach>
+    </update>
+</mapper>

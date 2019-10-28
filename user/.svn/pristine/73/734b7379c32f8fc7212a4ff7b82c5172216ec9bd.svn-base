@@ -1,0 +1,63 @@
+package com.woniu.movie.controller;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.woniu.movie.pojo.Movie;
+import com.woniu.movie.response.ResponseResult;
+import com.woniu.movie.service.IMovieService;
+import com.woniu.movie.vo.MovieQueryVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 功能描述:<br>
+ * 〈〉
+ *
+ * @author justin
+ * @create 2019/10/18
+ * @since 1.0.0
+ */
+@Controller
+@RequestMapping("/movie")
+public class MovieController {
+
+    @Autowired
+    private IMovieService movieService;
+
+    /**
+     * 根据queryVo查询电影
+     *
+     * @param filmQueryVo 电影查询条件
+     * @return 返回查询结果
+     */
+    @GetMapping("/list")
+    @ResponseBody
+    public ResponseResult queryMovieByQueryVo(MovieQueryVo filmQueryVo) {
+        //从queryVo中获取页数和单页显示量
+        Integer page = filmQueryVo.getPage();
+        Integer pageSize = filmQueryVo.getPageSize();
+        //如果没有获取到页数相关参数或者页数不合法 就设置为默认值
+        if (page == null || page <= 0) {
+            page = 1;
+        }
+        if (pageSize == null || pageSize <= 0) {
+            pageSize = 10;
+        }
+        PageHelper.startPage(page, pageSize);
+        List<Movie> movies = movieService.findAllMovieByFilmQueryVo(filmQueryVo);
+        return new ResponseResult("200", "查询成功！").add("movies", new PageInfo<>(movies));
+    }
+
+    @GetMapping("detail")
+    public String queryMovieDetail(Integer movieId, Map map) {
+        Movie movie = movieService.selectByPrimaryKey(movieId);
+        map.put("movie", movie);
+        return "film_detail";
+    }
+
+}

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.MovieTicketMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.MovieTicket">
+        <!--@mbg.generated-->
+        <!--@Table movie_ticket-->
+        <id column="movie_ticket_id" jdbcType="INTEGER" property="movieTicketId"/>
+        <result column="movie_schedule_id" jdbcType="INTEGER" property="movieScheduleId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="movie_ticket_seat_x" jdbcType="VARCHAR" property="movieTicketSeatX"/>
+        <result column="movie_ticket_seat_y" jdbcType="VARCHAR" property="movieTicketSeatY"/>
+        <result column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="movie_ticket_seat_state" jdbcType="VARCHAR" property="movieTicketSeatState"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        movie_ticket_id, movie_schedule_id, user_id, movie_ticket_seat_x, movie_ticket_seat_y,
+        order_id, movie_ticket_seat_state
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from movie_ticket
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from movie_ticket
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="movie_ticket_id" keyProperty="movieTicketId"
+            parameterType="com.woniu.movie.pojo.MovieTicket" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into movie_ticket (movie_schedule_id, user_id, movie_ticket_seat_x,
+        movie_ticket_seat_y, order_id, movie_ticket_seat_state
+        )
+        values (#{movieScheduleId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{movieTicketSeatX,jdbcType=VARCHAR},
+        #{movieTicketSeatY,jdbcType=VARCHAR}, #{orderId,jdbcType=INTEGER}, #{movieTicketSeatState,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" keyColumn="movie_ticket_id" keyProperty="movieTicketId"
+            parameterType="com.woniu.movie.pojo.MovieTicket" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into movie_ticket
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="movieScheduleId != null">
+                movie_schedule_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="movieTicketSeatX != null">
+                movie_ticket_seat_x,
+            </if>
+            <if test="movieTicketSeatY != null">
+                movie_ticket_seat_y,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="movieTicketSeatState != null">
+                movie_ticket_seat_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="movieScheduleId != null">
+                #{movieScheduleId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatX != null">
+                #{movieTicketSeatX,jdbcType=VARCHAR},
+            </if>
+            <if test="movieTicketSeatY != null">
+                #{movieTicketSeatY,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatState != null">
+                #{movieTicketSeatState,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.MovieTicket">
+        <!--@mbg.generated-->
+        update movie_ticket
+        <set>
+            <if test="movieScheduleId != null">
+                movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatX != null">
+                movie_ticket_seat_x = #{movieTicketSeatX,jdbcType=VARCHAR},
+            </if>
+            <if test="movieTicketSeatY != null">
+                movie_ticket_seat_y = #{movieTicketSeatY,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="movieTicketSeatState != null">
+                movie_ticket_seat_state = #{movieTicketSeatState,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.MovieTicket">
+        <!--@mbg.generated-->
+        update movie_ticket
+        set movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=INTEGER},
+        movie_ticket_seat_x = #{movieTicketSeatX,jdbcType=VARCHAR},
+        movie_ticket_seat_y = #{movieTicketSeatY,jdbcType=VARCHAR},
+        order_id = #{orderId,jdbcType=INTEGER},
+        movie_ticket_seat_state = #{movieTicketSeatState,jdbcType=VARCHAR}
+        where movie_ticket_id = #{movieTicketId,jdbcType=INTEGER}
+    </update>
+</mapper>

@@ -1,0 +1,26 @@
+package com.woniu.movie.mapper;
+
+import com.woniu.movie.pojo.Order;
+
+import java.util.List;
+
+public interface OrderMapper {
+    int deleteByPrimaryKey(Integer orderId);
+
+    int insert(Order record);
+
+    int insertSelective(Order record);
+
+    Order selectByPrimaryKey(Integer orderId);
+
+    int updateByPrimaryKeySelective(Order record);
+
+    int updateByPrimaryKey(Order record);
+
+    //查询票数
+    int findByPrimaryKeyT(Integer integer);
+
+    int updateByOrderNumberSelective(Order order);
+
+    List<Order> selectOrderByUserId(Integer userId);
+}

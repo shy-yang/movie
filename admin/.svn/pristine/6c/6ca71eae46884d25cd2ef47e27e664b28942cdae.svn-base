@@ -1,0 +1,50 @@
+package com.woniu.movie.pojo;
+
+import java.io.Serializable;
+
+import lombok.Data;
+
+@Data
+public class ShowSite implements Serializable {
+    /**
+     * 放映点id
+     */
+    private Integer showSiteId;
+
+    /**
+     * 放映点地址
+     */
+    private String showSiteAddress;
+
+    /**
+     * 放映点坐标
+     */
+    private String showSiteCoordinate;
+
+    /**
+     * 放映点电话
+     */
+    private String showSitePhone;
+
+    /**
+     * 放映点服务
+     */
+    private String showSiteService;
+
+    /**
+     * 放映点图片
+     */
+    private String showSiteImage;
+
+    /**
+     * 放映点介绍
+     */
+    private String showSiteDescription;
+
+    /**
+     * 影院id
+     */
+    private Integer cinemaId;
+
+    private static final long serialVersionUID = 1L;
+}

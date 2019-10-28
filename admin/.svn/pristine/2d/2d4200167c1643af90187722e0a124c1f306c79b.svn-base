@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.MovieScheduleMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.vo.MovieScheduleQueryVo">
+        <!--@mbg.generated-->
+        <!--@Table movie_schedule-->
+        <id column="movie_schedule_id" jdbcType="INTEGER" property="movieScheduleId"/>
+        <result column="movie_id" jdbcType="INTEGER" property="movieId"/>
+        <result column="show_hall_id" jdbcType="INTEGER" property="showHallId"/>
+        <result column="show_site_id" jdbcType="INTEGER" property="showSiteId"/>
+        <result column="movie_schedule_start_time" jdbcType="TIMESTAMP" property="movieScheduleStartTime"/>
+        <result column="movie_schedule_end_time" jdbcType="TIMESTAMP" property="movieScheduleEndTime"/>
+        <result column="movie_schedule_price" jdbcType="DECIMAL" property="movieSchedulePrice"/>
+
+        <association property="movie" javaType="movie">
+            <id column="movie_id" property="movieId"></id>
+            <result column="movie_name" property="movieName"></result>
+            <result column="movie_duration" property="movieDuration"></result>
+        </association>
+        <association property="showSite" javaType="showSite">
+            <id column="show_site_id" property="showSiteId"></id>
+            <result column="show_site_name" property="showSiteName"></result>
+        </association>
+        <association property="showHall" javaType="showHall">
+            <id column="show_hall_id" property="showHallId"></id>
+            <result column="show_hall_number" property="showHallNumber"></result>
+            <result column="show_hall_name" property="showHallName"></result>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        movie_schedule_id, movie_id, show_hall_id, show_site_id, movie_schedule_start_time,
+        movie_schedule_end_time, movie_schedule_price
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select ms.*,m.*,ss.*,sh.*
+        from movie_schedule ms,movie m,show_site ss,show_hall sh
+        where ms.movie_id=m.movie_id
+        and ms.show_site_id=ss.show_site_id
+        and ms.show_hall_id=sh.show_hall_id
+        and ms.movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER}
+    </select>
+
+    <sql id="movieScheduleSql">
+        <if test="qv!=null">
+            <if test="qv.movieId!=0 and qv.movieId!=null">
+                and ms.movie_id=#{qv.movieId}
+            </if>
+            <if test="qv.showSiteId !=0 and qv.showSiteId!=null">
+                and ms.show_site_id=#{qv.showSiteId}
+            </if>
+            <if test="qv.showTime!=null and qv.showTime.toString().trim()!=''">
+                and Date(ms.movie_schedule_start_time)=#{qv.showTime}
+            </if>
+            <if test="qv.showHallId !=0 and qv.showHallId !=null">
+                and ms.show_hall_id=#{qv.showHallId}
+            </if>
+        </if>
+    </sql>
+
+    <!--排片管理页面显示列表-->
+    <select id="selectAllMovieSchedule" resultMap="BaseResultMap">
+        select ms.*,m.*,ss.*,sh.*
+        from movie_schedule ms,movie m,show_site ss,show_hall sh
+        <where>
+            ms.movie_id=m.movie_id
+            and ms.show_site_id=ss.show_site_id
+            and ms.show_hall_id=sh.show_hall_id
+            <include refid="movieScheduleSql"></include>
+        </where>
+        ORDER BY ms.movie_schedule_start_time DESC
+    </select>
+
+    <!--判定添加的排片的时间是否已有信息-->
+    <select id="selectMovieChecked" resultMap="BaseResultMap">
+        select *
+        from movie_schedule ms
+        where ms.show_hall_id=#{qv.showHallId}
+    </select>
+
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from movie_schedule
+        where movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByPrimaryKeys" parameterType="string">
+        delete from movie_schedule
+        where movie_schedule_id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" keyColumn="movie_schedule_id" keyProperty="movieScheduleId"
+            parameterType="com.woniu.movie.vo.MovieScheduleQueryVo" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        <selectKey order="AFTER" keyProperty="movieScheduleId" resultType="int">
+          select LAST_INSERT_ID()
+        </selectKey>
+        insert into movie_schedule (movie_id, show_hall_id, show_site_id,
+        movie_schedule_start_time, movie_schedule_end_time,
+        movie_schedule_price)
+        values (#{movieId,jdbcType=INTEGER}, #{showHallId,jdbcType=INTEGER}, #{showSiteId,jdbcType=INTEGER},
+        #{movieScheduleStartTime,jdbcType=TIMESTAMP}, #{movieScheduleEndTime,jdbcType=TIMESTAMP},
+        #{movieSchedulePrice,jdbcType=DECIMAL})
+    </insert>
+    <insert id="insertSelective" keyColumn="movie_schedule_id" keyProperty="movieScheduleId"
+            parameterType="com.woniu.movie.vo.MovieScheduleQueryVo" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into movie_schedule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="movieId != null">
+                movie_id,
+            </if>
+            <if test="showHallId != null">
+                show_hall_id,
+            </if>
+            <if test="showSiteId != null">
+                show_site_id,
+            </if>
+            <if test="movieScheduleStartTime != null">
+                movie_schedule_start_time,
+            </if>
+            <if test="movieScheduleEndTime != null">
+                movie_schedule_end_time,
+            </if>
+            <if test="movieSchedulePrice != null">
+                movie_schedule_price,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="movieId != null">
+                #{movieId,jdbcType=INTEGER},
+            </if>
+            <if test="showHallId != null">
+                #{showHallId,jdbcType=INTEGER},
+            </if>
+            <if test="showSiteId != null">
+                #{showSiteId,jdbcType=INTEGER},
+            </if>
+            <if test="movieScheduleStartTime != null">
+                #{movieScheduleStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="movieScheduleEndTime != null">
+                #{movieScheduleEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="movieSchedulePrice != null">
+                #{movieSchedulePrice,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.MovieSchedule">
+        <!--@mbg.generated-->
+        update movie_schedule
+        <set>
+            <if test="movieId != null">
+                movie_id = #{movieId,jdbcType=INTEGER},
+            </if>
+            <if test="showHallId != null">
+                show_hall_id = #{showHallId,jdbcType=INTEGER},
+            </if>
+            <if test="showSiteId != null">
+                show_site_id = #{showSiteId,jdbcType=INTEGER},
+            </if>
+            <if test="movieScheduleStartTime != null">
+                movie_schedule_start_time = #{movieScheduleStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="movieScheduleEndTime != null">
+                movie_schedule_end_time = #{movieScheduleEndTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="movieSchedulePrice != null">
+                movie_schedule_price = #{movieSchedulePrice,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.MovieSchedule">
+        <!--@mbg.generated-->
+        update movie_schedule
+        set movie_id = #{movieId,jdbcType=INTEGER},
+        show_hall_id = #{showHallId,jdbcType=INTEGER},
+        show_site_id = #{showSiteId,jdbcType=INTEGER},
+        movie_schedule_start_time = #{movieScheduleStartTime,jdbcType=TIMESTAMP},
+        movie_schedule_end_time = #{movieScheduleEndTime,jdbcType=TIMESTAMP},
+        movie_schedule_price = #{movieSchedulePrice,jdbcType=DECIMAL}
+        where movie_schedule_id = #{movieScheduleId,jdbcType=INTEGER}
+    </update>
+</mapper>

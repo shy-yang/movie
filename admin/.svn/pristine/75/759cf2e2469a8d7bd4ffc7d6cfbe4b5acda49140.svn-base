@@ -1,0 +1,21 @@
+package com.woniu.movie.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * 功能描述:<br>
+ * 〈〉
+ *
+ * @author justin
+ * @create 2019/10/18
+ * @since 1.0.0
+ */
+@Controller
+public class ShowSiteController {
+
+    @RequestMapping("add_show_site")
+    public String addSite(){
+        return "add_show_site";
+    }
+}

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.Order">
+        <!--@mbg.generated-->
+        <!--@Table order-->
+        <id column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="order_state" jdbcType="VARCHAR" property="orderState"/>
+        <result column="order_create_time" jdbcType="TIMESTAMP" property="orderCreateTime"/>
+        <result column="total_price" jdbcType="DECIMAL" property="totalPrice"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        order_id, user_id, order_number, order_state, order_create_time, total_price
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from order
+        where order_id = #{orderId,jdbcType=INTEGER}
+    </select>
+
+    <select id="findByPrimaryKeyT" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        <!--@mbg.generated-->
+        select
+        count(*)
+        from movie_ticket
+        where order_id= #{orderId,jdbcType=INTEGER};
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        <!--@mbg.generated-->
+        delete from order
+        where order_id = #{orderId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="order_id" keyProperty="orderId" parameterType="com.woniu.movie.pojo.Order"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into order (user_id, order_number, order_state,
+        order_create_time, total_price)
+        values (#{userId,jdbcType=INTEGER}, #{orderNumber,jdbcType=VARCHAR}, #{orderState,jdbcType=VARCHAR},
+        #{orderCreateTime,jdbcType=TIMESTAMP}, #{totalPrice,jdbcType=DECIMAL})
+    </insert>
+    <insert id="insertSelective" keyColumn="order_id" keyProperty="orderId" parameterType="com.woniu.movie.pojo.Order"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="orderNumber != null">
+                order_number,
+            </if>
+            <if test="orderState != null">
+                order_state,
+            </if>
+            <if test="orderCreateTime != null">
+                order_create_time,
+            </if>
+            <if test="totalPrice != null">
+                total_price,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="orderNumber != null">
+                #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="orderState != null">
+                #{orderState,jdbcType=VARCHAR},
+            </if>
+            <if test="orderCreateTime != null">
+                #{orderCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="totalPrice != null">
+                #{totalPrice,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.Order">
+        <!--@mbg.generated-->
+        update order
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="orderNumber != null">
+                order_number = #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="orderState != null">
+                order_state = #{orderState,jdbcType=VARCHAR},
+            </if>
+            <if test="orderCreateTime != null">
+                order_create_time = #{orderCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="totalPrice != null">
+                total_price = #{totalPrice,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where order_id = #{orderId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.Order">
+        <!--@mbg.generated-->
+        update order
+        set user_id = #{userId,jdbcType=INTEGER},
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+        order_state = #{orderState,jdbcType=VARCHAR},
+        order_create_time = #{orderCreateTime,jdbcType=TIMESTAMP},
+        total_price = #{totalPrice,jdbcType=DECIMAL}
+        where order_id = #{orderId,jdbcType=INTEGER}
+    </update>
+</mapper>

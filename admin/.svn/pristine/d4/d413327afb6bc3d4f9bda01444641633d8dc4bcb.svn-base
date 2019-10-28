@@ -1,0 +1,12 @@
+package com.woniu.movie.vo;
+
+import lombok.Data;
+
+@Data
+public class CommentQueryVo {
+    String movieName;
+    String userName;
+    Integer commentId;
+    Integer movieId;
+    Integer userId;
+}

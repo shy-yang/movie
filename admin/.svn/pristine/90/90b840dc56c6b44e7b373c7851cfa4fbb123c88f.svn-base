@@ -1,0 +1,25 @@
+package com.woniu.movie.mapper;
+
+import com.woniu.movie.pojo.Coupon;
+import com.woniu.movie.vo.CouponQueryVo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface CouponMapper {
+    int deleteByPrimaryKey(Integer couponId);
+
+    int insert(Coupon record);
+
+    int insertSelective(Coupon record);
+
+    Coupon selectByPrimaryKey(Integer couponId);
+
+    int updateByPrimaryKeySelective(Coupon record);
+
+    int updateByPrimaryKey(Coupon record);
+
+    List<Coupon> selectAllCouponByCouponQueryVo(@Param("cqv") CouponQueryVo couponQueryVo);
+
+    int batchUpdateCouponStateByCouponIds(@Param("couponIds") String[] couponIds, @Param("couponState") String couponState);
+}

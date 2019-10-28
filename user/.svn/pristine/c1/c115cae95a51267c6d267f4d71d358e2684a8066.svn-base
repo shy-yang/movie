@@ -1,0 +1,20 @@
+package com.woniu.movie.vo;
+
+import lombok.Data;
+
+import java.util.List;
+
+/**
+ * 功能描述:<br>
+ * 〈获取所有信息集合和页数〉
+ *
+ * @author 单海洋
+ * @create 2019/10/18
+ * @since 1.0.0
+ */
+@Data
+public class ShowSitePage<T> {
+    private List<T> list;
+    private int count;
+    private int pageCount;
+}

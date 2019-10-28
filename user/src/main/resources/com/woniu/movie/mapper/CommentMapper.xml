@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.movie.mapper.CommentMapper">
+    <resultMap id="BaseResultMap" type="com.woniu.movie.pojo.Comment">
+        <!--@mbg.generated-->
+        <!--@Table comment-->
+        <id column="comment_id" jdbcType="INTEGER" property="commentId"/>
+        <result column="comment_content" jdbcType="VARCHAR" property="commentContent"/>
+        <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="movie_id" jdbcType="INTEGER" property="movieId"/>
+        <result column="comment_state" jdbcType="INTEGER" property="commentState"/>
+        <result column="comment_score" jdbcType="DOUBLE" property="commentScore"/>
+    </resultMap>
+
+    <resultMap id="voMap" type="commentVo">
+        <id column="comment_id" jdbcType="INTEGER" property="commentId"/>
+        <result column="comment_content" jdbcType="VARCHAR" property="commentContent"/>
+        <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime"/>
+        <result column="comment_state" jdbcType="INTEGER" property="commentState"/>
+        <result column="comment_score" jdbcType="DOUBLE" property="commentScore"/>
+        <association property="user" javaType="user">
+            <id column="user_id" jdbcType="INTEGER" property="userId"/>
+            <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        </association>
+        <association property="movie" javaType="com.woniu.movie.pojo.Movie">
+            <id column="movie_id" jdbcType="INTEGER" property="movieId"/>
+            <result column="movie_name" jdbcType="VARCHAR" property="movieName"/>
+            <result column="movie_decade" jdbcType="VARCHAR" property="movieDecade"/>
+            <result column="movie_country" jdbcType="VARCHAR" property="movieCountry"/>
+            <result column="movie_level" jdbcType="VARCHAR" property="movieLevel"/>
+            <result column="movie_language" jdbcType="VARCHAR" property="movieLanguage"/>
+            <result column="movie_duration" jdbcType="VARCHAR" property="movieDuration"/>
+            <result column="movie_director" jdbcType="VARCHAR" property="movieDirector"/>
+            <result column="movie_actors" jdbcType="VARCHAR" property="movieActors"/>
+            <result column="movie_placard" jdbcType="VARCHAR" property="moviePlacard"/>
+            <result column="movie_publish" jdbcType="DATE" property="moviePublish"/>
+            <result column="movie_score" jdbcType="DOUBLE" property="movieScore"/>
+            <result column="movie_total_score" jdbcType="DOUBLE" property="movieTotalScore"/>
+            <result column="movie_score_times" jdbcType="INTEGER" property="movieScoreTimes"/>
+            <result column="movie_description" jdbcType="VARCHAR" property="movieDescription"/>
+            <result column="movie_box_office" jdbcType="DECIMAL" property="movieBoxOffice"/>
+            <result column="movie_state" jdbcType="INTEGER" property="movieState"/>
+        </association>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        comment_id, comment_content, comment_time, user_id, movie_id, comment_state, comment_score
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from comment
+        where comment_id = #{commentId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from comment
+        where comment_id = #{commentId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="comment_id" keyProperty="commentId" parameterType="com.woniu.movie.pojo.Comment"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into comment (comment_content, comment_time, user_id,
+        movie_id, comment_state, comment_score
+        )
+        values (#{commentContent,jdbcType=VARCHAR}, #{commentTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER},
+        #{movieId,jdbcType=INTEGER}, #{commentState,jdbcType=INTEGER}, #{commentScore,jdbcType=DOUBLE}
+        )
+    </insert>
+    <insert id="insertSelective" keyColumn="comment_id" keyProperty="commentId"
+            parameterType="com.woniu.movie.pojo.Comment" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="commentContent != null">
+                comment_content,
+            </if>
+            <if test="commentTime != null">
+                comment_time,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="movieId != null">
+                movie_id,
+            </if>
+            <if test="commentState != null">
+                comment_state,
+            </if>
+            <if test="commentScore != null">
+                comment_score,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="commentContent != null">
+                #{commentContent,jdbcType=VARCHAR},
+            </if>
+            <if test="commentTime != null">
+                #{commentTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="movieId != null">
+                #{movieId,jdbcType=INTEGER},
+            </if>
+            <if test="commentState != null">
+                #{commentState,jdbcType=INTEGER},
+            </if>
+            <if test="commentScore != null">
+                #{commentScore,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.woniu.movie.pojo.Comment">
+        <!--@mbg.generated-->
+        update comment
+        <set>
+            <if test="commentContent != null">
+                comment_content = #{commentContent,jdbcType=VARCHAR},
+            </if>
+            <if test="commentTime != null">
+                comment_time = #{commentTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="movieId != null">
+                movie_id = #{movieId,jdbcType=INTEGER},
+            </if>
+            <if test="commentState != null">
+                comment_state = #{commentState,jdbcType=INTEGER},
+            </if>
+            <if test="commentScore != null">
+                comment_score = #{commentScore,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where comment_id = #{commentId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.woniu.movie.pojo.Comment">
+        <!--@mbg.generated-->
+        update comment
+        set comment_content = #{commentContent,jdbcType=VARCHAR},
+        comment_time = #{commentTime,jdbcType=TIMESTAMP},
+        user_id = #{userId,jdbcType=INTEGER},
+        movie_id = #{movieId,jdbcType=INTEGER},
+        comment_state = #{commentState,jdbcType=INTEGER},
+        comment_score = #{commentScore,jdbcType=DOUBLE}
+        where comment_id = #{commentId,jdbcType=INTEGER}
+    </update>
+    <sql id="cqv">
+        <if test="cqv!=null">
+            <if test="cqv.movieName!=null and cqv.movieName.trim()!=''">
+                and m.movie_name=#{cqv.movieName}
+            </if>
+            <if test="cqv.userName!=null and cqv.userName.trim()!=''">
+                and u.user_name=#{cqv.userName}
+            </if>
+            <if test="cqv.commentId!=null">
+                and c.comment_id=#{cqv.commentId}
+            </if>
+            <if test="cqv.userId!=null">
+                and u.user_id=#{cqv.userId}
+            </if>
+            <if test="cqv.movieId!=null">
+                and m.movie_id=#{cqv.movieId}
+            </if>
+        </if>
+    </sql>
+
+    <select id="selectCommentVoByCommentQueryVo" resultType="com.woniu.movie.vo.CommentVo">
+        select c.*,m.*,u.user_id,u.user_name from comment c,movie m,user u
+        <where>
+            <include refid="cqv"/>
+        </where>
+    </select>
+</mapper>

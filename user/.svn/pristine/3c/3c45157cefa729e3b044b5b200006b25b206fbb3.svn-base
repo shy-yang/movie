@@ -1,0 +1,673 @@
+/*1、这个每个页面都可以加*/
+html, body {
+    color: #333; /*黑色背景*/
+    margin: 0; /*清除浏览器中默认的body的内外边距，因为每个浏览器定义的内外边距币一样*/
+    height: 100%; /*<body>默认不是高度100%显示的*/
+    font-family: "Myriad Set Pro", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+    /*是字体的意思, 系统会按照顺序选择字体, 如果没有第一个 "Helvetica Neue", 就会查找第二个, 依次类推, 如果都没有就会使用你的浏览器默认字体*/
+    -webkit-font-smoothing: antialiased; /*抗锯齿，字体清晰。前缀-webkit是chrome和safari的私有属性，可以不加*/
+    -moz-osx-font-smoothing: grayscale; /*是火狐针对ios系统制定的规则，有两个值，inherit，grayscale（字体抗锯齿，比较清晰）。*/
+    font-weight: normal; /*字体正常显示*/
+}
+
+/*如果设置了border-box，实际所占高度 = 设置的高度（height）+ 外边距（margin）*/
+/*否则：块级元素实际所占高度=外边距（margin）+ 边界宽度(border-width) + 内边距（padding）+ 高度（height）*/
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+a, label, button, input, select {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /*这个属性只用于iOS (iPhone和iPad)。当你点击一个链接或者通过Javascript定义的可点击元素的时候，它就会出现一个半透明的灰色背景。要重设这个表现，你可以设置-webkit-tap-highlight-color为任何颜色。*/
+}
+
+
+body {
+    margin: 0; /*清除掉浏览器默认的外边距 因为每个浏览器默认的不一定一样 所以为保一致 将他们重置*/
+    background-image: url("../image/body.jpg"); /*设置背景图片*/
+    background-repeat: no-repeat; /*no-repeat 背景图像将仅显示一次。repeat-y 背景图像将在垂直方向重复。 */
+    background-size: 100% 100%; /*完全铺满整个盒子，图片可能会变形*/
+}
+
+/*清除这些元素的内外边距*/
+html, body, div, dl, dt, dd, ol, ul, li, h1, h2, h3, h4, h5, h6, p, blockquote, pre, button, fieldset, form, input, legend, textarea, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none; /*没有文本装饰*/
+    color: #08acee; /*设置超链接颜色为蓝色*/
+}
+
+button {
+    outline: 0; /*CSS默认按钮的点击时候出现蓝色边框，这样就不会有了*/
+}
+
+img {
+    border: 0; /*，默认img标签，有一个1px的边框*/
+}
+
+/*标签选择器*/
+input {
+    outline: none; /*使绘制于元素周围的一条线无效*/
+    background: transparent; /*背景透明*/
+    border: none; /*border-style的简写，即用不设置元素所有边框的样式*/
+    outline: medium; /*chrom浏览器，点击input输入时，边框消失*/
+}
+
+/* :focus 选择器：选中时取消背景色，绘制于元素周围的一条线无效*/
+*:focus {
+    outline: none;
+    background-color: transparent; /**/
+}
+
+/*::selection选择器*/
+::selection {
+    /*设置背景透明，实际上background默认的颜色就是透明的属性。*/
+    /*但是如果一个元素覆盖在另外一个元素之上，想显示下面的元素，就需要把上面元素的background设置transparent*/
+    background: transparent;
+}
+
+::-moz-selection {
+    /*针对火狐浏览器，用来设置背景透明*/
+    background: transparent;
+}
+
+/* 标签选择器*/
+button, input, optgroup, select, textarea { /*<optgroup> 标签可以把相关的选项组合在一起*/
+    margin: 0; /*从父元素继承外边距属性*/
+    font: inherit; /*从父元素继承字体属性*/
+    color: inherit; /*从父元素继承颜色属性*/
+    outline: none; /*表示使outline属性无效,使绘制于元素周围的一条线无效*/
+}
+
+/*标签选择器：设置列表项目样式为不使用项目符号*/
+li {
+    list-style: none;
+}
+
+/*伪元素类选择器：清除浮动*/
+.clearfix::after {
+    clear: both;
+    content: ".";
+    display: block; /*将元素显示为块级元素，从而可以更好地操控元素的宽高，以及内外边距，每一个块级元素都是从新的一行开始。*/
+    height: 0;
+    visibility: hidden;
+}
+
+/*类选择器：左浮动*/
+.fl {
+    float: left;
+}
+
+/*类选择器：右浮动*/
+.fr {
+    float: right;
+}
+
+/*类选择器：设置div盒子样式*/
+.divHeight {
+    width: 100%; /*宽度占满*/
+    height: 10px; /*设置盒子高度为10px*/
+    background: #f5f5f5; /*设置盒子背景为白色*/
+    position: relative; /*相对定位，是相对于前面的容器定位的。这个时候不能用top left在定位。应该用margin。*/
+    overflow: hidden; /*该元素的内容若超出了给定的宽度和高度属性，超出的部分将会被隐藏，不占位。*/
+}
+
+.r-line {
+    position: relative;
+}
+
+.r-line:after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    right: 0;
+    height: 100%;
+    border-right: 1px solid #D9D9D9;
+    -webkit-transform: scaleX(0.5);
+    transform: scaleX(0.5);
+    -webkit-transform-origin: 100% 0;
+    transform-origin: 100% 0;
+}
+
+.b-line {
+    position: relative;
+}
+
+.b-line:after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid #e2e2e2;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+}
+
+/* 必要样式 */
+.aui-register-popup {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#4C000000, endColorstr=#4C000000);
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, .4);
+    margin: 0;
+    overflow-y: scroll;
+}
+
+.aui-register-box {
+    position: relative;
+    width: 476px;
+    padding-bottom: 10px;
+    margin-top: 44px;
+    margin-left: 50%;
+    left: -238px;
+    border-radius: 3px;
+    background: #fff;
+    box-shadow: 0 2px 6px 2px rgba(0, 0, 0, .24);
+}
+
+.aui-register-link {
+    position: absolute;
+    width: 100%;
+    top: -28px;
+}
+
+.aui-register-link a {
+    color: #f6f6f6;
+    font: 12px/1.2 "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", arial, Tahoma, SimSun, sans-serif;
+    text-decoration: none;
+}
+
+.aui-register-logo {
+    width: 105px;
+    margin: 0 auto;
+    padding-top: 42px;
+    padding-bottom: 20px;
+}
+
+.aui-register-logo img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: none;
+}
+
+/*类选择器：用户登录表单项目*/
+.aui-register-form-item {
+    width: 350px; /*设置宽度*/
+    margin: 20px auto; /*只有两个参数,第一个参数是上下外边各20px,第二个参数是定左右自适应。四个参数则依次对应上右下左*/
+    position: relative; /*相对位置*/
+    text-align: justify; /*实现两端对齐文本效果*/
+}
+
+/*类选择器：用户登录表单项目下的按钮样式*/
+.aui-register-form-item .aui-btn-reg {
+    width: 100%; /*设置宽度*/
+    height: 42px; /*设置高度*/
+    outline: 0; /*设置绘制于元素周围的一条线为无*/
+    border: 0; /*border-width的简写，设置元素的所有边框为0*/
+    background: #ff552e; /*背景色为橘红*/
+    color: #fff; /*设置按钮里面的字体颜色Wie白色*/
+    cursor: pointer; /*定义了鼠标指针放在一个元素边界范围内时所用的光标形状，这里是显示一个小手*/
+    text-align: center; /*字体居中*/
+}
+
+/*鼠标悬浮状态下：用户登录表单项目下的按钮样式*/
+.aui-register-form-item .aui-btn-reg:hover {
+    width: 100%;
+    height: 42px;
+    outline: 0;
+    border: 0;
+    background: #ff552e;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+}
+
+/*获取焦点状态下：用户登录表单项目下的按钮样式*/
+.aui-register-form-item .aui-btn-reg:focus {
+    width: 100%;
+    height: 42px;
+    outline: 0;
+    border: 0;
+    background: #ff552e;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+}
+
+/*类选择器：用户登录表单项目下的input框样式*/
+.aui-register-form-item input {
+    width: 100%; /*设置宽度*/
+    height: 42px; /*设置高度*/
+    box-sizing: border-box; /*/*如果设置了border-box，实际所占高度 = 设置的高度（height）+ 外边距（margin）*/
+    outline: 0; /*设置绘制于元素周围的一条线为无*/
+    border: 2px solid #ebebeb; /*设置元素的边框样式*/
+    text-indent: 15px; /*缩进段落的第一行15像素*/
+    font-size: 14px; /*字体大小*/
+    line-height: 42px; /*字体上下居中*/
+    *margin-left: -15px; /*左边距离一个父级元素的边距-15px，前面加* 或者_，不是CSS的正常写法，而是利用IE的解析BUG，从而实现所需要的效果。*/
+    background: #fff; /*背景为白色*/
+}
+
+/*当元素获得焦点时,发生 focus 事件*/
+.aui-register-form-item input:focus {
+    border: 2px solid #bbbaba; /*边框灰色*/
+    background: #fff; /*背景白色*/
+}
+
+/*在鼠标点击时的样式！*/
+.aui-register-form-item input:active {
+    border: 2px solid #bbbaba; /*边框灰色*/
+    background: #fff; /*背景白色*/
+}
+
+.aui-get-code {
+    position: absolute;
+    top: 8px;
+    *top: 11px;
+    right: 8px;
+    height: 26px;
+    color: #999;
+    font-size: 12px;
+    line-height: 26px;
+    background: #eee;
+    border-radius: 2px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.aui-register-tag {
+    text-align: center;
+    width: 350px;
+    margin: 0 auto;
+    position: relative;
+    top: 4px;
+    display: block;
+    float: left;
+}
+
+/*清除浮动*/
+.clear {
+    display: block; /*让元素都变成块级元素，这样占一行，就不会浮动了*/
+    width: 0;
+    height: 0;
+    clear: both;
+    *display: none; /*为了兼容ie6和ie7*/
+}
+
+.protocol {
+    font-size: 14px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #999;
+}
+
+.protocol a {
+    color: #ff553e;
+    text-decoration: none;
+}
+
+.aui-register-bottom {
+    position: absolute;
+    width: 76%;
+    margin-left: 12%;
+    bottom: -46px;
+}
+
+.aui-register-bottom a {
+    color: #f6f6f6;
+    font: 12px/1.2 "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", arial, Tahoma, SimSun, sans-serif;
+    text-decoration: none;
+    float: left;
+    width: 33%;
+    text-align: center;
+}
+
+.focus {
+    width: 350px;
+    text-align: left;
+    color: #ff552e;
+    font-size: 12px;
+    position: relative;
+    padding-left: 20px;
+    float: left;
+}
+
+.focus span {
+    height: 35px;
+    line-height: 35px;
+}
+
+.icon-tips {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAEN0lEQVRYR82YXWwUZRSGn3e7ulD8bSUGxYi4QKzdof7UxhuCNwJiCdBuAiZNjJELe6mJ3qhcqIneqDHRGI3xhqAwbTH1B4MxwWiMksjP7raG0HBhgGAiJYgQqe0cs1u37S473f1mUTtXm+x53/PMmfm+c74Rc/zSHOejLkBL0wCpBzBbBLEmsCbM/gSNEMRGOHvkuPYzXk8RnAENYnR5m5BtROoErg8FMLuE+BpjkDH7RIO5X11hnQCty+tAfIC42zURZoa0G9guP3O0Vn1NgLZhxbUkrn4L9HitxuFxFmDsZGysV4NHz1fzqwpom1rvIh77HLijmpnT/8YQAWs1kDkxm25WQEu3roeYD8x3Sl5zsJ0msDXqz2XCJKGAtrH1Tq7SYdA1NeeLFGinmVB7WCUrAlrnLY3Maz4IWhEpp7PIfuac2rUvc6FcWhkw7b0DPOWY5zeC4CWk80gvAkuc9GY71JftqQpom1YuJ27DkN+EXa7xDvnDB/IK29h2A/GJEaRmFwcwT342O1NzWQWt2+tHbHY0Pis/2zRTY93eD4gOR5+v5GcfDgW0dEsS4sfcTIvRwWb5uT2FCqZX3grBCGies9cE92kgc7CoK6mgdaeeQ3rV2bRAZQbKA2bBepCWRvIheEV+7vkQwCiPJRpGuMqG5WenWulUBW196kYaNRopndmHSDuwIECx6zB7F2lRJK+CSIvlHzlZ+FU0sXRLG8QPuZvaiPzssrIF8hFii7vXPwpjlfoy35YCdqUeIaZ8z3W7jIuMXVqmwaOnpm6229uJ2OpmNDM62CI/t6sccBsxvRfJ1OwE0qfyM72F9VI3oD0jP/t6KWC39yTi/UiAk6ID8jOFfa9uwMCeVn/2jbJ3sDC5fDYnAG1iq/qGPi4F3OzdSwM/zQlAbLX87DelgPltZj5nkKoOsSE3ceUe8QS3Fcev0k6STn0PejBiFa8UYE5+JlVkKG91zyK99r8Cmr2svuwLlQHrGhZmrOIurwvZGqRt7jc7fo/84cMVASe3iNRupLS78TTg9Iad+gJpnYPXl/IzJfGXz4NpL396y49cjgMrp/jj4lLtHbk0BZj29gJrawYcJ6U9mdzM+Mojf3fr2yhW6AqO1wGMPFS+y68CHqpZX+vIX3jM65IJFsz/Dun+mhPUFWi/wAVP/vFz5Tbhx87O5TeRSBxCWlxX7mriye837eVnkdBFMtOvcIBqsH2I26vlifj/XxD0FCeXSh5Vu4alkwuhcR/QFhEiTHaSYLxT/cOzzqBVAQvvZP4gn2h+E+mJCKu7EuAuGO+VP1x1gq8JcHrbaEliDdsRj4FizhU1jiHbVhwEatE7AU6Bbmi9mQSPgjZg5DtGIjyZ/Q7aSxAMcCY34PrFNRJgyUJaTZyFLUsgngRLYizAGAWNYhOnGR360RWq6kZdS+n/q5i6K/hvg/4NPX2LOLSlU28AAAAASUVORK5CYII=');
+    width: 15px;
+    height: 15px;
+    background-size: 15px;
+    display: block;
+    float: left;
+    position: absolute;
+    left: 0;
+    top: 9px;
+}
+
+
+
+
+.msg {
+    margin-left: -20px;
+    width: 350px;
+    text-align: left;
+    color: #ff552e;
+    font-size: 12px;
+    position: relative;
+    padding-left: 20px;
+    float: left;
+    height: 35px;
+    line-height: 35px;
+}
+
+.register-wrap {
+    overflow: hidden;
+}
+
+.register-wrap .register {
+    width: 100%;
+    display: inline-block;
+}
+
+.register-wrap .register .register-top {
+    padding-top: 20px;
+    text-align: center;
+    width: 350px;
+    margin: 0 auto;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.register-top:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.register-wrap .register .register-top h2 {
+    cursor: pointer;
+    float: left;
+    width: 175px;
+    color: #666;
+    font-size: 16px;
+    line-height: 66px;
+    font-weight: normal;
+}
+
+.register-wrap .register .register-top h2.normal {
+    border-bottom: 1px solid #ff552e;
+    top: 4px;
+    color: #ff552e;
+}
+
+.register-wrap .register .register-top h2.nopassword {
+    top: 4px;
+}
+
+.register-wrap .register .register-top a {
+    display: inline-block;
+    float: right;
+    width: 50px;
+    height: 50px;
+    background: url("../image/co.png") no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.register-wrap .register .register-top a:hover {
+    background: url("../image/co1.png") no-repeat;
+    background-size: cover;
+}
+
+.aui-tag-size {
+    cursor: pointer;
+    color: #ff8c14;
+    font-size: 12px;
+    line-height: 25px;
+    text-align: center;
+    float: left;
+    width: 73px;
+    position: absolute;
+    left: -80px;
+    height: 25px;
+}
+
+.register-wrap .register .login-con {
+    display: none;
+}
+
+.saoma {
+    display: none;
+}
+
+.saoma .screen-tu {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    cursor: pointer;
+    background: url("../image/pc.png") no-repeat;
+    background-size: cover;
+}
+
+.saoma .screen-tu:hover {
+    background: url("../image/pc1.png") no-repeat;
+    background-size: cover;
+}
+
+.aui-text-item {
+    width: 350px;
+    margin: 20px auto;
+    position: relative;
+}
+
+.aui-text-item h1 {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    margin: 28px 0;
+    line-height: 22px;
+    height: 22px;
+    font-weight: normal;
+}
+
+.qr-code {
+    width: 100%;
+    display: inline-block;
+    height: 210px;
+    position: relative;
+    text-align: center;
+}
+
+.qr-code img {
+    border: 1px solid #eee;
+    padding: 15px;
+    width: 182px;
+    height: 182px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.tips_img {
+    width: 208px;
+    height: 202px;
+    float: right;
+    background-image: url("../image/app.png");
+    margin: 0 20px 0 -30px;
+    display: none;
+    background-repeat: no-repeat;
+}
+
+.qr-code:hover .tips_img {
+    display: inline-block;
+}
+
+.aui-tab-footer p {
+    margin-top: 23px;
+    margin-bottom: 23px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    line-height: 17px;
+    height: 17px;
+}
+
+.aui-tab-footer p a {
+    color: #f4691c;
+    text-decoration: none;
+}
+
+.aui-for-pwd {
+    text-decoration: none;
+    color: #999;
+    font-size: 12px;
+    float: right;
+    position: relative;
+    top: -15px;
+}
+
+/*类选择器：设置协议的css*/
+.aui-protocol {
+    font-size: 14px; /*字体*/
+    text-align: center; /*居中*/
+    margin-top: 20px; /*上外边距*/
+    color: #999; /*颜色*/
+}
+
+/*类选择器：设置协议里面链接的css*/
+.aui-protocol a {
+    color: #ff553e; /*颜色*/
+    text-decoration: none; /*取出超链接下划线*/
+}
+
+/*设置用户登录最下面qq背景图片和超链接的css*/
+.aui-thirds a .aui-qq-img {
+    width: 26px;
+    height: 26px;
+    float: left; /*左浮动*/
+    margin: 0 12px 0 0; /*上右下左*/
+    background-image: url("../image/qq.png"); /*背景图片*/
+    background-size: 26px; /*规定背景图像的尺寸*/
+}
+
+/*设置悬浮状态下：qq图片css*/
+.aui-thirds a:hover .aui-qq-img {
+    background-image: url("../image/qq1.png"); /*图片改变了*/
+    background-size: 26px; /*规定背景图像的尺寸*/
+}
+
+.aui-thirds a .aui-wx-img {
+    width: 26px;
+    height: 26px;
+    float: left;
+    margin: 0 12px 0 0;
+    background-image: url("../image/wx.png");
+    background-size: 26px;
+}
+
+.aui-thirds a:hover .aui-wx-img {
+    background-image: url("../image/wx1.png");
+    background-size: 26px;
+}
+
+.aui-thirds a .aui-wb-img {
+    width: 26px;
+    height: 26px;
+    float: left;
+    margin: 0 12px 0 0;
+    background-image: url("../image/wb.png");
+    background-size: 26px;
+}
+
+.aui-thirds a:hover .aui-wb-img {
+    background-image: url("../image/wb1.png");
+    background-size: 26px;
+}
+
+.aui-thirds a {
+    text-align: left;
+    float: left;
+    width: 29%;
+    *width: auto;
+    font-size: 12px;
+    line-height: 32px;
+    color: #999;
+    text-decoration: none;
+    margin: 0 2%;
+}
+
+.aui-thirds a i {
+    font-style: normal;
+}
+
+.aui-thirds {
+    width: 350px;
+    margin: 20px auto;
+    position: relative;
+}
+
+/*这个用在输入框的下面，给input的框的兄弟节点用！*/
+.from_box {
+    left: 4px;
+    top: 45px;
+    font-size: 14px;
+    position: absolute;
+    padding: 4px 18px 4px 40px; /*文字距离边框的内边距, 顺序是上右下左*/
+    background: #FFFFFF;
+    border: 1px solid #aaa;
+    z-index: 10; /*两个定位元素，都设置了position: absolute; top: 0; left: 0; 重叠在一起了，参数越大判定谁显示在上面，*/
+    border-radius: 4px; /*圆角*/
+    box-shadow: rgba(0, 0, 0, 0.3) 4px 3px 7px 1px; /*设置阴影的，用的时候上网查*/
+    display: none; /*默认不显示*/
+}
+
+/*这个css的意思是在类名为from_box的元素后追加内容。里面会再多出一个盒子，我们设置这个盒子的位置，旋转角度，可以创造一个角*/
+.from_box:after {
+    content: ""; /*内容无*/
+    display: block; /*显示状态*/
+    width: 15px; /*宽度*/
+    height: 15px; /*高度*/
+    transform: rotate(45deg); /*代表顺时针转45°*/
+    position: absolute; /*没有规定left和top的属性值时，是相对父级盒子绝对定位*/
+    top: -9px;
+    left: 17px;
+    background-color: #fff;
+    border-top: 1px solid #aaa; /*设置盒子上边线灰色*/
+    border-left: 1px solid #aaa; /*设置盒子左边线灰色*/
+
+}
+
+/*那个盒子添加了css元素类from_bo，那么在这个盒子里面再显示一个盒子，盒子内容如下。*/
+.from_box:before {
+    content: ""; /*内容无*/
+    display: block; /*显示状态*/
+    position: absolute; /*绝对位置*/
+    background-image: url("../image/ti.png"); /*盒子背景图*/
+    background-size: 100%; /*背景图大小充满盒子*/
+    width: 20px; /*盒子宽度*/
+    height: 20px; /*盒子高度*/
+    left: 10px; /*盒子设置在举例父盒左部的5px处*/
+    top: 5px; /*盒子设置在举例父盒上部的5px处*/
+    z-index: 10; /*层叠状态下的显示优先级*/
+}

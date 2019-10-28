@@ -1,0 +1,47 @@
+package com.woniu.movie.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import com.woniu.movie.mapper.CouponMapper;
+import com.woniu.movie.pojo.Coupon;
+import com.woniu.movie.service.ICouponService;
+
+@Service
+public class CouponServiceImpl implements ICouponService {
+
+    @Resource
+    private CouponMapper couponMapper;
+
+    @Override
+    public int removeCouponByCouponId(Integer couponId) {
+        return couponMapper.deleteByPrimaryKey(couponId);
+    }
+
+    @Override
+    public int add(Coupon record) {
+        return couponMapper.insert(record);
+    }
+
+    @Override
+    public int addSelective(Coupon record) {
+        return couponMapper.insertSelective(record);
+    }
+
+    @Override
+    public Coupon findCouponByCouponId(Integer couponId) {
+        return couponMapper.selectByPrimaryKey(couponId);
+    }
+
+    @Override
+    public int modifyCouponByCouponIdSelective(Coupon record) {
+        return couponMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Override
+    public int modifyCouponByCouponId(Coupon record) {
+        return couponMapper.updateByPrimaryKey(record);
+    }
+
+}

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <title th:text="${#strings.arraySplit(#request.getAttribute('movie').movieName,'/')[1]}">Title</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/bootstrap4.3.1.min.css">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link rel="stylesheet" href="maoyan/cinemas-list.81574a4d.css">
+    <link rel="stylesheet" href="maoyan/common.0a548310.css">
+    <link rel="stylesheet" href="css/mycss.css">
+    <link rel="stylesheet" href="layer/css/layui.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="js/vue2.6.10_min.js"></script>
+    <script src="layer/layui.js"></script>
+    <script src="laydate/laydate.js"></script>
+    <script src="js/moment-with-locales.js"></script>
+    <script src="maoyan/cinemas-list.da50b0b9.js"></script>
+    <script src="maoyan/common.9fc677f9.js"></script>
+    <script src="maoyan/owl_1.7.11.js"></script>
+    <script src="maoyan/stat.88d57c80.js"></script>
+    <script src="js/jqpaginator.js"></script>
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+
+        div {
+            white-space: nowrap;
+        }
+
+        .active {
+            border-radius: 14px;
+            font-size: 14px;
+            padding: 4px 4px;
+            background: orangered;
+            color: white;
+        }
+
+        a:hover {
+            color: #ef4238;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{common/header::header}"></div>
+<!--<img th:src="${#request.getAttribute('movie').moviePlacard}">-->
+<!--<img th:src="@{images/ImgBackground.png}">-->
+<div class="container-fluid" id="app" v-cloak>
+    <!--电影banner信息-->
+    <div class="row" style="margin-top: 60px;">
+        <img id="bannerImg" height="360px" src="images/ImgBackground.png">
+        <div class="col-sm-4">
+            <div class=" img_background">
+                <img width="232px" height="322px" th:src="${#request.getAttribute('movie').moviePlacard}">
+            </div>
+        </div>
+        <div class="col-sm-3 banner_font" style="padding-top: 50px;">
+            <h3 th:text="${#strings.arraySplit(#request.getAttribute('movie').movieName,'/')[0]}"></h3>
+            <div th:if="${#arrays.length(#strings.arraySplit(#request.getAttribute('movie').movieName,'/'))>1}">
+                <div class="banner_subtitle"
+                     th:text="${#strings.arraySplit(#request.getAttribute('movie').movieName,'/')[1]}"></div>
+            </div>
+            <div th:text="${#request.getAttribute('movie').movieLevel}"></div>
+            <div>
+                <span th:text="${#request.getAttribute('movie').movieCountry}"></span>
+                <span>/</span>
+                <span th:text="${#strings.replace(#request.getAttribute('movie').movieLanguage,'/',',')}"></span>
+                <input class="hidden" type="text" th:value="${#request.getAttribute('movie').movieId}" id="movieId"
+                       readonly></input>
+            </div>
+            <div style="height: 60px;"
+                 th:text="${#dates.format(#request.getAttribute('movie').moviePublish,'yyyy-MM-dd')}">
+
+            </div>
+            <div style="margin-top: 30px;">
+                <div style="display: flex;justify-content: space-between;">
+                    <button class="btn " style="width: 48%;background-color: #756189;color: white;">想看</button>
+                    <button class="btn " style="width: 48%; background-color: #756189;color: white;">评分</button>
+                </div>
+                <div style="margin-top: 20px;">
+                    <a th:href="@{/movie/detail(movieId=${#request.getAttribute('movie').movieId})}"
+                       class="btn btn-danger btn-block">
+                        查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3 banner_font" style="padding-top: 190px;">
+            <div>用户评分</div>
+            <div>
+                <span style="font-size: 50px;color: #ffc600;" id="score"></span>
+                <div style="display: inline-block;height: 10px;">
+
+                    <div>
+                        <div id="test03"></div>
+                    </div>
+                    <div th:text="${#request.getAttribute('movie').movieScoreTimes+'次评论'}"></div>
+                </div>
+            </div>
+            <div>累计票房</div>
+            <div th:text="${#request.getAttribute('movie').movieBoxOffice}">0</div>
+        </div>
+    </div>
+
+
+    <!---->
+    <div style="margin-top:140px;">
+        <div class="tags-panel col-md-10 col-sm-offset-1" style="margin: 0 auto;">
+            <ul class="tags-lines">
+                <li class="tags-line">
+                    <div class="tags-title">日期</div>
+                    <ul class="tags">
+                        <li>
+                            <a href="javascript:" class="active text-white" name="date" v-bind:id="'date'+'-1'"
+                               v-on:click="checkDate(-1,nowDate)">{{nowDate | moment}}</a>
+                        </li>
+                        <li v-for="(d,index) in dateList">
+                            <a href="javascript:" v-bind:value="d" name="date" v-bind:id="'date'+index"
+                               v-on:click="checkDate(index,d)">{{d | moment}}</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="tags-line tags-line-border" data-th-type="district">
+                    <div class="tags-title">地区</div>
+                    <ul class="tags">
+                        <li>
+                            <a href="javascript:" class="active text-white" name="region" v-bind:id="'region'+'-1'"
+                               v-on:click="checkRegion(-1,'')">全部</a>
+                        </li>
+                        <li v-for="(r,index) in regionList">
+                            <a href="javascript:" name="region" v-bind:id="'region'+index"
+                               v-on:click="checkRegion(index,r)">{{r}}</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="tags-line tags-line-border" data-th-type="showHall">
+                    <div class="tags-title">展厅</div>
+                    <ul class="tags">
+                        <li>
+                            <a href="javascript:" class="active text-white" name="hall" v-bind:id="'hall'+'-1'"
+                               v-on:click="checkHall(-1,'')">全部</a>
+                        </li>
+                        <li v-for="(h,index) in hallList">
+                            <a href="javascript:" name="hall" v-bind:id="'hall'+index" v-on:click="checkHall(index,h)">{{h}}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="margin-top:40px;">
+        <div class="cinemas-list col-md-10 col-sm-offset-1" style="margin: 0 auto;">
+            <h2 class="cinemas-list-header">影院列表</h2>
+            <div class="cinema-cell" v-for="m in messageList" v-if="size!=0">
+                <div class="cinema-info">
+                    <a href="javascript:" class="cinema-name">{{m.showSite.showSiteName}}</a>
+                    <p class="cinema-address">地址：{{m.showSite.showSiteAddress}}</p>
+                </div>
+                <div class="buy-btn">
+                    <a :href="'/movieSchedule/showSiteView?showSiteId='+m.showSiteId+'&movieId='+m.movieId">选座购票</a>
+                </div>
+                <div class="price">
+                    <span class="rmb red">￥</span>
+                    <span class="price-num red">
+                        <span class="stonefont">{{m.movieSchedulePrice}}</span>
+                    </span>
+                    <span>起</span>
+                </div>
+            </div>
+            <div class="no-cinemas" v-if="size==0">抱歉，没有找到相关结果，请尝试用其他条件筛选。</div>
+        </div>
+    </div>
+    <div style="margin-top: 20px">
+        <div class="cinemas-list">
+            <div class="row text-center" style="margin-left: 640px">
+                <div id="pager" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+    <input id="totalScore" type="hidden" th:value="${#request.getAttribute('movie').movieTotalScore}">
+    <input id="scoreTimes" type="hidden" th:value="${#request.getAttribute('movie').movieScoreTimes}">
+</div>
+<div th:replace="~{common/footer::footer}"></div>
+</body>
+<script>
+    let movieId = $("#movieId").val();
+
+    let app = new Vue({
+        el: "#app",
+        data: {
+            nowDate: [],
+            dateList: [],
+            regionList: [],
+            hallList: [],
+            messageList: [],
+            searchDate: new Date(),
+            searchRegion: '',
+            searchHall: '',
+            size: []
+        },
+        filters: {
+            moment(value, formatString) {
+                formatString = formatString || 'MM月DD';
+                return moment(value).format(formatString);
+            }
+        },
+        created: {},
+        methods: {
+            checkDate: function (index, d) {
+                $("a[name=date],[class=active]").removeClass('active').removeClass("text-white");
+                let res = $("#date" + index).html();
+                this.searchDate = d;
+                $("#date" + index).addClass('active').addClass("text-white");
+                setPager();
+            },
+            checkRegion: function (index, r) {
+                $("a[name=region],[class=active]").removeClass('active').removeClass("text-white");
+                let res = $("#region" + index).html();
+                this.searchRegion = r;
+                $("#region" + index).addClass('active').addClass("text-white");
+                setPager();
+            },
+            checkHall: function (index, h) {
+                $("a[name=hall],[class=active]").removeClass('active').removeClass("text-white");
+                let res = $("#hall" + index).html();
+                this.searchHall = h;
+                $("#hall" + index).addClass('active').addClass("text-white");
+                setPager();
+            },
+        }
+    });
+
+
+    function getSearchMessage(pageNum) {
+        let time = app.searchDate;
+        let showTime = formatDate(time);
+        let showSiteAddress = app.searchRegion;
+        let showHallName = app.searchHall;
+        /*console.log(showTime)
+        console.log(showSiteAddress)
+        console.log(showHallName)*/
+        $.post("/movieSchedule/getMovieScheduleMessage", {
+            movieId: movieId,
+            pageNum: pageNum,
+            pageSize: 8,
+            showTime: showTime,
+            showSiteAddress: showSiteAddress,
+            showHallName: showHallName
+        }, function (data) {
+            //console.log(data)
+            app.messageList = data.map.pageInfo.list;
+            app.size = data.map.pageInfo.size;
+            $('#pager').jqPaginator('option', {
+                totalPages: data.map.pageInfo.pages
+            });
+        })
+    }
+
+
+    //分页
+    function setPager() {
+        $("#pager").jqPaginator({
+            totalPages: 1,
+            currentPage: 1,
+            onPageChange: function (num, type) {
+                getSearchMessage(num);
+            }
+        })
+    }
+
+    setPager();
+
+
+    function getDate() {
+        let newDate = new Date();
+        app.nowDate = newDate;
+        let timeStamp = Date.parse(new Date(newDate));
+        let arr = new Array();
+        let oneDay = 24 * 60 * 60 * 1000;
+        for (let i = 1; i < 8; i++) {
+            timeStamp = timeStamp + oneDay;
+            arr.push(new Date(timeStamp));
+        }
+        app.dateList = arr;
+    }
+    getDate();
+
+    function getRegion() {
+        let region = ["浦东新区", "闵行区", "宝山区", "松江区", "嘉定区", "徐汇区", "青浦区", "黄浦区",
+            "普陀区", "杨浦区", "静安区", "奉贤区", "长宁区", "金山区", "虹口区", "崇明区"];
+        app.regionList = region;
+    }
+
+    getRegion();
+
+    function getShowHall() {
+        let showHall = ["IMAX厅", "CGS中国巨幕厅", "杜比全景声厅", "Dolby Cinema厅", "RealD厅", "RealD 6FL厅", "LUXE巨幕厅", "4DX厅", "DTS:X 临境音厅"];
+        app.hallList = showHall;
+    }
+
+    getShowHall();
+
+    //日期格式处理方式
+    function formatDate(date) {
+        let now = new Date(date);
+        let yyyy = now.getFullYear();
+        let MM = now.getMonth() + 1;
+        let dd = now.getDate();
+        return yyyy + "-" + MM + "-" + dd;
+    }
+
+
+    //评分
+    layui.use(['rate'], function () {
+        var totalScore = parseInt($("#totalScore").val());
+        var scoreTimes = parseInt($("#scoreTimes").val())
+        var score = totalScore / scoreTimes;
+
+        //保留一位小数
+        if (Number.isNaN(score)) {
+            score = 0;
+            $("#score").text('0.0')
+        } else {
+            score = score.toFixed(1)
+            $("#score").text(score)
+        }
+
+        var rate = layui.rate;
+        rate.render({
+            elem: '#test03'
+            , value: score
+            , half: true
+            , readonly: true
+        })
+    })
+</script>
+</html>

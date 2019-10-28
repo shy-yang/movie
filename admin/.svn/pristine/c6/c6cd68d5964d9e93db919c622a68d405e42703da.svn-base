@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>优惠券详情</title>
+        <link href="css/bootstrap4.3.1.min.css?v=3.3.6" rel="stylesheet">
+        <link href="css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+        <link href="css/style.css?v=4.1.0" rel="stylesheet">
+        <script src="js/jquery.min.js?v=2.1.4"></script>
+        <script src="js/jqpaginator.js"></script>
+        <script src="js/vue2.6.10_min.js"></script>
+        <script src="just_layer/layer.js"></script>
+        <script src="laydate/laydate.js"></script>
+        <script src="js/moment-with-locales.js"></script>
+        <script src="js/jqpaginator.js"></script>
+        <style type="text/css">
+            [v-cloak] {
+                display: none;
+            }
+
+            .mySearchTitle {
+                font-weight: bold;
+                font-size: larger
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid" id="app" v-cloak>
+            <div class="mt-3 row">
+                <button class="btn btn-sm btn-outline btn-outline-primary ml-1" @click="addCoupon()">添加优惠券</button>
+                <button class="btn btn-sm btn-outline-danger ml-2" @click="batchSetCouponState(0)">批量设为不可领取</button>
+                <button class="btn btn-sm btn-outline-success ml-2" @click="batchSetCouponState(1)">批量设为可领取</button>
+            </div>
+
+            <div class="form-row mt-3">
+                <div class="form-group col-2">
+                    <label class="control-label mySearchTitle">单页显示条数：</label>
+                    <select class="form-control" id="pageSize" v-model="pageSize">
+                        <option>5</option>
+                        <option>10</option>
+                        <option>15</option>
+                        <option>20</option>
+                    </select>
+                </div>
+                <div class="form-group col-2 ml-2">
+                    <label class="control-label mySearchTitle">优惠金额：</label>
+                    <input type="number" id="couponBenefitPrice" v-model="couponBenefitPrice">
+                </div>
+                <div class="form-group col-2">
+                    <label class="control-label mySearchTitle">开始日期：</label>
+                    <input type="text" id="searchStart" v-model="searchStart">
+                </div>
+                <div class="form-group col-2">
+                    <label class="control-label mySearchTitle">结束日期：</label>
+                    <input type="text" id="searchEnd" v-model="searchEnd">
+                </div>
+                <div class="form-group col-1">
+                    <label class="control-label mySearchTitle">点击搜索</label>
+                    <button class="btn btn-sm btn-block btn-info" @click="search()">搜索</button>
+                </div>
+                <div class="form-group col-1">
+                    <label class="control-label mySearchTitle">重置条件</label>
+                    <button class="btn btn-sm btn-block btn-dark" @click="reSet()">清空</button>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <table class="table table-hover table-bordered table-striped text-center">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll" onclick="selectAll(this)"></th>
+                        <th>ID</th>
+                        <th>优惠金额</th>
+                        <th>开始时间</th>
+                        <th>过期时间</th>
+                        <th>优惠券状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="c in coupons">
+                        <td><input type="checkbox" name="flag" :value="c.couponId"></td>
+                        <td>{{c.couponId}}</td>
+                        <td>{{c.couponBenefitPrice}}</td>
+                        <td>{{c.couponStartTime | moment}}</td>
+                        <td>{{c.couponEndTime | moment}}</td>
+                        <td v-if="c.couponState==1" class="text-success">可领取</td>
+                        <td v-if="c.couponState==0" class="text-danger">不可领取</td>
+                        <td>
+                            <button class="btn-sm btn btn-outline-info" @click="updateCouponView(c.couponId)">编辑优惠券
+                            </button>
+                            <button v-if="c.couponState==1" class="btn-sm btn btn-outline-danger"
+                                    @click="setCouponState(0,c.couponId)">设为不可领取
+                            </button>
+                            <button v-if="c.couponState==0" class="btn-sm btn btn-outline-success"
+                                    @click="setCouponState(1,c.couponId)">设为可领取
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <!--分页小工具 start-->
+                <div class="mt-2 row">
+                    <div class="col-4 offset-4">
+                        <ul id="pager" class="pagination"></ul>
+                    </div>
+                </div>
+                <!--分页小工具 end-->
+            </div>
+
+            <!--添加优惠券界面开始-->
+            <div id="addView" class="mt-3" style="display: none">
+                <div class="col-8 offset-2">
+                    <form id="uploadForm">
+                        <div class="card">
+                            <div class="card-header text-center font-weight-bold">添加优惠券</div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    优惠券金额:
+                                    <input type="number" name="couponBenefitPrice" class="form-control">
+                                </div>
+                                <div>
+                                    开始时间:
+                                    <input type="text" id="start" name="couponStartTime" class="form-control">
+                                </div>
+                                <div>
+                                    结束时间:
+                                    <input type="text" id="end" name="couponEndTime" class="form-control">
+                                </div>
+                                <div class="mt-1">
+                                    是否开放领取：
+                                    <input type="radio" name="couponState" value="1" checked>是
+                                    <input type="radio" name="couponState" value="0">否
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-success mt-2" @click="addNewCoupon()"
+                                            type="button">确认添加
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--添加优惠券界面结束-->
+
+            <!--编辑优惠券界面开始-->
+            <div id="updateView" class="mt-3" style="display: none">
+                <div class="col-8 offset-2">
+                    <form id="updateForm">
+                        <div class="card">
+                            <div class="card-header text-center font-weight-bold">编辑优惠券</div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    优惠券金额:
+                                    <input type="number" name="couponBenefitPrice" class="form-control"
+                                           :value="coupon.couponBenefitPrice">
+                                    <input type="hidden" :value="coupon.couponId" name="couponId">
+                                </div>
+                                <div>
+                                    开始时间:
+                                    <input type="text" id="upStart" name="couponStartTime" class="form-control"
+                                           :value="coupon.couponStartTime | moment">
+                                </div>
+                                <div>
+                                    结束时间:
+                                    <input type="text" id="upEnd" name="couponEndTime" class="form-control"
+                                           :value="coupon.couponEndTime | moment">
+                                </div>
+                                <div class="mt-1">
+                                    是否开放领取：
+                                    <input type="radio" name="couponState" value="1"
+                                           v-if="coupon.couponState==1" checked>是
+                                    <input type="radio" name="couponState" value="1"
+                                           v-else>是
+
+                                    <input type="radio" name="couponState" value="0"
+                                           v-if="coupon.couponState==0" checked>否
+                                    <input type="radio" name="couponState" value="0"
+                                           v-else>否
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary mt-2" @click="updateCoupon()"
+                                            type="button">确认编辑
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--编辑优惠券界面结束-->
+        </div>
+    </body>
+    <script>
+        var addOpen;
+        var updateOpen;
+        const app = new Vue({
+            el: "#app",
+            data: {
+                couponBenefitPrice: "",
+                searchStart: "",
+                searchEnd: "",
+                pageSize: 10,
+                coupon: {},
+                coupons: []
+            },
+            methods: {
+                //搜索优惠券
+                search: () => {
+                    getCouponView();
+                },
+                reSet: () => {
+                    app.couponBenefitPrice = "";
+                    app.searchStart = "";
+                    app.searchEnd = "";
+                },
+                //打开编辑优惠券弹窗
+                updateCouponView: (couponId) => {
+                    //后端请求该优惠券的信息 显示在编辑表单内
+                    $.get(
+                        "/coupon/queryByCouponId",
+                        {
+                            couponId: couponId
+                        },
+                        function (data) {
+                            app.coupon = data.map.coupon;
+                        }
+                    );
+                    updateOpen = layer.open(
+                        {
+                            type: 1,
+                            content: $("#updateView"),
+                            title: '编辑优惠券',
+                            shadeClose: true,
+                            shade: 0.1,
+                            area: ['44%', '61%'],
+                            maxmin: false,
+                            anim: 3,
+                            resize: false,
+                            end: function () {
+                                getCouponView();
+                            }
+                        }
+                    );
+                },
+                //上传优惠券更新
+                updateCoupon: () => {
+                    $.ajax({
+                        url: '/coupon/update',
+                        type: 'POST',
+                        cache: false,
+                        data: new FormData($('#updateForm')[0]),
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data.code == "200") {
+                                layer.close(updateOpen);
+                                getCouponView();
+                                layer.msg(data.message, {icon: 1, time: 2000});
+                                return;
+                            }
+                            layer.msg(data.message, {icon: 2, time: 2000});
+                        }
+                    });
+                },
+                //打开添加优惠券弹窗
+                addCoupon: () => {
+                    addOpen = layer.open(
+                        {
+                            type: 1,
+                            content: $("#addView"),
+                            title: '添加优惠券',
+                            shadeClose: true,
+                            shade: 0.1,
+                            area: ['44%', '61%'],
+                            maxmin: false,
+                            anim: 4,
+                            resize: false,
+                            end: function () {
+                                getCouponView();
+                            }
+                        }
+                    );
+                },
+                //设置单个优惠券的状态
+                setCouponState: (couponState, couponId) => {
+                    //确认操作
+                    layer.confirm("确认设置？", {icon: 3},
+                        function (index) {
+                            $.post(
+                                "/coupon/setCouponState",
+                                {
+                                    couponState: couponState,
+                                    couponId: couponId
+                                },
+                                function (data) {
+                                    getCouponView();
+                                    if (data.code == "200") {
+                                        layer.msg(data.message, {icon: 1, time: 2000});
+                                        return;
+                                    }
+                                    layer.msg(data.message, {icon: 2, time: 2000});
+                                }
+                            );
+                            layer.close(index);
+                        },
+                        function (index) {
+                            layer.msg("已取消", {icon: 7, time: 2000});
+                            layer.close(index);
+                        }
+                    );
+                },
+                //批量设置优惠券的状态
+                batchSetCouponState: (couponState) => {
+                    let checks = $("input[name=flag]:checked");
+                    if (checks.length < 1) {
+                        layer.msg("请至少选择一个优惠券", {icon: 5, time: 2000});
+                        return;
+                    }
+                    let ids = "";
+                    checks.each(function () {
+                        ids += "," + this.value;
+                    });
+                    ids = ids.substring(1);
+                    //确认操作
+                    layer.confirm("确认设置？", {icon: 3},
+                        function (index) {
+                            $.post(
+                                "/coupon/batchSetCouponState",
+                                {
+                                    couponState: couponState,
+                                    couponIds: ids
+                                },
+                                function (data) {
+                                    getCouponView();
+                                    if (data.code == "200") {
+                                        layer.msg(data.message, {icon: 1, time: 2000});
+                                        return;
+                                    }
+                                    layer.msg(data.message, {icon: 2, time: 2000});
+                                }
+                            );
+                            layer.close(index);
+                        },
+                        function (index) {
+                            layer.msg("已取消", {icon: 7, time: 2000});
+                            layer.close(index);
+                        }
+                    );
+                },
+                //发送添加优惠券请求
+                addNewCoupon: () => {
+                    $.ajax({
+                        url: 'coupon/add',
+                        type: 'POST',
+                        cache: false,
+                        data: new FormData($('#uploadForm')[0]),
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            getCouponView();
+                            if (data.code == "200") {
+                                layer.close(addOpen);
+                                layer.msg(data.message, {icon: 1, time: 2000});
+                                return;
+                            }
+                            layer.msg(data.message, {icon: 2, time: 2000});
+                        }
+                    });
+                },
+            },
+            filters: {
+                //保留2位小数点过滤器 不四舍五入
+                number(value) {
+                    var toFixedNum = Number(value).toFixed(3);
+                    return toFixedNum.substring(0, toFixedNum.toString().length - 1);
+                },
+                //将时间戳转换为指定格式 需要引入moment-with-locales.js
+                moment(value, formatString) {
+                    formatString = formatString || 'YYYY-MM-DD';
+                    return moment(value).format(formatString);
+                }
+            },
+
+            created: function () {
+
+            },
+            mounted: function () {
+                getCouponView();
+            }
+        });
+
+        //条件分页查询
+        function couponPages(num) {
+            $.get(
+                "/coupon/list",
+                {
+                    page: num,
+                    pageSize: $("#pageSize").val(),
+                    couponStartTime: $("#searchStart").val(),
+                    couponEndTime: $("#searchEnd").val(),
+                    couponBenefitPrice: $("#couponBenefitPrice").val()
+                },
+                function (data) {
+                    app.coupons = data.map.coupons.list;
+                    let total = data.map.coupons.pages;
+                    total = parseInt(total) > 0 ? total : 1;
+                    let visible = 10;
+                    if (parseInt(num) > parseInt(total)) {
+                        visible = parseInt(num)
+                    }
+                    $("#pager").jqPaginator('option', {
+                        totalPages: parseInt(total),
+                        visiblePages: parseInt(visible)
+                    });
+                }
+            );
+        }
+
+        function getCouponView() {
+            couponPages(1);
+            $("#pager").jqPaginator({
+                totalPages: 1,
+                visiblePages: 1,
+                currentPage: 1,
+                //更改页数时触发
+                onPageChange: function (num, type) {
+                    couponPages(num);
+                }
+            });
+        }
+
+        //laydate
+        laydate.render({
+            elem: "#start"
+        });
+
+        laydate.render({
+            elem: "#end"
+        });
+        laydate.render({
+            elem: "#upStart"
+        });
+        laydate.render({
+            elem: "#upEnd"
+        });
+        laydate.render({
+            elem: "#searchStart",
+            done: function (value, date, endDate) {
+                app.searchStart = value;
+            }
+        });
+        laydate.render({
+            elem: "#searchEnd",
+            done: function (value, date, endDate) {
+                app.searchEnd = value;
+            }
+        });
+
+        //全选复选框点击事件
+        function selectAll(e) {
+            $("input[name=flag]").prop("checked", $(e).prop("checked"))
+        }
+
+
+    </script>
+</html>

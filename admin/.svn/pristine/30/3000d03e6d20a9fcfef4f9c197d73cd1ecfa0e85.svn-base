@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html"
+      xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+
+    <title>Title</title>
+    <!--bootstrap样式-->
+    <link href="css/bootstrap4.3.1.min.css?v=3.3.7" rel="stylesheet">
+    <!--图标-->
+    <link href="css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <!--后台主题UI框架-->
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <!--bootstrap.js和jquery.js,注意bootstrap必须放在下面！-->
+    <script src="js/jquery.min.js?v=2.1.1"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+    <!--vue框架-->
+    <script src="js/vue2.6.10_min.js"></script>
+    <!--layui弹框-->
+    <script src="just_layer/layer.js"></script>
+
+    <!-- <script src="laydate/laydate.js"></script>-->
+    <script src="js/moment-with-locales.js"></script>
+
+    <!--分页插件-->
+    <script src="js/jqpaginator.js"></script>
+
+
+    <style>
+        /*消除vue闪烁*/
+        [v-clock]{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid" id="app" v-clock>
+        <div class="row">
+            <div class="bg-success text-white text-center p-2  col-sm-12 fa fa-university">用户管理列表</div>
+        </div>
+
+        <!--查询操作和批量封号！-->
+        <div class="row mt-3">
+
+            <!--查询操作，ajax提交form表单-->
+            <div class="col-sm-10">
+                <form class="form-inline">
+
+                        <div class="form-group">
+                            <label for="ID">ID:</label>
+                            <input type="text" class="form-control" id="ID" name="userId" v-model="userId" placeholder="请输入ID">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="NAME">Name:</label>
+                            <input type="text" class="form-control"  name="userName" v-model="userName" id="NAME" placeholder="请输入名字">
+                        </div>
+
+                    <button type="button" class="btn btn-outline-primary"  v-on:click="check()" >快速查询</button>
+
+                    <button type="submit" class="btn btn-outline-warning ml-2"><li class="fa fa-search">更多查询</li></button>
+                </form>
+            </div>
+            <!--批量删除和添加操作！-->
+            <div class="col-sm-2  text-center">
+                <div class="">
+                    <button class="btn btn-sm btn-danger" v-on:click="forbids()"><li class="fa fa-trash-o" >批量封号</li></button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!--用户数据显示开始-->
+        <div class="row mt-3" >
+            <table class="table  table-hover ">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="check" >
+                        </th>
+                        <th>id</th>
+                        <th>头像</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>昵称</th>
+                        <th>邮箱</th>
+                       <!-- <th>密码</th>-->
+                        <th>剩余积分</th>
+                        <th>积分累计</th>
+                        <th>等级</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(c,index) in lists">
+                        <td>
+                            <input type="checkbox" name="check"  v-bind:value="c.userId">
+                        </td>
+                        <td >{{c.userId}}</td>
+                        <td>
+                            <img :src="c.userHeadImage" width="40px;">
+                        </td>
+                        <td >{{c.userName}}</td>
+                        <td >{{c.userSex}}</td>
+                        <td >{{c.userNickname}}</td>
+                        <td >{{c.userEmail}}</td>
+                       <!-- <td >{{c.userPassword}}</td>-->
+                        <td >{{c.userScoreActive}}</td>
+                        <td >{{c.userScoreSum}}</td>
+                        <td >{{c.userLevel}}</td>
+
+                        <td v-if="c.userState == '0'" class="text-danger">封号</td>
+                        <td v-else="c.userState == '1'" class="text-success">正常</td>
+
+                        <td>
+                            <input type="button" class="btn btn-sm btn-warning" v-on:click="modifyUser(c.userId)" value="修改"  data-toggle="modal" data-target="#myModal">
+
+                            <input type="button" class="btn btn-sm btn-danger " v-if="c.userState == '1'" v-on:click="forbid(c.userId)" value="封号">
+                            <input type="button" class="btn btn-sm btn-success " v-else="c.userState == '0'" v-on:click="openUser(c.userId)" value="解封">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--用户数据显示结束-->
+
+        <!--分页操作，后端mybatis分页插件与前端分页结合-->
+        <div class="row">
+
+            <div class="col-sm-6 ">
+               当前:{{pageNum}}页   总条数:{{total}}条
+            </div>
+
+            <div class="col-sm-6 ">
+                <div id="pager" class="pagination ml-3"></div>
+            </div>
+        </div>
+        <!--分页结束-->
+
+        <!--修改User页面开始-->
+        <div id="updateView" class="mt-3" style="display: none">
+            <div class="col-8 offset-2">
+                <form id="updateForm">
+                    <div class="card">
+                        <div class="card-header text-center font-weight-bold"><i class="fa fa-hourglass-end" aria-hidden="true"></i></div>
+
+                        <div class="card-body">
+                            <div class="form-group">
+
+                                <div class="mt-2">
+                                    现存积分:
+                                    <input type="number"  class="form-control"  v-model:value="myUser.userScoreActive" >
+                                </div>
+
+                                <div class="mt-2">
+                                    累计积分:
+                                    <input type="number"   class="form-control"  v-model:value="myUser.userScoreSum" >
+                                </div>
+
+                                <div class="float-right">
+                                    <button  type="button" class="btn btn-sm btn-outline-primary mt-2" v-on:click="submitUser()">
+                                        <i class="fa fa-check-circle"></i>确认修改
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--修改User页面结束-->
+
+    </div>
+    <script th:inline="javascript">
+        /*定义一个对象，用来使用layer的弹层方法*/
+        var modifyOpen;
+        /*1、vue框架*/
+        const vueApp=new Vue({
+            el:"#app",
+            data:{
+                lists:[],
+                total:"",
+                pageNum:"",
+                myUser:{},
+                userId:"",
+                userName: ""
+            },
+            methods:{
+                //封号处理
+                forbid:function (i) {
+                  if(confirm("确认封号吗")){
+                        $.post(
+                            "user/forbid/"+i,
+                            function(data){
+                                alert(data.message)
+                                    location.reload()
+                            }
+                        )
+                    }
+                },
+                //解封
+                openUser:function(i){
+                    if(confirm("确认解封吗？")){
+                        $.post(
+                            "user/open/"+i,
+                            function(data){
+                                alert(data.message)
+                              /*  location.reload()*/;
+                                setpager();
+                            }
+                        )
+                    }
+                },
+                //批量封号
+                forbids:function () {
+                    let checks=$("input[name=check]:checked");
+                    if(checks.length<1){
+                        alert("请选择一项进行封号");
+                        return;
+                    }else {
+                        let ids="";
+                        checks.each(function () {
+                            ids+=","+this.value;
+                        })
+                        ids=ids.substring(1);
+                        $.post("user/forbidAll",{
+                            ids:ids
+                        },function (data) {
+                            location.reload();
+                            alert(data.message)
+                        })
+                    }
+                },
+                //修改用户信息
+                modifyUser: (userId) => {
+                    /*向后端请求用户信息回显*/
+                    $.get(
+                        "/user/queryByUserId",
+                        {
+                            userId: userId
+                        },
+                        function (data) {
+                            vueApp.myUser = data.map.user;
+                        },
+                    );
+                    /*打开弹层*/
+                    modifyOpen = layer.open(
+                        {
+                            type: 1,   //表示页面层，如果是2那么打开的是个iframe
+                            content: $("#updateView"),  //这里放的是dom!dom最好放在body最外层！
+                            title: '修改用户信息',
+                            shadeClose: true,      //设置为true，那么点击弹层外区域也能关闭
+                            shade: 0.1,            //弹层外区域颜色
+                            area: ['40%', '60%'], //默认是自适应的！
+                            maxmin: true,      //可以选择把弹层开到最大！
+                            anim:0,            //弹出时的动画效果，这里选择的渐显！
+                            resize: false,     //是否允许拉伸
+                            end: function () {
+                                setpager(); //无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。
+                            }
+                        }
+                    );
+                },
+                //将修改后的数据发送到后台
+                submitUser:()=>{
+                    console.log(vueApp.myUser)
+                    $.post(
+                        "/user/modifyUser",
+                        {user:JSON.stringify(vueApp.myUser)},
+                        function(data){
+                            if (data.code == "100") {
+                                //加入发送成功，就让他关闭图层
+                                layer.close(modifyOpen);
+                                setpager();
+                                layer.msg(data.message, {icon: 1, time: 1000});
+                                return;
+                            }
+                            layer.msg(data.message, {icon: 2, time: 1000});
+                        }
+                    )
+                },
+                //将查询内容发送到后台,并在前台显示
+                check: () => {
+                    setpager();
+                },
+            }
+        })
+
+        /*定义一个全局变量pageNum,用于在setpager()方法中调用showproductdata()，给其pageNum赋值*/
+        var pageNum = 1;
+
+        /*1、向后端发送请求获取用户数据赋值给vue中属性*/
+        /*2、将查询出来的总页数赋值给分页插件jqPaginator中的总页数属性*/
+        function showproductdata() {
+
+            $.post("user/list", {
+                pageNum : pageNum,
+                userId: $("#ID").val(),
+                userName: $("#NAME").val()
+            }, function(data) {
+                vueApp.lists= data.map.pageInfo.list;
+                vueApp.total=data.map.pageInfo.total;
+                vueApp.pageNum=data.map.pageInfo.pageNum
+
+                //设置控件总页数！
+                $('#pager').jqPaginator('option', {
+                    totalPages : data.map.pageInfo.pages
+                });
+            });
+        }
+        /*1、分页插件jqPaginator*/
+        function setpager() {
+            $("#pager").jqPaginator({
+                totalPages: 1,
+                visiblePages: 2,
+                currentPage : 1,
+                /*这里是一个点击事件，页面点击的值会赋给num*/
+                onPageChange : function(num, type) {
+                   /* layer.msg("第" + num + "页"); //这里用了一下layer插件*/
+                    pageNum = num;   //改变全局变量pageNum
+                    showproductdata();  //调用showproductdata()向前台获取数据！
+                }
+            });
+        }
+        //自调用
+        setpager();
+
+        //全选全消
+        $(function () {
+            $("#check").click(function () {
+                $("input[name=check]").prop("checked",this.checked);
+            })
+        })
+
+
+    </script>
+</body>
+</html>

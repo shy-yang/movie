@@ -1,0 +1,53 @@
+package com.woniu.movie.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import com.woniu.movie.pojo.Admin;
+import com.woniu.movie.mapper.AdminMapper;
+import com.woniu.movie.service.IAdminService;
+
+@Service
+public class AdminServiceImpl implements IAdminService {
+
+    @Resource
+    private AdminMapper adminMapper;
+
+    @Override
+    public int removeAdminByAdminId(Integer adminId) {
+        return adminMapper.deleteByPrimaryKey(adminId);
+    }
+
+    @Override
+    public int add(Admin record) {
+        return adminMapper.insert(record);
+    }
+
+    @Override
+    public int addSelective(Admin record) {
+        return adminMapper.insertSelective(record);
+    }
+
+    @Override
+    public Admin findAdminByAdminId(Integer adminId) {
+        return adminMapper.selectByPrimaryKey(adminId);
+    }
+
+    @Override
+    public Admin findAdminByAdminAccount(String account) {
+        return adminMapper.selectByPrimaryAccount(account);
+    }
+
+    @Override
+    public int modifyAdminByAdminIdSelective(Admin record) {
+        return adminMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Override
+    public int modifyAdminByAdminId(Admin record) {
+        return adminMapper.updateByPrimaryKey(record);
+    }
+
+}

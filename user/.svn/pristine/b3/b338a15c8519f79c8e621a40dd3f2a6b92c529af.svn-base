@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <base th:href="@{/}">
+        <meta charset="UTF-8">
+        <title>底部</title>
+    </head>
+    <body>
+        <footer class="footer" th:fragment="footer">
+            <div class="footer-container">
+                <div class="footer-link">
+                    <div class="footer-link__item">
+                        <h4 class="footer-title">关于我们</h4>
+                        <ul class="footer-list">
+                            <li class="item"><a href="#">关于我们</a></li>
+                            <li class="item"><a href="#">帮助中心</a></li>
+                            <li class="item"><a href="#">加入我们</a></li>
+                            <li class="item"><a href="#">联系我们</a></li>
+                            <li class="item"><a href="#">标签集</a></li>
+                            <li class="item"><a href="#">商务合作</a></li>
+                            <li class="item"><a href="#">免责声明</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-link__item">
+                        <h4 class="footer-title">手机应用</h4>
+                        <ul class="footer-list">
+                            <li class="item"><a href="#">关于我们</a></li>
+                            <li class="item"><a href="#">帮助中心</a></li>
+                            <li class="item"><a href="#">加入我们</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-link__item">
+                        <div class="footer-orcode">
+                            <img src="https://fanchw-1259090380.cos.ap-shanghai.myqcloud.com/web_site.png"
+                                 style="width: 120px;height: 120px" alt="#">
+                        </div>
+                        <div class="orcode-text">
+                            <p>扫描二维码</p>
+                            <p>收藏关注更多动态</p>
+                        </div>
+                    </div>
+                    <div class="footer-link__item">
+                        <h4 class="footer-title">关注我们</h4>
+                        <ul class="footer-list">
+                            <li class="item"><a href="#">关于我们</a></li>
+                            <li class="item"><a href="#">帮助中心</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-link__item">
+                        <h4 class="footer-title">友情链接</h4>
+                        <ul class="footer-list">
+                            <li class="item"><a href="#">关于我们</a></li>
+                            <li class="item"><a href="#">帮助中心</a></li>
+                            <li class="item"><a href="#">关于我们</a></li>
+                            <li class="item"><a href="#">帮助中心</a></li>
+                            <li class="item"><a href="#">关于我们</a></li>
+                            <li class="item"><a href="#">帮助中心</a></li>
+                            <li class="item"><a href="#">关于我们</a></li>
+                            <li class="item"><a href="#">帮助中心</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="fopter-copyright">
+                    <p>Copyright &copy; 2019.Company name All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

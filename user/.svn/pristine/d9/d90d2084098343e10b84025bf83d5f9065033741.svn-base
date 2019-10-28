@@ -1,0 +1,24 @@
+package com.woniu.movie.service;
+
+import com.woniu.movie.pojo.Order;
+
+import java.util.Date;
+import java.util.List;
+
+public interface IOrderService {
+
+
+    int removeOrderByOrderId(Integer orderId);
+
+    int add(Order record);
+
+    int addSelective(Order record);
+
+    Order findOrderByOrderId(Integer orderId);
+
+    int modifyOrderByOrderIdSelective(Order record);
+
+    int modifyOrderByOrderId(Order record);
+
+    int createOrderByTicketsAndUserId(List<Integer> tickets, Integer userId, Date createTime);
+}

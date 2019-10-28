@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:v-text="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-model="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href="@{/}">
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--图标-->
+    <link href="css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="css/login.css" rel="stylesheet">
+    <script src="js/jquery.min.js?v=2.1.1"></script>
+    <link href="css/userLogin.css" rel="stylesheet" type="text/css"/>
+    <!--layui弹层-->
+    <script src="just_layer/layer.js"></script>
+    <!--vue框架-->
+    <script src="js/vue2.6.10_min.js"></script>
+    <!--引入layui功能模块-->
+    <script src="layer/layui.js"></script>
+    <style type="text/css" rel="stylesheet">
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0; /*清除掉浏览器默认的外边距 因为每个浏览器默认的不一定一样 所以为保一致 将他们重置*/
+            background-image: url("https://lizx-1300499917.cos.ap-shanghai.myqcloud.com/img02.jpg"); /*设置背景图片*/
+            background-repeat: no-repeat; /*no-repeat 背景图像将仅显示一次。repeat-y 背景图像将在垂直方向重复。 */
+            background-size: cover; /*保证背景图不变形*/
+        }
+
+        .address {
+            margin-left: 34%;
+            margin-top: 27%;
+            width: 30px;
+            height: 30px;
+            border-radius: 20px;
+            background-color: #182C4E;
+            border: 0px;
+        }
+    </style>
+</head>
+
+<body>
+<!--播放音乐-->
+<audio loop autoplay>
+    <source src="https://lizx-1300499917.cos.ap-shanghai.myqcloud.com/music01.mp3">
+</audio>
+<div id="app" class="container-fluid">
+    <button @click="register()" class="address"></button>
+    <div id="updateView" class="mt-3" style="display: none ">
+        <div class="col-sm-10 col-sm-offset-1">
+            <form class="form-horizontal" enctype="multipart/form-data" id="frm">
+                <div class="form-group">
+                    <label for="userName" class="col-sm-2 control-label">用户名:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="userName" class="form-control" id="userName" placeholder="请输入中文用户名"
+                               required maxlength="20"
+                               onblur="check(this.id,0)" onfocus="check1(this.id)"
+                        >
+                        <div class="from_box">用户名不能为空</div>
+                    </div>
+                </div>
+                <script>
+                    function check(x, y) {
+                        if (document.getElementById(x).value.length <= y) {
+                            document.getElementById(x).nextElementSibling.style.display = "block";
+                            setTimeout(function () {
+                                document.getElementById(x).nextElementSibling.style.display = "none";
+                            }, 3000);
+                        }
+                    }
+
+                    function check1(x) {
+                        document.getElementById(x).nextElementSibling.style.display = "none";
+                    }
+                </script>
+
+                <div class="form-group">
+                    <label for="userNickName" class="col-sm-2 control-label">匿名:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="userNickname" class="form-control" id="userNickName"
+                               placeholder="请输入匿名" required maxlength="20"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userPassword" class="col-sm-2 control-label">密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" name="userPassword" class="form-control" id="userPassword"
+                               placeholder="请输入密码" required maxlength="20"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userPassword2" class="col-sm-2 control-label">确认密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="userPassword2" placeholder="请再次输入密码" required
+                               maxlength="20">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userPhone" class="col-sm-2 control-label">手机号:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="userPhone" class="form-control" id="userPhone" placeholder="请输入手机号"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userEmail" class="col-sm-2 control-label">邮箱:</label>
+                    <div class="col-sm-10">
+                        <input type="email" v-model:value="userEmail" name="userEmail" class="form-control"
+                               id="userEmail" placeholder="请输入邮箱" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">性别:</label>
+                    <div class="col-sm-10">
+                        <input type="radio" name="userSex" id="Radio1" value="男"> 男
+                        <input type="radio" name="userSex" id="Radio2" value="女"> 女
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userHeadImage" class="col-sm-2 control-label">头像:</label>
+                    <div class="col-sm-10">
+                        <input type="file" id="userHeadImage" name="uploadImg">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userDescription" class="col-sm-2 control-label">自我描述:</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" name="userDescription" rows="3" id="userDescription"
+                                  placeholder="说两句吧老铁"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userVerifyCode" class="col-sm-2 control-label">激活:</label>
+                    <div class="col-sm-7 ">
+                        <input type="text" class="form-control ml-10 " name="userVerifyCode" id="userVerifyCode"
+                               placeholder="请输入邮箱验证码" required>
+                    </div>
+                    <div class="col-sm-3  ">
+                        <input type="button" style="display: block" id="moBtn" class=" form-control" value="获取验证码"
+                               onclick="sendMsgCode()" @click="getVerifyCode()">
+                        <input type="button" style="display: none" id="secondShow" class="form-control" value="获取验证码">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" class="btn btn-default" @click="submitUser()">submit</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <!--注册信息结束-->
+    </div>
+
+</div>
+
+<script>
+    /*定义一个对象，用来使用layer的弹层方法*/
+    var modifyOpen;
+    const vueApp = new Vue({
+        el: "#app",
+        data: {
+            userEmail: ""
+        },
+        methods: {
+            register: function () {
+                modifyOpen = layer.open(
+                    {
+                        type: 1,   //表示页面层，如果是2那么打开的是个iframe
+                        content: $("#updateView"),  //这里放的是dom!dom最好放在body最外层！
+                        title: '<h4 class="text-center">用户注册</h4>',
+                        shadeClose: true,      //设置为true，那么点击弹层外区域也能关闭
+                        shade: 0.1,            //弹层外区域颜色
+                        area: ['50%', '80%'], //默认是自适应的！
+                        maxmin: true,      //可以选择把弹层开到最大！
+                        anim: 6,            //弹出时的动画效果，这里选择的渐显
+                        resize: false,     //是否允许拉伸
+                        end: function () {
+                            //setpager(); //无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。
+                        }
+                    })
+            },
+            /*提交用户注册信息*/
+            submitUser: () => {
+                let form = new FormData($("#frm").get(0));
+                console.log(form)
+                let params = $("#frm").serialize();//序列化之后图片就没有了！
+                console.log(params)
+                $.ajax({
+                    url: "/user/register",
+                    type: "post",
+                    data: form,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        layer.msg(data.message, {icon: 4, time: 2000})
+                        var timer = setInterval(function () {
+                            if (data.code == '400') {
+                                location.href = "/"
+                            }
+                        }, 2000)
+                    }
+                })
+            },
+            /*从后端获取验证码*/
+            getVerifyCode: () => {
+                var userEmail = vueApp.userEmail;
+                $.get(
+                    "user/email",
+                    {userEmail: userEmail},
+                    function (data) {
+                        layer.msg(data.message)
+                    },
+                    "json"
+                );
+            }
+        }
+    })
+
+    var countdown = 30;  // 时长 s
+    // 获取验证码按钮点击事件
+    function sendMsgCode() {
+        $("#moBtn").css('display', 'none');
+        $("#secondShow").css('display', 'block');
+        $("#secondShow").val('重新发送(' + countdown + 's)');
+        var timer = setInterval(function () {
+            if (countdown == 0) {
+                clearInterval(timer);
+                $("#secondShow").css('display', 'none');
+                $("#moBtn").css('display', 'block');
+                countdown = 30;
+            }
+            $("#secondShow").val('重新发送(' + (countdown - 1) + 's)');
+            countdown--;
+        }, 1000);
+    };
+
+
+</script>
+</body>
+</html>
